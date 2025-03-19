@@ -1,5 +1,5 @@
 
-const category = require('../../models/category');
+const category = require('../../models/admin/category');
 
 
 const categoryInfo = async(req,res)=>{

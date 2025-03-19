@@ -9,10 +9,6 @@
        <%- include('partials/admin/header.ejs') %> 
 
 
-       
-<-- add section herre -->
-
-
 
         
         <%- include('partials/admin/footer.ejs')  %>

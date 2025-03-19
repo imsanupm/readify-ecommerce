@@ -1,20 +1,20 @@
-
+const Category = require('../../models/admin/category')
 const Product = require('../../models/admin/productSchema');
+const fs = require('fs');
+const path =  require('path');
+const User = require('../../models/user/userSchema');
+const sharp = require('sharp');
 
-const loadProductPage = async (req,res)=>{
+const getProductaddPage = async(req,res)=>{
     try {
-        console.log('addproduct function is working')
-        res.render('addProduct')
+        const category = await Category.find({isListed:true})
+        console.log(category);
+        res.render('addProduct',{
+            cat:category
+        })
     } catch (error) {
-        console.log(`error during productInfo ${error}`);
-    }
-}
-
-const addProduct = async(req,res)=>{
-    try {
-        
-    } catch (error) {
-        
+        console.log(`problem on your getProductPage fucntion ${error}`)
+        res.status(500).json({message:'internal server error'});
     }
 }
 
@@ -22,5 +22,5 @@ const addProduct = async(req,res)=>{
 
 
 module.exports = {
-    loadProductPage,
+    getProductaddPage,
 }

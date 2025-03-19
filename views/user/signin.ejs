@@ -180,7 +180,7 @@
 <body>
     <div class="signup-container">
         <h2>Sign Up for Readify</h2>
-        <form method="post" action="/signup" onsubmit="return validateForm(event)">
+        <form method="post" action="/signup" onsubmit="return validateForm(event)" onsubmit="return validateForm(event)" novalidate>
             <input name="name" type="text" placeholder="Full Name" required>
             <input name="email" type="email" placeholder="Email" required>
             <input name="Phone" type="tel" placeholder="Phone Number" required>
@@ -195,7 +195,7 @@
         </form>
     </div>
 
-    <script>
+    <!-- <script>
         function validateForm(event) {
             event.preventDefault();
 
@@ -215,6 +215,22 @@
                 });
                 return false;
             }
+
+
+           //new one 
+
+           
+
+
+           if (!name || !email || !phone || !password || !cPassword) {
+        Swal.fire({
+            icon: 'error',
+            title: 'All Fields Required',
+            text: 'Please fill in all the fields'
+        });
+        return false;
+    }
+
 
             // Validate email (must contain @gmail.com)
             if (!email.toLowerCase().endsWith('@gmail.com')) {
@@ -267,6 +283,6 @@
 
             return false; // Prevent default submission until success
         }
-    </script>
+    </script> -->
 </body>
 </html>
