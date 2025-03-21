@@ -99,9 +99,7 @@ const addProduct = async (req,res) => {
   }
 }
 
-// Make sure to update your route to use the multer middleware correctly
-// In your routes file:
-// router.post('/addProduct', uploads.array('croppedImages', 4), productController.addProduct);
+
 
 module.exports = {
     getProductaddPage,

@@ -639,8 +639,16 @@
                   .then(response => {
                     console.log(response)
                     hideLoading();
-                    if (response) {
-                      window.location.href = '/admin/products?success=Book added successfully';
+                    if (response.ok) {
+                      Swal.fire({
+                        title:'Success',
+                        icon:'success',
+                        text:'New Product added'
+                      })
+                      setTimeout(()=>{
+                        window.location.reload();
+
+                      },2000)
                     } else {
                       throw new Error('Server error');
                     }
