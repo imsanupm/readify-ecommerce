@@ -20,10 +20,10 @@ const productSchema = new Schema({
         type:Number,
         required:true
     },
-    salePrice:{
-        type:Number,
-        required:true
-    },
+    // salePrice:{
+    //     type:Number,
+    //     required:true
+    // },
     productOffer:{
         type:Number,
         default:0

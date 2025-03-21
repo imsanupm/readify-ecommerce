@@ -1089,14 +1089,14 @@ textarea.form-control {
   overflow: hidden;
 }
 
-.card:hover {
+/* .card:hover {
   -webkit-transform: translateY(-2px);
           transform: translateY(-2px);
   -webkit-transition-duration: 0.3s;
           transition-duration: 0.3s;
   -webkit-box-shadow: none;
           box-shadow: none;
-}
+} */
 
 .icontext {
   display: -webkit-inline-box;

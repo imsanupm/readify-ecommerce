@@ -132,6 +132,10 @@ const catagoryStatus = async (req, res) => {
     }
 };
 
+const searchCategory = async (req,res)=>{
+    
+}
+
 
 
 module.exports = {

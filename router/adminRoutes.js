@@ -23,7 +23,7 @@ adminRouter.put('/category/toggle/:id',adminCategory.catagoryStatus)
 //Product management
 adminRouter.get('/addProducts',productController.getProductaddPage);
 // adminRouter.post('/addProduct',uploads.array("images",4),productController.addProduct)
-adminRouter.post('/addProduct',uploads.array('productImages',10),productController.addProduct);
+adminRouter.post('/addProducts',uploads.array('productImages',10),productController.addProduct);
 
 
 module.exports= adminRouter;
