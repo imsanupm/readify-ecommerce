@@ -12,11 +12,10 @@
         <div class="content-header">
             <div>
                 <h2 class="content-title card-title">Products List</h2>
-                <p>Lorem ipsum dolor sit amet.</p>
+               
             </div>
             <div>
-                <a href="#" class="btn btn-light rounded font-md">Export</a>
-                <a href="#" class="btn btn-light rounded  font-md">Import</a>
+              
                 <a href="#" class="btn btn-primary btn-sm rounded">Create new</a>
             </div>
         </div>
@@ -28,13 +27,10 @@
                             <input class="form-check-input" type="checkbox" value="">
                         </div>
                     </div>
-                    <div class="col-md-3 col-12 me-auto mb-md-0 mb-3">
-                        <select class="form-select">
-                            <option selected>All category</option>
-                            <option>Electronics</option>
-                            <option>Clothes</option>
-                            <option>Automobile</option>
-                        </select>
+                    <div class="col-md-4 col-12 me-auto mb-md-0 mb-3 d-flex">
+                        <input type="text" id="categorySearch" class="form-control me-2 flex-grow-1" placeholder="Search category" aria-label="Search category">
+                        <button class="btn btn-outline-success me-2 flex-shrink-0" onclick="searchCategory()">Search</button>
+                        <button class="btn btn-outline-danger flex-shrink-0" onclick="clearSearch()">Clear</button>
                     </div>
                     <div class="col-md-2 col-6">
                         <input type="date" value="02.05.2022" class="form-control">
@@ -49,14 +45,9 @@
                     </div>
                 </div>
             </header> <!-- card-header end// -->
-            <div class="card-body">
+            <!-- <div class="card-body">
                 <article class="itemlist">
                     <div class="row align-items-center">
-                        <div class="col col-check flex-grow-0">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox">
-                            </div>
-                        </div>
                         <div class="col-lg-4 col-sm-4 col-8 flex-grow-1 col-name">
                             <a class="itemside" href="#">
                                 <div class="left">
@@ -80,315 +71,97 @@
                             </a>
                             <a href="#" class="btn btn-sm font-sm btn-light rounded">
                                 <i class="material-icons md-delete_forever"></i> Delete
-                            </a>
-                        </div>
-                    </div> <!-- row .// -->
-                </article> <!-- itemlist  .// -->
-                <article class="itemlist">
-                    <div class="row align-items-center">
-                        <div class="col col-check flex-grow-0">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="">
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-sm-4 col-8 flex-grow-1 col-name">
-                            <a class="itemside" href="#">
-                                <div class="left">
-                                    <img src="assets/imgs/items/2.jpg" class="img-sm img-thumbnail" alt="Item">
-                                </div>
-                                <div class="info">
-                                    <h6 class="mb-0">Helionic Hooded Down Jacket</h6>
+                                       </a>
+                                   </div>
+                   
                                 </div>
                             </a>
-                        </div>
-                        <div class="col-lg-2 col-sm-2 col-4 col-price"> <span>$990.99</span> </div>
-                        <div class="col-lg-2 col-sm-2 col-4 col-status">
-                            <span class="badge rounded-pill alert-success">Active</span>
-                        </div>
-                        <div class="col-lg-1 col-sm-2 col-4 col-date">
-                            <span>02.11.2022</span>
-                        </div>
-                        <div class="col-lg-2 col-sm-2 col-4 col-action text-end">
-                            <a href="#" class="btn btn-sm font-sm rounded btn-brand">
-                                <i class="material-icons md-edit"></i> Edit
-                            </a>
-                            <a href="#" class="btn btn-sm font-sm btn-light rounded">
-                                <i class="material-icons md-delete_forever"></i> Delete
-                            </a>
-                        </div>
-                    </div> <!-- row .// -->
-                </article> <!-- itemlist  .// -->
-                <article class="itemlist">
-                    <div class="row align-items-center">
-                        <div class="col col-check flex-grow-0">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="">
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-sm-4 col-8 flex-grow-1 col-name">
-                            <a class="itemside" href="#">
-                                <div class="left">
-                                    <img src="assets/imgs/items/3.jpg" class="img-sm img-thumbnail" alt="Item">
-                                </div>
-                                <div class="info">
-                                    <h6 class="mb-0">Lace mini dress with faux leather</h6>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="col-lg-2 col-sm-2 col-4 col-price"> <span>$76.99</span> </div>
-                        <div class="col-lg-2 col-sm-2 col-4 col-status">
-                            <span class="badge rounded-pill alert-warning">Archived</span>
-                        </div>
-                        <div class="col-lg-1 col-sm-2 col-4 col-date">
-                            <span>02.11.2022</span>
-                        </div>
-                        <div class="col-lg-2 col-sm-2 col-4 col-action text-end">
-                            <a href="#" class="btn btn-sm font-sm rounded btn-brand">
-                                <i class="material-icons md-edit"></i> Edit
-                            </a>
-                            <a href="#" class="btn btn-sm font-sm btn-light rounded">
-                                <i class="material-icons md-delete_forever"></i> Delete
-                            </a>
-                        </div>
-                    </div> <!-- row .// -->
-                </article> <!-- itemlist  .// -->
-                <article class="itemlist">
-                    <div class="row align-items-center">
-                        <div class="col col-check flex-grow-0">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="">
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-sm-4 col-8 flex-grow-1 col-name">
-                            <a class="itemside" href="#">
-                                <div class="left">
-                                    <img src="assets/imgs/items/4.jpg" class="img-sm img-thumbnail" alt="Item">
-                                </div>
-                                <div class="info">
-                                    <h6 class="mb-0">Fanmis Men's Travel Bag</h6>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="col-lg-2 col-sm-2 col-4 col-price"> <span>$18.00</span> </div>
-                        <div class="col-lg-2 col-sm-2 col-4 col-status">
-                            <span class="badge rounded-pill alert-success">Active</span>
-                        </div>
-                        <div class="col-lg-1 col-sm-2 col-4 col-date">
-                            <span>02.11.2022</span>
-                        </div>
-                        <div class="col-lg-2 col-sm-2 col-4 col-action text-end">
-                            <a href="#" class="btn btn-sm font-sm rounded btn-brand">
-                                <i class="material-icons md-edit"></i> Edit
-                            </a>
-                            <a href="#" class="btn btn-sm font-sm btn-light rounded">
-                                <i class="material-icons md-delete_forever"></i> Delete
-                            </a>
-                        </div>
-                    </div> <!-- row .// -->
-                </article> <!-- itemlist  .// -->
-                <article class="itemlist">
-                    <div class="row align-items-center">
-                        <div class="col col-check flex-grow-0">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="">
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-sm-4 col-8 flex-grow-1 col-name">
-                            <a class="itemside" href="#">
-                                <div class="left">
-                                    <img src="assets/imgs/items/3.jpg" class="img-sm img-thumbnail" alt="Item">
-                                </div>
-                                <div class="info">
-                                    <h6 class="mb-0">Jeans Shorts for Men</h6>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="col-lg-2 col-sm-2 col-4 col-price"> <span>$76.99</span> </div>
-                        <div class="col-lg-2 col-sm-2 col-4 col-status">
-                            <span class="badge rounded-pill alert-danger">Disabled</span>
-                        </div>
-                        <div class="col-lg-1 col-sm-2 col-4 col-date">
-                            <span>02.11.2022</span>
-                        </div>
-                        <div class="col-lg-2 col-sm-2 col-4 col-action text-end">
-                            <a href="#" class="btn btn-sm font-sm rounded btn-brand">
-                                <i class="material-icons md-edit"></i> Edit
-                            </a>
-                            <a href="#" class="btn btn-sm font-sm btn-light rounded">
-                                <i class="material-icons md-delete_forever"></i> Delete
-                            </a>
-                        </div>
-                    </div> <!-- row .// -->
-                </article> <!-- itemlist  .// -->
-                <article class="itemlist">
-                    <div class="row align-items-center">
-                        <div class="col col-check flex-grow-0">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="">
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-sm-4 col-8 flex-grow-1 col-name">
-                            <a class="itemside" href="#">
-                                <div class="left">
-                                    <img src="assets/imgs/items/5.jpg" class="img-sm img-thumbnail" alt="Item">
-                                </div>
-                                <div class="info">
-                                    <h6 class="mb-0">Wallet made of leather brown color</h6>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="col-lg-2 col-sm-2 col-4 col-price"> <span>$18.00</span> </div>
-                        <div class="col-lg-2 col-sm-2 col-4 col-status">
-                            <span class="badge rounded-pill alert-warning">Archived</span>
-                        </div>
-                        <div class="col-lg-1 col-sm-2 col-4 col-date">
-                            <span>02.11.2022</span>
-                        </div>
-                        <div class="col-lg-2 col-sm-2 col-4 col-action text-end">
-                            <a href="#" class="btn btn-sm font-sm rounded btn-brand">
-                                <i class="material-icons md-edit"></i> Edit
-                            </a>
-                            <a href="#" class="btn btn-sm font-sm btn-light rounded">
-                                <i class="material-icons md-delete_forever"></i> Delete
-                            </a>
-                        </div>
-                    </div> <!-- row .// -->
-                </article> <!-- itemlist  .// -->
-                <article class="itemlist">
-                    <div class="row align-items-center">
-                        <div class="col col-check flex-grow-0">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="">
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-sm-4 col-8 flex-grow-1 col-name">
-                            <a class="itemside" href="#">
-                                <div class="left">
-                                    <img src="assets/imgs/items/6.jpg" class="img-sm img-thumbnail" alt="Item">
-                                </div>
-                                <div class="info">
-                                    <h6 class="mb-0">Modern Armchair for home interiors</h6>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="col-lg-2 col-sm-2 col-4 col-price"> <span>$76.99</span> </div>
-                        <div class="col-lg-2 col-sm-2 col-4 col-status">
-                            <span class="badge rounded-pill alert-success">Active</span>
-                        </div>
-                        <div class="col-lg-1 col-sm-2 col-4 col-date">
-                            <span>02.11.2022</span>
-                        </div>
-                        <div class="col-lg-2 col-sm-2 col-4 col-action text-end">
-                            <a href="#" class="btn btn-sm font-sm rounded btn-brand">
-                                <i class="material-icons md-edit"></i> Edit
-                            </a>
-                            <a href="#" class="btn btn-sm font-sm btn-light rounded">
-                                <i class="material-icons md-delete_forever"></i> Delete
-                            </a>
-                        </div>
-                    </div> <!-- row .// -->
-                </article> <!-- itemlist  .// -->
-                <article class="itemlist">
-                    <div class="row align-items-center">
-                        <div class="col col-check flex-grow-0">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="">
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-sm-4 col-8 flex-grow-1 col-name">
-                            <a class="itemside" href="#">
-                                <div class="left">
-                                    <img src="assets/imgs/items/4.jpg" class="img-sm img-thumbnail" alt="Item">
-                                </div>
-                                <div class="info">
-                                    <h6 class="mb-0">Lace mini dress with faux leather</h6>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="col-lg-2 col-sm-2 col-4 col-price"> <span>$18.00</span> </div>
-                        <div class="col-lg-2 col-sm-2 col-4 col-status">
-                            <span class="badge rounded-pill alert-success">Active</span>
-                        </div>
-                        <div class="col-lg-1 col-sm-2 col-4 col-date">
-                            <span>02.11.2022</span>
-                        </div>
-                        <div class="col-lg-2 col-sm-2 col-4 col-action text-end">
-                            <a href="#" class="btn btn-sm font-sm rounded btn-brand">
-                                <i class="material-icons md-edit"></i> Edit
-                            </a>
-                            <a href="#" class="btn btn-sm font-sm btn-light rounded">
-                                <i class="material-icons md-delete_forever"></i> Delete
-                            </a>
-                        </div>
-                    </div> <!-- row .// -->
-                </article> <!-- itemlist  .// -->
-                <article class="itemlist">
-                    <div class="row align-items-center">
-                        <div class="col col-check flex-grow-0">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="">
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-sm-4 col-8 flex-grow-1 col-name">
-                            <a class="itemside" href="#">
-                                <div class="left">
-                                    <img src="assets/imgs/items/3.jpg" class="img-sm img-thumbnail" alt="Item">
-                                </div>
-                                <div class="info">
-                                    <h6 class="mb-0">Lace mini dress with faux leather</h6>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="col-lg-2 col-sm-2 col-4 col-price"> <span>$76.99</span> </div>
-                        <div class="col-lg-2 col-sm-2 col-4 col-status">
-                            <span class="badge rounded-pill alert-success">Active</span>
-                        </div>
-                        <div class="col-lg-1 col-sm-2 col-4 col-date">
-                            <span>02.11.2022</span>
-                        </div>
-                        <div class="col-lg-2 col-sm-2 col-4 col-action text-end">
-                            <a href="#" class="btn btn-sm font-sm rounded btn-brand">
-                                <i class="material-icons md-edit"></i> Edit
-                            </a>
-                            <a href="#" class="btn btn-sm font-sm btn-light rounded">
-                                <i class="material-icons md-delete_forever"></i> Delete
-                            </a>
-                        </div>
-                    </div> <!-- row .// -->
-                </article> <!-- itemlist  .// -->
-                <article class="itemlist">
-                    <div class="row align-items-center">
-                        <div class="col col-check flex-grow-0">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="">
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-4 col-8 flex-grow-1 col-name">
-                            <a class="itemside" href="#">
-                                <div class="left">
-                                    <img src="assets/imgs/items/4.jpg" class="img-sm img-thumbnail" alt="Item">
-                                </div>
-                                <div class="info">
-                                    <h6 class="mb-0">Lace mini dress with faux leather</h6>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="col-lg-2 col-sm-2 col-4 col-price"> <span>$180.99</span> </div>
-                        <div class="col-lg-2 col-sm-2 col-4 col-status">
-                            <span class="badge rounded-pill alert-success">Active</span>
-                        </div>
-                        <div class="col-lg-1 col-sm-2 col-4 col-date">
-                            <span>02.11.2022</span>
-                        </div>
-                        <div class="col-lg-2 col-sm-2 col-4 col-action text-end">
-                            <a href="#" class="btn btn-sm font-sm rounded btn-brand">
-                                <i class="material-icons md-edit"></i> Edit
-                            </a>
-                            <a href="#" class="btn btn-sm font-sm btn-light rounded">
-                                <i class="material-icons md-delete_forever"></i> Delete
-                            </a>
-                        </div>
-                    </div> <!-- row .// -->
+                        </div> -->
+
+
+                        <!-- product-list.ejs -->
+                      <!-- product-list.ejs -->
+<div class="card">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table align-middle table-hover">
+          <thead class="bg-light">
+            <tr>
+              <th class="py-3 px-4">Product</th>
+              <th class="py-3 px-4">Price</th>
+              <th class="py-3 px-4">Status</th>
+              <th class="py-3 px-4">Author</th>
+              <th class="py-3 px-4 text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% products.forEach(function(product) { %>
+              <tr>
+                <td class="py-3 px-4">
+                  <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                      <img 
+                        src="<%= product.productImage[0] || 'assets/imgs/items/placeholder.jpg' %>" 
+                        class="img-sm img-thumbnail" 
+                        alt="<%= product.name || 'Product' %>"
+                      >
+                    </div>
+                    <div class="info ms-3">
+                      <h6 class="mb-0"><%= product.productTitle || 'Unnamed Product' %></h6>
+                    </div>
+                  </div>
+                </td>
+                <td class="py-3 px-4">
+                  <% if (product.regularPrice !== undefined && product.regularPrice !== null) { %>
+                    <% if (typeof product.regularPrice === 'number') { %>
+                      <span>$<%= product.regularPrice.toFixed(2) %></span>
+                    <% } else { %>
+                      <span>$<%= parseFloat(product.regularPrice) ? parseFloat(product.regularPrice).toFixed(2) : '0.00' %></span>
+                    <% } %>
+                  <% } else { %>
+                    <span>$0.00</span>
+                  <% } %>
+                </td>
+                <td class="py-3 px-4">
+                  <span class="badge rounded-pill <%= (product.status === 'Active') ? 'alert-success' : 'alert-secondary' %>">
+                    <%= product.status || 'N/A' %>
+                  </span>
+                </td>
+                <td class="py-3 px-4">
+                  <span><%= product.authorName || 'N/A' %></span>
+                </td>
+                <td class="py-3 px-4 text-end">
+                  <div class="d-flex justify-content-end align-items-center">
+                    <a href="/products/edit/<%= product.id %>" class="btn btn-sm font-sm rounded btn-brand me-2">
+                      <i class="material-icons md-edit"></i> Edit
+                    </a>
+                    <div class="d-flex align-items-center">
+                      <span class="me-2 small">
+                        <%= product.blocked ? 'Blocked' : 'Active' %>
+                      </span>
+                      <div class="form-check form-switch">
+                        <form class="toggle-form" data-id="<%= product.id %>">
+                            <input 
+                                class="form-check-input toggle-block" 
+                                type="checkbox" 
+                                role="switch" 
+                                id="blockToggle<%= product.id %>" 
+                                <%= !product.isBlocked ? 'checked' : '' %>
+                            >
+                            <input type="hidden" name="blocked" value="<%= !product.isBlocked %>">
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>                
+
                 </article> <!-- itemlist  .// -->
             </div> <!-- card-body end// -->
         </div> <!-- card end// -->
@@ -406,7 +179,67 @@
         </div>
     </section>
 
-
+    <!-- <script>
+        document.querySelectorAll('.toggle-form').forEach(form => {
+            form.addEventListener('change', function (event) {
+                event.preventDefault(); // Prevent the default form submission
+    
+                const checkbox = this.querySelector('.toggle-block');
+                const productId = this.dataset.id;
+                const isBlocked = !checkbox.checked; // Toggle logic
+    
+                fetch(`/blockUnblockProduct/toggle-block/${productId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ blocked: isBlocked })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.blocked) {
+                        alert("Product is now Blocked");
+                    } else {
+                        alert("Product is now Active");
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+    </script> -->
+    <script>
+        document.querySelectorAll('.toggle-form').forEach(form => {
+            form.addEventListener('change', function (event) {
+                event.preventDefault(); // Prevent default form submission
+    
+                const checkbox = this.querySelector('.toggle-block');
+                const productId = this.dataset.id;
+                const isBlocked = !checkbox.checked; // Determine new status
+                const actionText = isBlocked ? "block" : "unblock"; // Alert message
+    
+                // Show confirmation popup
+                if (!confirm(`Are you sure you want to ${actionText} this product?`)) {
+                    checkbox.checked = !checkbox.checked; // Revert checkbox state if canceled
+                    return;
+                }
+    
+                // Proceed with fetch request
+                fetch(`/blockUnblockProduct/toggle-block/${productId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ blocked: isBlocked })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert(`Product is now ${data.blocked ? 'Blocked' : 'Active'}`);
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+    </script>
+    
 
        <%- include('partials/admin/footer.ejs')  %>
     </main>

@@ -99,9 +99,48 @@ const addProduct = async (req,res) => {
   }
 }
 
+const listProduct = async(req,res)=>{
+    try {
+        const page  = parseInt(req.query.page) || 1;
+        const limit = 0;
+        const skip = (page-1)*limit;
 
+        const productData = await productModel.find({})
+        .sort({createdAt:-1})
+        .skip(skip)
+        .limit(limit);
+         
+        const totalProducts = await productModel.find({});
+        const totalPages = Math.ceil(totalProducts/limit)
+        res.render('listProduct',{
+            products:productData,
+            currentPage:page,
+            totalPage:totalPages
+        }); 
+    } catch (error) {
+        console.log(`error during listing the product ${error}`)
+    }
+}
+
+  const blockUnblockProduct = async (req,res)=>{
+    try {
+        const productId = req.params.id
+        const product = await productModel.findById(productId)
+        if(!product){
+            return res.status(404).json({message:"product not found"})
+        }
+        product.isBlocked = !product.isBlocked
+        await product.save()
+        res.status(200).json({ message: "product status updated", blocked: product.isBlocked });
+    } catch (error) {
+        console.error("Error toggling product block status:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+}
 
 module.exports = {
     getProductaddPage,
     addProduct,
+    listProduct,
+    blockUnblockProduct,
 };
