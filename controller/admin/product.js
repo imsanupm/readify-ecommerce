@@ -138,9 +138,50 @@ const listProduct = async(req,res)=>{
     }
 }
 
+ const getProductEdit = async(req,res)=>{
+    try {
+        const id = req.params.id;
+        const product = await productModel.findOne({_id:id});
+        const category = await Category.find({})
+        console.log('productData',product)
+        res.render("updateProduct",{
+            categories:category,
+            product
+        })
+    } catch (error) {
+        console.log(`error during getProductEditPage${error}`)
+        //add page not found here
+    }
+ }
+
+
+ const removeProductImage = async (req, res) => {
+    try {
+        const productId = req.params.id;
+        const { imageUrl } = req.body;
+
+        const product = await Product.findById(productId);
+        if (!product) {
+            return res.status(404).json({ success: false, message: "Product not found" });
+        }
+
+        // Remove image from the database
+        product.productImage = product.productImage.filter(img => img !== imageUrl);
+        await product.save();
+
+        res.json({ success: true, message: "Image removed successfully" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+};
+
+
 module.exports = {
     getProductaddPage,
     addProduct,
     listProduct,
     blockUnblockProduct,
+    getProductEdit,
+    removeProductImage,
 };

@@ -2,10 +2,13 @@ const User = require('../../models/user/userSchema');
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcrypt');
 const  env = require('dotenv').config();
+const Product=require('../../models/admin/productSchema')
 
 const loadHomepage = async (req,res)=>{
     try {
-        res.render('home');
+       const product  = await Product.find({isBlocked:false}).sort({createdAt:-1}).limit(6)
+       console.log("produt from home page",product)
+        res.render('home',{products:product})
     } catch (error) {
         console.log(`error during ${error}`);
     }

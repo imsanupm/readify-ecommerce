@@ -132,13 +132,13 @@
                 </td>
                 <td class="py-3 px-4 text-end">
                   <div class="d-flex justify-content-end align-items-center">
-                    <a href="/products/edit/<%= product.id %>" class="btn btn-sm font-sm rounded btn-brand me-2">
+                    <a href="/admin/editProduct/<%= product.id %>" class="btn btn-sm font-sm rounded btn-brand me-2">
                       <i class="material-icons md-edit"></i> Edit
                     </a>
                     <div class="d-flex align-items-center">
                       <span class="me-2 small">
                         <%= product.blocked ? 'Blocked' : 'Active' %>
-                      </span>
+                      </span>   
                       <div class="form-check form-switch">
                         <form class="toggle-form" data-id="<%= product.id %>">
                             <input 

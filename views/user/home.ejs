@@ -80,65 +80,77 @@
 			</div>
 		<!-- End Hero Section -->
 
-		<!-- Start Product Section -->
-		<div class="product-section">
-			<div class="container">
-				<div class="row">
-
-					<!-- Start Column 1 -->
-					<div class="col-md-12 col-lg-3 mb-5 mb-lg-0">
-						<h2 class="mb-4 section-title">Crafted with excellent material.</h2>
-						<p class="mb-4">Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate velit imperdiet dolor tempor tristique. </p>
-						<p><a href="shop.html" class="btn">Explore</a></p>
-					</div> 
-					<!-- End Column 1 -->
-
-					<!-- Start Column 2 -->
-					<div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
-						<a class="product-item" href="cart.html">
-							<img src="images/product-1.png" class="img-fluid product-thumbnail">
-							<h3 class="product-title">Nordic Chair</h3>
-							<strong class="product-price">$50.00</strong>
-
-							<span class="icon-cross">
-								<img src="images/cross.svg" class="img-fluid">
-							</span>
-						</a>
-					</div> 
-					<!-- End Column 2 -->
-
-					<!-- Start Column 3 -->
-					<div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
-						<a class="product-item" href="cart.html">
-							<img src="images/product-2.png" class="img-fluid product-thumbnail">
-							<h3 class="product-title">Kruzo Aero Chair</h3>
-							<strong class="product-price">$78.00</strong>
-
-							<span class="icon-cross">
-								<img src="images/cross.svg" class="img-fluid">
-							</span>
-						</a>
-					</div>
-					<!-- End Column 3 -->
-
-					<!-- Start Column 4 -->
-					<div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
-						<a class="product-item" href="cart.html">
-							<img src="images/product-3.png" class="img-fluid product-thumbnail">
-							<h3 class="product-title">Ergonomic Chair</h3>
-							<strong class="product-price">$43.00</strong>
-
-							<span class="icon-cross">
-								<img src="images/cross.svg" class="img-fluid">
-							</span>
-						</a>
-					</div>
-					<!-- End Column 4 -->
-
+			<!-- views/products.ejs -->
+<div class="product-section">
+	<div class="container">
+	  <div class="row">
+		<!-- Start Column 1 - Heading Section -->
+		<div class="col-md-12 col-lg-3 mb-5 mb-lg-0">
+		  <h2 class="mb-4 section-title">Crafted with excellent material.</h2>
+		  <p class="mb-4">Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate velit imperdiet dolor tempor</p>
+		  <p><a href="/shop" class="btn">Explore</a></p>
+		</div> 
+		<!-- End Column 1 -->
+		
+		<!-- Product Listings -->
+		<% products.forEach(function(product) { %>
+		  <div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
+			<a class="product-item" href="/product/<%= product._id %>">
+			  <img src="<%= product.productImage[0] %>" class="img-fluid product-thumbnail" alt="<%= product.productTitle %>">
+			  <h3 class="product-title"><%= product.productTitle %></h3>
+			  
+			  <!-- Product Rating -->
+			  <div class="product-rating mb-2">
+				<% for(let i = 1; i <= 5; i++) { %>
+				  <% if(i <= product.rating) { %>
+					<span class="star filled">★</span>
+				  <% } else { %>
+					<span class="star">☆</span>
+				  <% } %>
+				<% } %>
+				<span class="rating-count">(<%= product.reviewCount %>)</span>
+			  </div>
+			  
+			  <!-- Product Price Section -->
+			  <div class="product-price-section">
+				<% if(product.productOffr > 0) { %>
+				  <span class="original-price">$<%= product.originalPrice.toFixed(2) %></span>
+				  <strong class="product-price">$<%= product.finalPrice.toFixed(2) %></strong>
+				  <span class="discount-badge">-<%= product.discount %>%</span>
+				<% } else { %>
+				  <strong class="product-price">$<%= product.regularPrice.toFixed(2) %></strong>
+				<% } %>
+			  </div>
+			  
+			  <!-- Product Labels -->
+			  <% if(product.labels && product.labels.length > 0) { %>
+				<div class="product-labels">
+				  <% product.labels.forEach(function(label) { %>
+					<span class="label <%= label.type %>"><%= label.text %></span>
+				  <% }); %>
 				</div>
-			</div>
-		</div>
-		<!-- End Product Section -->
+			  <% } %>
+			  
+			  <!-- Available Colors Section (if applicable) -->
+			  <% if(product.colors && product.colors.length > 0) { %>
+				<div class="product-colors mt-2">
+				  <% product.colors.forEach(function(color) { %>
+					<span class="color-dot" style="background-color: <%= color.code %>" title="<%= color.name %>"></span>
+				  <% }); %>
+				</div>
+			  <% } %>
+			  
+			  <!-- Add to Cart Icon -->
+			  <span class="icon-cross">
+				<img src="/images/cross.svg" class="img-fluid">
+			  </span>
+			</a>
+		  </div>
+		<% }); %>
+		<!-- End Product Listings -->
+	  </div>
+	</div>
+  </div>
 
 		<!-- Start Why Choose Us Section -->
 		<div class="why-choose-section">
