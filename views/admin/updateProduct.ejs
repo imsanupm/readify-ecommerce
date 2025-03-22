@@ -207,7 +207,7 @@
                                               <% product.productImage.forEach((image, index) => { %>
                                                   <div class="image-box" id="image-box-<%= index %>">
                                                       <img src="<%= image %>" alt="Product Image <%= index + 1 %>">
-                                                      <span class="delete-btn" onclick="removeImage('<%= image %>', '<%= product._id %>', <%= index %>)">&times;</span>
+                                                      <span class="delete-btn" onclick="removeImage('<%= image %>', '<%= product._id %>', '<%= index %>')">&times;</span>
                                                   </div>
                                               <% }); %>
                                           <% } else { %>
@@ -792,11 +792,12 @@
 //==================================================delete product image====================================================
 
                 function removeImage(imageUrl, productId, index) {
+                  console.log("image ind",index)
         if (confirm("Are you sure you want to remove this image?")) {
             fetch(`/admin/remove-image/${productId}`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ imageUrl: imageUrl })
+                body: JSON.stringify({ imageUrl: imageUrl,index })
             })
             .then(response => {
                 if (!response.ok) {
@@ -810,6 +811,7 @@
                 } else {
                     alert("Error: " + data.message);
                 }
+
             })
             .catch(error => console.error("Error:", error));
         }

@@ -157,10 +157,12 @@ const listProduct = async(req,res)=>{
 
  const removeProductImage = async (req, res) => {
     try {
+         console.log('fucntion worlasjdfisqanfvdqansvjpawggvio====')
+        console.log(req.body)
         const productId = req.params.id;
         const { imageUrl } = req.body;
 
-        const product = await Product.findById(productId);
+        const product = await productModel.findById(productId);
         if (!product) {
             return res.status(404).json({ success: false, message: "Product not found" });
         }
@@ -169,6 +171,7 @@ const listProduct = async(req,res)=>{
         product.productImage = product.productImage.filter(img => img !== imageUrl);
         await product.save();
 
+        
         res.json({ success: true, message: "Image removed successfully" });
     } catch (error) {
         console.error(error);
