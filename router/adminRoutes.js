@@ -29,6 +29,8 @@ adminRouter.get('/listProducts',productController.listProduct)
 adminRouter.patch('/blockUnblockProduct/toggle-block/:id',productController.blockUnblockProduct)
 adminRouter.get('/editProduct/:id',productController.getProductEdit);
 adminRouter.delete('/remove-image/:id',productController.removeProductImage)
+adminRouter.put('/updateImg',uploads.array("productImages",10),productController.updateImg)
+adminRouter.post('/edit-product/:id', uploads.array('productImages', 10), productController.editProduct);
 
 module.exports= adminRouter;
 

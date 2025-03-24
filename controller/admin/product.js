@@ -22,7 +22,8 @@ const getProductaddPage = async(req, res) => {
     }
 };
 
-// Modified to handle cropped images from the front-end
+// add product function
+
 const addProduct = async (req,res) => {
   console.log('your add product functioin is working ')
     
@@ -171,7 +172,7 @@ const listProduct = async(req,res)=>{
         product.productImage = product.productImage.filter(img => img !== imageUrl);
         await product.save();
 
-        
+
         res.json({ success: true, message: "Image removed successfully" });
     } catch (error) {
         console.error(error);
@@ -179,6 +180,96 @@ const listProduct = async(req,res)=>{
     }
 };
 
+const updateImg = async (req,res) => {
+    try {
+        console.log('this body from updateImg function',req.body);
+        console.log("your params are ",req.params.id)
+    } catch (error) {
+        console.log(`error during updateImage function ${error}`)
+    }
+}
+
+
+
+const editProduct = async (req, res) => {
+    console.log('Your edit product function is working');
+
+    try {
+        const productId = req.params.id;
+        const existingProduct = await Product.findById(productId);
+
+        if (!existingProduct) {
+            console.log('Product not found');
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
+        const categories = await Category.find({});
+        if (!categories) {
+            console.log('Error when finding categories');
+            return res.status(500).json({ message: 'Error fetching categories' });
+        }
+
+        const {
+            name,
+            writer,
+            category_id,
+            language,
+            regularPrice,
+            salePrice,
+            availableQuantity,
+            description,
+            publishedDate
+        } = req.body;
+
+        console.log(req.body);
+
+        if (!name || !writer || !category_id || !language || !regularPrice || !availableQuantity || !description) {
+            console.log('Problem with finding credentials in req.body in editProduct in productController');
+            return res.render('Admin/editProduct', { 
+                categories, 
+                product: existingProduct, 
+                message: 'Need Credentials' 
+            });
+        }
+
+        // Handle image updates
+        let imagePaths = existingProduct.productImage; // Keep existing images by default
+        if (req.files && req.files.length > 0) {
+            imagePaths = req.files.map(file => `/uploadedImages/${file.filename}`);
+        }
+
+        if (!imagePaths || imagePaths.length < 3) {
+            console.log('Problem with imagePaths in editProduct in productController');
+            return res.render('Admin/editProduct', { 
+                categories, 
+                product: existingProduct, 
+                message: 'Problem with imagePaths - Minimum 3 images required' 
+            });
+        }
+
+        // Update product details
+        existingProduct.productTitle = name;
+        existingProduct.authorName = writer;
+        existingProduct.category = category_id;
+        existingProduct.language = language;
+        existingProduct.regularPrice = regularPrice;
+        existingProduct.salePrice = salePrice || null;
+        existingProduct.quantity = availableQuantity;
+        existingProduct.description = description;
+        existingProduct.productImage = imagePaths;
+        if (publishedDate) existingProduct.publishedDate = publishedDate;
+
+        await existingProduct.save();
+        console.log(`Book Updated
+            name: ${name}`);
+
+        return res.status(200).json({ success: true, message: 'Product updated successfully!' });
+
+    } catch (error) {
+        console.log(`Error in editProduct: ${error}`);
+        return res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
 
 module.exports = {
     getProductaddPage,
@@ -187,4 +278,6 @@ module.exports = {
     blockUnblockProduct,
     getProductEdit,
     removeProductImage,
+    updateImg,
+    editProduct,
 };

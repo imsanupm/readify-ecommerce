@@ -3,6 +3,8 @@ const router = express.Router();
 const userController = require('../controller/user/userController');
 const passportConfig = require('../config/passport');
 const passport = passportConfig.passport;
+const listProduct = require('../controller/user/productList')
+const productDetailPage = require('../controller/user/poductDeatils')
 
 router.get('/', userController.loadHomepage);
 router.get('/signup', userController.loadSignup);
@@ -13,6 +15,12 @@ router.get('/verify-otp', userController.loadVerifyOtp);
 router.post('/verify-otp', userController.verifyOtp);
 router.get('/resend-otp', userController.resendOtp);
 router.get('/pagenotfound', userController.pageNotfound);
+//product
+router.get('/productListPage',listProduct.getProductListPage)
+router.get('/productListPage/sort', listProduct.productSorting);
+router.get('/productListPage/filter', listProduct.filterProducts);
+router.get('/productDetilPage/:id',productDetailPage.getProductDetailPage)
+
 
 
 

@@ -74,7 +74,7 @@
                           </a>
                         </div>
                         <div class="card-body p-4">
-                          <form id="addProductForm" action="/admin/addProducts" method="POST" enctype="multipart/form-data">
+                          <form id="addProductForm" method="post" action="/admin/edit-product/<%=product._id%>"  enctype="multipart/form-data">
                             <div class="row mb-4">
                               <div class="col-md-6">
                                 <div class="card border-0 shadow-sm h-100">
@@ -165,41 +165,6 @@
                                           
                                           <label class="input-group-text bg-brown text-white" for="productImages">Browse</label>
                                         </div>
-
-
-                                        <!-- <div class="image-preview-container">
-                                          <label class="image-label">Upload Images <span class="text-danger">*</span> (Minimum 3 required)</label>
-                                          <div class="image-list">
-                                              <% if (product.productImage&& product.productImage.length > 0) { %>
-                                                  <% product.productImage.forEach((image, index) => { %>
-                                                      <div class="image-box">
-                                                          <img src="<%=product.image%>" alt="Product Image <%= index + 1 %>">
-                                                          <span class="delete-btn" onclick="removeImage('<%= image %>')">&times;</span>
-                                                      </div>
-                                                  <% }); %>
-                                              <% } else { %>
-                                                  <p>No images uploaded yet.</p>
-                                              <% } %>
-                                          </div>
-                                      </div> -->
-
-
-                                      <!-- <div class="image-preview-container">
-                                        <label class="image-label">Upload Images <span class="text-danger">*</span> (Minimum 3 required)</label>
-                                        <div class="image-list">
-                                            <% if (product.productImage && product.productImage.length > 0) { %>
-                                                <% product.productImage.forEach((image, index) => { %>
-                                                    <div class="image-box">
-                                                        <img src="<%= image %>" alt="Product Image <%= index + 1 %>" onerror="this.src='/images/default.png';">
-                                                        <span class="delete-btn" onclick="removeImage('<%= image %>')">&times;</span>
-                                                    </div>
-                                                <% }); %>
-                                            <% } else { %>
-                                                <p>No images uploaded yet.</p>
-                                            <% } %>
-                                        </div>
-                                    </div> -->
-
                                     <div class="image-preview-container">
                                       <label class="image-label">Upload Images <span class="text-danger">*</span> (Minimum 3 required)</label>
                                       <div class="image-list">
@@ -215,10 +180,6 @@
                                           <% } %>
                                       </div>
                                   </div>
-                                  
-                                    
-                                      
-
                                         <div class="alert alert-light-brown border-0 d-flex align-items-start" role="alert">
                                           <i class="fas fa-info-circle me-2 text-brown mt-1"></i>
                                           <div class="small text-muted">
@@ -279,7 +240,7 @@
                               <a href="/admin/products" class="btn btn-secondary">
                                 <i class="fas fa-times me-2"></i>Cancel
                               </a>
-                              <button type="submit" class="btn btn-brown" id="saveBookBtn">
+                              <button type="submit" class="btn btn-brown" id="updateBookBtn">
                                 <i class="fas fa-save me-2"></i>Save Book
                               </button>
                             </div>
@@ -735,38 +696,35 @@
                     resetPreviewArea();
                   }
                 }
-                
+                //her you added a new functionality
+
                 function submitFormWithFormData(formData) {
-                  const actionUrl = document.getElementById('addProductForm').action;
-                  return fetch(actionUrl, {
+                const actionUrl = document.getElementById('editProductForm').action;
+                return fetch(actionUrl, {
                     method: 'POST',
                     body: formData
-                  })
-
-                  .then(response => {
-                    console.log(response)
+                })
+                .then(response => {
                     hideLoading();
-                    if (response.ok) {
-                      Swal.fire({
-                        title:'Success',
-                        icon:'success',
-                        text:'New Product added'
-                      })
-                      setTimeout(()=>{
-                        window.location.reload();
-
-                      },2000)
+                    return response.json().then(data => ({ status: response.status, body: data }));
+                })
+                .then(({ status, body }) => {
+                    if (status === 200 && body.success) {
+                        Swal.fire({
+                            title: 'Success',
+                            icon: 'success',
+                            text: 'Product updated successfully'
+                        }).then(() => window.location.href = '/admin/products');
                     } else {
-                      throw new Error('Server error');
+                        throw new Error(body.message || 'Server error');
                     }
-                  })
-                  .catch(error => {
+                })
+                .catch(error => {
                     hideLoading();
                     console.error('Error:', error);
-                    alert('There was an error adding the book. Please try again.');
-                  });
-                }
-                
+                    alert('There was an error updating the book: ' + error.message);
+                });
+            } 
                 function showLoading(message) {
                   // Create loading overlay
                   const overlay = document.createElement('div');
@@ -818,19 +776,6 @@
     }
 
                 </script>
-                
-                
-               
-
-
-
-
-
-
-                   
-
-
-
                     <%- include('partials/admin/footer.ejs') %>
             </main>
             <%- include('partials/admin/scriptTags.ejs') %>

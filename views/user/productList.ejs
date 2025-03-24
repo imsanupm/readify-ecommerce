@@ -1,0 +1,170 @@
+<!-- /*
+* Bootstrap 5
+* Template Name: Furni
+* Template Author: Untree.co
+* Template URI: https://untree.co/
+* License: https://creativecommons.org/licenses/by/3.0/
+*/ -->
+<%-include('partials/user/header')%>
+
+	<div class="hero">
+		<div class="container">
+			<div class="row justify-content-between align-items-center">
+				<div class="col-lg-5">
+					<div class="intro-excerpt">
+						<h1>Shop</h1>
+					</div>
+				</div>
+				<div class="col-lg-7">
+					<div class="shop-controls d-flex flex-wrap justify-content-end gap-3">
+						<div class="dropdown">
+							<button class="btn btn-outline-dark dropdown-toggle" type="button" id="sortDropdown"
+								data-bs-toggle="dropdown" aria-expanded="false">
+								Sort by
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="sortDropdown">
+								<li><a class="dropdown-item sort-option" data-sort="price-low-high" href="#">Price: Low
+										to High</a></li>
+								<li><a class="dropdown-item sort-option" data-sort="price-high-low" href="#">Price: High
+										to Low</a></li>
+								<li><a class="dropdown-item sort-option" data-sort="name-asc" href="#">Name: A to Z</a>
+								</li>
+								<li><a class="dropdown-item sort-option" data-sort="name-desc" href="#">Name: Z to A</a>
+								</li>
+							</ul>
+						</div>
+
+						<!-- Filter Options -->
+						<div class="dropdown">
+							<button class="btn btn-outline-dark dropdown-toggle" type="button" id="filterDropdown"
+								data-bs-toggle="dropdown" aria-expanded="false">
+								Filter by
+							</button>
+							<ul class="dropdown-menu filter-menu p-3" aria-labelledby="filterDropdown"
+								style="width: 250px;">
+								<!-- Category Filter -->
+								<li class="mb-3">
+									<h6>Category</h6>
+									<% categories.forEach(category=> { %>
+										<div class="form-check">
+											<input class="form-check-input category-checkbox" type="checkbox"
+												id="category_<%= category._id %>" value="<%= category.name %>">
+											<label class="form-check-label" for="category_<%= category._id %>">
+												<%= category.name %>
+											</label>
+										</div>
+										<% }) %>
+								</li>
+								<li>
+									<h6>Price Range</h6>
+									<div class="price-range-slider">
+										<input type="range" class="form-range" min="0" max="2000" step="10" id="priceRangeMin" value="0">
+										<input type="range" class="form-range" min="0" max="2000" step="10" id="priceRangeMax" value="2000">
+										<div class="d-flex justify-content-between">
+											<span>₹<span id="minPrice">0</span></span>
+											<span>₹<span id="maxPrice">2000</span></span>
+										</div>
+									</div>
+								</li>
+
+								<!-- Apply Filter Button -->
+								<li class="mt-3">
+									<button class="btn btn-dark w-100">Apply Filters</button>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End Hero Section -->
+
+	<% if (products.length> 0) { %>
+		<div class="untree_co-section product-section before-footer-section">
+			<div class="container">
+				<div class="row">
+					<% products.forEach((product)=> { %>
+						<div class="col-6 col-md-3 col-lg-2 mb-3">
+							<a class="product-item" href="/productDetilPage/<%=product._id%>" <a class="product-item"
+								href="/product/<%= product._id %>">
+								<img src="<%= product.productImage[0] %>" class="img-fluid product-thumbnail">
+								<h4 class="product-title">
+									<%= product.productTitle %>
+								</h4>
+								<p class="product-author">
+									<%= product.authorName %>
+								</p>
+								<div class="product-rating">
+									<span style="color: #FFD700;">★★★★</span><span>☆</span>
+									<small>(4.2/5)</small>
+								</div>
+								<strong class="product-price">&#8377;<%= product.regularPrice %></strong>
+								<span class="icon-cross">
+									<img src="images/cross.svg" class="img-fluid">
+								</span>
+							</a>
+						</div>
+						<% }) %>
+				</div>
+			</div>
+		</div>
+		<% } else { %>
+			<p>No products available</p>
+			<% } %>
+
+
+
+				<!-- Start Footer Section -->
+				
+
+					<script>
+						document.querySelectorAll('.sort-option').forEach(item => {
+							item.addEventListener('click', function () {
+								const selectedSort = this.getAttribute('data-sort');
+
+								// Fetch sorted data from the server
+								fetch(`/productListPage/sort?sortBy=${selectedSort}`)
+									.then(response => response.json())
+									.then(data => {
+										updateProductList(data.products);
+									})
+									.catch(error => console.error('Error fetching sorted products:', error));
+							});
+						});
+
+						// Function to update product list dynamically
+						function updateProductList(products) {
+							const productContainer = document.querySelector('.product-section .row');
+							productContainer.innerHTML = ""; // Clear existing products
+
+							products.forEach(product => {
+								productContainer.innerHTML += `
+					<div class="col-6 col-md-3 col-lg-2 mb-3">
+						<a class="product-item" href="/product/${product._id}">
+							<img src="${product.productImage[0]}" class="img-fluid product-thumbnail">
+							<h4 class="product-title">${product.productTitle}</h4>
+							<p class="product-author">${product.authorName}</p>
+							<div class="product-rating">
+								<span style="color: #FFD700;">★★★★</span><span>☆</span>
+								<small>(4.2/5)</small>
+							</div>
+							<strong class="product-price"> Price ${product.price}</strong>
+							<span class="icon-cross">
+								<img src="images/cross.svg" class="img-fluid">
+							</span>
+						</a>
+					</div>
+				`;
+							});
+						}
+
+
+
+
+
+
+						
+					</script>
+
+<%-include('partials/user/footer')%>
