@@ -22,27 +22,12 @@
                         <div style="display: flex; align-items: center; gap: 6px;">
                             <input name="searchUser" type="text" placeholder="Search..." class="form-control" id="searchInput">
                             <button onclick="performSearch()" class="btn" style="background-color: #4CAF50; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; height: 36px; font-size: 13px;">
-                                <i class="material-icons md-search" style="font-size: 16px; vertical-align: middle;"></i> Search
+                                <i class="material-icons md-search" style="font-size: 16px; vertical-align: middle;"></i> 
                             </button>
                             <button onclick="clearSearch()" class="btn" style="background-color: #f44336; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; height: 36px; font-size: 13px;">
-                                <i class="material-icons md-clear" style="font-size: 16px; vertical-align: middle;"></i> Clear
+                                <i class="material-icons md-clear" style="font-size: 16px; vertical-align: middle;"></i> 
                             </button>
                         </div>
-                    </div>
-                    <div class="col-lg-2 col-md-3 col-6">
-                        <select class="form-select">
-                            <option>Status</option>
-                            <option>Active</option>
-                            <option>Disabled</option>
-                            <option>Show all</option>
-                        </select>
-                    </div>
-                    <div class="col-lg-2 col-md-3 col-6">
-                        <select class="form-select">
-                            <option>Show 20</option>
-                            <option>Show 30</option>
-                            <option>Show 40</option>
-                        </select>
                     </div>
                 </div>
             </header> <!-- card-header end// -->
@@ -65,17 +50,18 @@
                             <tr>
                                 <td width="40%">
                                     <a href="#" class="itemside">
-                                        <div class="left">
-                                            <img src="assets/imgs/people/avatar1.jpg" class="img-sm img-avatar" alt="Userpic">
-                                        </div>
                                         <div class="info pl-3">
                                             <h6 class="mb-0 title"><%=value.name%></h6>
-                                            <small class="text-muted">Seller ID: #439</small>
                                         </div>
                                     </a>
                                 </td>
                                 <td><%=value.email%></td>
-                                <td><span class="badge rounded-pill alert-success"><%=value.isActive%></span></td>
+                                <!-- <td><span class="badge rounded-pill alert-success"><%=value.isActive%></span></td> -->
+                                <td>
+                                    <span class="badge rounded-pill <%= value.isActive ? 'bg-success' : 'bg-danger' %> text-white">
+                                      <%= value.isActive ? 'Active' : 'Inactive' %>
+                                    </span>
+                                  </td>
                                 <td><%=value.phonenumber%></td>
                                 <td class="text-end">
                                     <a href="#" class="btn btn-sm rounded font-sm mt-15 toggle-btn"
@@ -83,7 +69,6 @@
                                                 style="background-color: blue; color: white;">
                                                 Unblock
                                             </a>
-                                    
                                 </td>
                             </tr>
 
@@ -109,7 +94,7 @@
     </section>
 
 
-            <script> 
+            <!-- <script> 
                 function toggleStatus(button) {
                     if (button.innerText.trim() === "Unblock") {
                         button.innerText = "Block";
@@ -161,8 +146,235 @@
                     }
                 }
             </script>
-        
-        <%- include('partials/admin/footer.ejs')  %>
+         -->
+      
+         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+         <!-- <script>
+             function toggleStatus(button) {
+                 const action = button.innerText.trim() === "Unblock" ? "Block" : "Unblock";
+                 const newColor = action === "Block" ? "red" : "blue";
+         
+                 Swal.fire({
+                     title: `Are you sure?`,
+                     text: `Do you want to ${action.toLowerCase()} this seller?`,
+                     icon: "warning",
+                     showCancelButton: true,
+                     confirmButtonColor: action === "Block" ? "#d33" : "#3085d6",
+                     cancelButtonColor: "#6c757d",
+                     confirmButtonText: `Yes, ${action.toLowerCase()} it!`
+                 }).then((result) => {
+                     if (result.isConfirmed) {
+                         button.innerText = action;
+                         button.style.backgroundColor = newColor;
+         
+                         Swal.fire({
+                             title: `${action}ed!`,
+                             text: `Seller has been ${action.toLowerCase()}ed.`,
+                             icon: "success",
+                             timer: 1500,
+                             showConfirmButton: false
+                         });
+                     }
+                 });
+             }
+         
+             function performSearch() {
+                 const searchInput = document.getElementById('searchInput');
+                 const searchTerm = searchInput.value.toLowerCase();
+                 const table = document.getElementById('sellersTable');
+                 const rows = table.getElementsByTagName('tr');
+         
+                 for (let i = 1; i < rows.length; i++) {
+                     const row = rows[i];
+                     const cells = row.getElementsByTagName('td');
+                     let found = false;
+         
+                     for (let j = 0; j < cells.length; j++) {
+                         const cellText = cells[j].textContent.toLowerCase();
+                         if (cellText.includes(searchTerm)) {
+                             found = true;
+                             break;
+                         }
+                     }
+         
+                     row.style.display = found ? '' : 'none';
+                 }
+             }
+         
+             function clearSearch() {
+                 const searchInput = document.getElementById('searchInput');
+                 searchInput.value = '';
+         
+                 const table = document.getElementById('sellersTable');
+                 const rows = table.getElementsByTagName('tr');
+         
+                 for (let i = 1; i < rows.length; i++) {
+                     rows[i].style.display = '';
+                 }
+             }
+         </script> -->
+         
+
+         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function toggleStatus(button) {
+        const action = button.innerText.trim() === "Unblock" ? "Block" : "Unblock";
+        const newColor = action === "Block" ? "red" : "blue";
+
+        Swal.fire({
+            title: `Are you sure?`,
+            text: `Do you want to ${action.toLowerCase()} this seller?`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: action === "Block" ? "#d33" : "#3085d6",
+            cancelButtonColor: "#6c757d",
+            confirmButtonText: `Yes, ${action.toLowerCase()} it!`
+        }).then((result) => {
+            if (result.isConfirmed) {
+                button.innerText = action;
+                button.style.backgroundColor = newColor;
+
+                Swal.fire({
+                    title: `${action}ed!`,
+                    text: `Seller has been ${action.toLowerCase()}ed.`,
+                    icon: "success",
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            }
+        });
+    }
+
+    function performSearch() {
+        const searchInput = document.getElementById('searchInput');
+        const searchTerm = searchInput.value.toLowerCase();
+        const table = document.getElementById('sellersTable');
+        const rows = table.getElementsByTagName('tr');
+
+        let foundAny = false; // Flag to track if any user is found
+
+        for (let i = 1; i < rows.length; i++) {
+            const row = rows[i];
+            const cells = row.getElementsByTagName('td');
+            let found = false;
+
+            for (let j = 0; j < cells.length; j++) {
+                const cellText = cells[j].textContent.toLowerCase();
+                if (cellText.includes(searchTerm)) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (found) {
+                row.style.display = '';
+                foundAny = true;
+            } else {
+                row.style.display = 'none';
+            }
+        }
+
+        // If no users are found, show a Swal alert
+        if (!foundAny) {
+            Swal.fire({
+                title: "User Not Found!",
+                text: "No matching users found. Try a different search.",
+                icon: "error",
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+    }
+
+    function clearSearch() {
+        const searchInput = document.getElementById('searchInput');
+        searchInput.value = '';
+
+        const table = document.getElementById('sellersTable');
+        const rows = table.getElementsByTagName('tr');
+
+        for (let i = 1; i < rows.length; i++) {
+            rows[i].style.display = '';
+        }
+    }
+</script>
+
+
+
+<script>
+    function performSearch() {
+    const searchInput = document.getElementById('searchInput').value.trim();
+    
+    if (!searchInput) {
+        alert('Please enter a search term');
+        return;
+    }
+
+    fetch(`/search-category?query=${encodeURIComponent(searchInput)}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('No categories found');
+            }
+            return response.json();
+        })
+        .then(categories => {
+            // Clear previous search results
+            const tableBody = document.querySelector('#categoriesTable tbody');
+            tableBody.innerHTML = '';
+
+            if (categories.length === 0) {
+                const noResultRow = `
+                    <tr>
+                        <td colspan="5" class="text-center text-danger">
+                            No categories found matching your search.
+                        </td>
+                    </tr>
+                `;
+                tableBody.innerHTML = noResultRow;
+            } else {
+                // Populate table with found categories
+                categories.forEach(category => {
+                    const row = `
+                        <tr>
+                            <td>${category.name}</td>
+                            <td>${category.description || 'No description'}</td>
+                            <td>
+                                <span class="badge ${category.isActive ? 'bg-success' : 'bg-danger'}">
+                                    ${category.isActive ? 'Active' : 'Inactive'}
+                                </span>
+                            </td>
+                            <td class="text-end">
+                                <a href="#" class="btn btn-sm btn-primary">View Details</a>
+                            </td>
+                        </tr>
+                    `;
+                    tableBody.innerHTML += row;
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Search error:', error);
+            const tableBody = document.querySelector('#categoriesTable tbody');
+            const errorRow = `
+                <tr>
+                    <td colspan="5" class="text-center text-danger">
+                        ${error.message || 'An error occurred while searching'}
+                    </td>
+                </tr>
+            `;
+            tableBody.innerHTML = errorRow;
+        });
+}
+
+function clearSearch() {
+    document.getElementById('searchInput').value = '';
+    // Optionally, reload the full list of categories
+    location.reload();
+}
+</script>
+
+
+         <%- include('partials/admin/footer.ejs')  %>
     </main>
     <%- include('partials/admin/scriptTags.ejs') %>
 </body>

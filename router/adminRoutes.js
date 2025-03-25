@@ -22,6 +22,7 @@ adminRouter.get('/category',adminCategory.categoryInfo);
 adminRouter.post('/addCategory',adminCategory.addCategory);
 adminRouter.post('/updateCategory/:categoryId',adminCategory.updateCategory)
 adminRouter.put('/category/toggle/:id',adminCategory.catagoryStatus)
+adminRouter.get('/search-category',adminCategory.searchCategory);
 //Product management
 adminRouter.get('/addProducts',productController.getProductaddPage);
 adminRouter.post('/addProducts',uploads.array('productImages',10),productController.addProduct);

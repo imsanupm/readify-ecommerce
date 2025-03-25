@@ -37,16 +37,14 @@
             </div>
         </div>
     </div>
-</div>
-
-
-       
+</div> 
        <section class="content-main">
         <div class="content-header">
             <div>
                 <h2 class="content-title card-title">Categories </h2>
                 <p>Add, edit or delete a category</p>
             </div>
+
             <div style="display: flex; gap: 5px; max-width: 250px;">
                 <input type="text" id="categorySearch" placeholder="Search Categories" class="form-control bg-white" style="flex: 1; height: 35px;">
                 <button class="btn btn-primary" id="searchBtn" style="height: 35px; padding: 5px 10px;">
@@ -65,10 +63,6 @@
                                 <input name="categoryName" type="text" placeholder="Type here" class="form-control" id="product_name" />
                             </div>
                             <div class="mb-4">
-                                <label for="product_slug" class="form-label">Slug</label>
-                                <input type="text" placeholder="Type here" class="form-control" id="product_slug" />
-                            </div>              
-                            <div class="mb-4">
                                 <label class="form-label">Description</label>
                                 <textarea name="description" placeholder="Type here" class="form-control"></textarea>
                             </div>
@@ -83,15 +77,11 @@
                                 <thead>
                                     <tr>
                                         <th class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="" />
-                                            </div>
                                         </th>
-                                        <th>ID</th>
                                         <th>Name</th>
                                         <th>Description</th>
                                         <th>edit</th>
-                                        <th>statu</th>
+                                        <th>Status</th>
                                         <th class="text-end">Action</th>
                                     </tr>
                                 </thead>
@@ -101,11 +91,7 @@
                                     <% cat.forEach(category => { %>
                                         <tr>
                                             <td class="text-center">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" value="" />
-                                                </div>
                                             </td>
-                                            <td><%= category._id %></td>
                                             <td><b><%= category.name %></b></td>
                                             <td><%= category.description %></td>
                                             <!-- Replaced slug with Edit button -->
@@ -294,13 +280,78 @@ document.querySelectorAll(".edit-category-btn").forEach(button => {
         });
     });
 
+
 </script>
-  
 
 
 
+<script>
+    document.getElementById("searchBtn").addEventListener("click", function () {
+    const query = document.getElementById("categorySearch").value.trim();
+    const tableBody = document.querySelector("tbody"); // Target the correct tbody
 
+    if (!tableBody) {
+        console.error("Table body not found.");
+        return;
+    }
 
+    fetch(`/admin/search-category?query=${query}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("No categories found");
+            }
+            return response.json();
+        })
+        .then(data => {
+            tableBody.innerHTML = ""; // Clear table
+
+            if (data.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="5" class="text-center">No categories found</td></tr>`;
+                return;
+            }
+
+            data.forEach(category => {
+                tableBody.innerHTML += `
+                    <tr>
+                        <td class="text-center"></td>
+                        <td><b>${category.name}</b></td>
+                        <td>${category.description}</td>
+                        <td>
+                            <button 
+                                class="edit-category-btn"
+                                data-id="${category._id}"
+                                data-name="${category.name}"
+                                data-description="${category.description}"
+                                style="background-color: #007bff; color: white; padding: 5px 15px; border: none; border-radius: 4px; cursor: pointer;"
+                                data-bs-toggle="modal" data-bs-target="#editCategoryModal">
+                                Edit
+                            </button>
+                        </td>
+                        <td>${category.isListed ? 'Listed' : 'Unlisted'}</td>
+                        <td class="text-end">
+                            <button 
+                                class="block-btn" 
+                                data-category-id="${category._id}"
+                                style="background-color: ${category.isListed ? '#dc3545' : '#007bff'}; 
+                                       color: white; 
+                                       padding: 5px 15px; 
+                                       border: none; 
+                                       border-radius: 4px; 
+                                       cursor: pointer;">
+                                ${category.isListed ? 'Block' : 'Unblock'}
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        })
+        .catch(error => {
+            console.error(" Error fetching categories:", error);
+            tableBody.innerHTML = `<tr><td colspan="5" class="text-center">Catefory not found</td></tr>`;
+        });
+});
+
+</script>
         
        <%- include('partials/admin/footer.ejs')  %>
     </main>

@@ -1,4 +1,4 @@
-// Update your controller (productController.js)
+
 const Category = require('../../models/admin/category');
 const productModel = require('../../models/admin/productSchema');
 const fs = require('fs');

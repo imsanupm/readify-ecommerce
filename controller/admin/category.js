@@ -1,5 +1,5 @@
 
-const category = require('../../models/admin/category');
+const categoryModel = require('../../models/admin/category');
 
 
 const categoryInfo = async(req,res)=>{
@@ -8,12 +8,12 @@ const categoryInfo = async(req,res)=>{
         const limit = 0;
         const skip = (page-1)*limit;
 
-        const categoryData = await category.find({})
+        const categoryData = await categoryModel.find({})
         .sort({createdAt:-1})
         .skip(skip)
         .limit(limit);
          
-        const totalCategories = await category.find({});
+        const totalCategories = await categoryModel.find({});
         const totalPages = Math.ceil(totalCategories/limit)
         res.render('category',{
             cat:categoryData,
@@ -31,13 +31,13 @@ const addCategory = async(req,res)=>{
     try {
         console.log('category add body ',req.body)
         const {categoryName,description} = req.body
-        const existingCategory = await category.findOne({name:categoryName});
+        const existingCategory = await categoryModel.findOne({name:categoryName});
         if(existingCategory){
             return res.status(400).json({message:'Category Already Exisits',redirectUrl:"/admin/adminlogin"})
         }
        
        
-        const newCategory = new category({
+        const newCategory = new categoryModel({
             name:categoryName,
             description:description
         })
@@ -73,7 +73,7 @@ const updateCategory = async (req,res) => {
     }
 
 
-     const existingCategory = await category.findOne({
+     const existingCategory = await categoryModel.findOne({
         _id:categoryId,
     });
      console.log(`category from database ${existingCategory}`);
@@ -85,7 +85,7 @@ const updateCategory = async (req,res) => {
         });
 
     }
-    const updatedCategory = await category.findByIdAndUpdate(
+    const updatedCategory = await categoryModel.findByIdAndUpdate(
         categoryId, // Find by ID
         { name: categoryName, description:categoryDescription }, // Update fields
         { new: true, } // Return updated document
@@ -108,10 +108,8 @@ const catagoryStatus = async (req, res) => {
     console.log('hello from block and unblock function');
     try {
         const categoryId = req.params.id;
-        console.log("Category ID:", categoryId);
 
-        // Rename the variable to avoid conflict
-        const foundCategory = await category.findById(categoryId);
+        const foundCategory = await categoryModel.findById(categoryId);
 
         if (!foundCategory) {
             return res.status(404).json({ success: false, message: 'Category not found' });
@@ -119,6 +117,7 @@ const catagoryStatus = async (req, res) => {
 
         foundCategory.isListed = !foundCategory.isListed;
         await foundCategory.save();
+        console.log('block&ublock function are working properly')
 
         res.json({
             success: true,
@@ -133,8 +132,26 @@ const catagoryStatus = async (req, res) => {
 };
 
 const searchCategory = async (req,res)=>{
-    
+    try {
+        console.log('search category function is worki')
+        const query = req.query.query
+        console.log(`data you got from the front end for searching is ${query}`)
+        const categories  = await categoryModel.find({name:{$regex:query,$options:"i"}})
+        console.log(`category name for searching is ${categories}`);
+        if(categories.length==0){
+            return res.status(404).json([])
+        }
+        
+        res.json(categories)
+
+    } catch (error) {
+        console.log(`error during searchCategory ${error}`)
+        res.status(500).json({message:"internal server error"})
+    }
 }
+
+
+
 
 
 
@@ -143,4 +160,5 @@ module.exports = {
     addCategory,
     updateCategory,
     catagoryStatus,
+    searchCategory,
 }
