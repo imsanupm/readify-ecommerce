@@ -5,7 +5,7 @@ const categoryModel = require('../../models/admin/category');
 const categoryInfo = async(req,res)=>{
     try {
         const page  = parseInt(req.query.page) || 1;
-        const limit = 0;
+        const limit = 4;
         const skip = (page-1)*limit;
 
         const categoryData = await categoryModel.find({})
@@ -13,12 +13,26 @@ const categoryInfo = async(req,res)=>{
         .skip(skip)
         .limit(limit);
          
-        const totalCategories = await categoryModel.find({});
+        const totalCategories = await categoryModel.countDocuments({});
         const totalPages = Math.ceil(totalCategories/limit)
+
+        const paginationLinks = [];
+        for (let i = 1; i <= totalPages; i++) {
+            paginationLinks.push({
+                number: i,
+                isActive: i === page
+            });
+        }
+
         res.render('category',{
             cat:categoryData,
-            currentPage:page,
-            totalPage:totalPages
+            currentPage: page,
+            totalPages,
+            paginationLinks,
+            hasPrevPage: page > 1,
+            hasNextPage: page < totalPages,
+            prevPage: page - 1,
+            nextPage: page + 1
         });
     } catch (error) {
         console.log(`error during categoryInfo functon in category${error}`);
@@ -46,7 +60,7 @@ const addCategory = async(req,res)=>{
 
     } catch (error) {
         console.log(`error during adding the category`,error);
-        return res.status(500).json({message:'internal Server error'})
+        return res.status(500).json({message:'All fields are required'})  //sanu you have to deal this handle the validation
     }
 }
 
@@ -64,7 +78,7 @@ const updateCategory = async (req,res) => {
             status: "error",
         })
      }
-     const containsNumbers = (input) => /\d/.test(input);  // Regex to check if string contains any number (0-9)
+     const containsNumbers = (input) => /\d/.test(input);  
      if (containsNumbers(req.body.categoryName) || containsNumbers(req.body.categoryDescription)) {
         return res.status(400).json({
             message: "Category name and description should not contain numbers!",
@@ -86,9 +100,9 @@ const updateCategory = async (req,res) => {
 
     }
     const updatedCategory = await categoryModel.findByIdAndUpdate(
-        categoryId, // Find by ID
-        { name: categoryName, description:categoryDescription }, // Update fields
-        { new: true, } // Return updated document
+        categoryId, 
+        { name: categoryName, description:categoryDescription }, 
+        { new: true, } 
     );
     
     console.log("hai");

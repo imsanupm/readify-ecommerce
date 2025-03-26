@@ -134,6 +134,11 @@
                 </div> <!-- .row // -->
             </div> <!-- card body .// -->
         </div> <!-- card .// -->
+
+
+        <%- include('partials/admin/pagination') %>
+
+       
     </section> 
 
     <script>
@@ -265,10 +270,17 @@ document.querySelectorAll(".edit-category-btn").forEach(button => {
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            Swal.fire('Success!', data.message, 'success');
-                            button.textContent = data.isListed ? 'Block' : 'Unblock';
-                            button.style.backgroundColor = data.isListed ? '#dc3545' : '#007bff';
-                        } else {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: data.message,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            location.reload(); 
+                        });
+
+                    }
+                         else {
                             Swal.fire('Error!', data.message, 'error');
                         }
                     })

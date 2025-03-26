@@ -63,13 +63,21 @@
                                     </span>
                                   </td>
                                 <td><%=value.phonenumber%></td>
-                                <td class="text-end">
+                                <!-- <td class="text-end">
                                     <a href="#" class="btn btn-sm rounded font-sm mt-15 toggle-btn"
                                                 onclick="toggleStatus(this)"
                                                 style="background-color: blue; color: white;">
                                                 Unblock
                                             </a>
+                                </td> -->
+                                <td class="text-end">
+                                    <button class="btn btn-sm rounded font-sm mt-15 toggle-btn"
+                                        onclick="confirmToggleStatus('<%= value._id %>', <%= value.isActive %>, this)"
+                                        style="background-color: <%= value.isActive ? 'red' : 'blue' %>; color: white;">
+                                        <%= value.isActive ? 'Block' : 'Unblock' %>
+                                    </button>
                                 </td>
+                                
                             </tr>
 
                             <% }) %>
@@ -94,126 +102,8 @@
     </section>
 
 
-            <!-- <script> 
-                function toggleStatus(button) {
-                    if (button.innerText.trim() === "Unblock") {
-                        button.innerText = "Block";
-                        button.style.backgroundColor = "red";
-                    } else {
-                        button.innerText = "Unblock";
-                        button.style.backgroundColor = "blue";
-                    }
-                }
-                
-                function performSearch() {
-                    const searchInput = document.getElementById('searchInput');
-                    const searchTerm = searchInput.value.toLowerCase();
-                    const table = document.getElementById('sellersTable');
-                    const rows = table.getElementsByTagName('tr');
-                    
-                    // Skip the header row (index 0)
-                    for (let i = 1; i < rows.length; i++) {
-                        const row = rows[i];
-                        const cells = row.getElementsByTagName('td');
-                        let found = false;
-                        
-                        for (let j = 0; j < cells.length; j++) {
-                            const cellText = cells[j].textContent.toLowerCase();
-                            if (cellText.includes(searchTerm)) {
-                                found = true;
-                                break;
-                            }
-                        }
-                        
-                        if (found) {
-                            row.style.display = '';
-                        } else {
-                            row.style.display = 'none';
-                        }
-                    }
-                }
-                
-                function clearSearch() {
-                    const searchInput = document.getElementById('searchInput');
-                    searchInput.value = '';
-                    
-                    // Show all rows
-                    const table = document.getElementById('sellersTable');
-                    const rows = table.getElementsByTagName('tr');
-                    
-                    for (let i = 1; i < rows.length; i++) {
-                        rows[i].style.display = '';
-                    }
-                }
-            </script>
-         -->
-      
+ 
          <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-         <!-- <script>
-             function toggleStatus(button) {
-                 const action = button.innerText.trim() === "Unblock" ? "Block" : "Unblock";
-                 const newColor = action === "Block" ? "red" : "blue";
-         
-                 Swal.fire({
-                     title: `Are you sure?`,
-                     text: `Do you want to ${action.toLowerCase()} this seller?`,
-                     icon: "warning",
-                     showCancelButton: true,
-                     confirmButtonColor: action === "Block" ? "#d33" : "#3085d6",
-                     cancelButtonColor: "#6c757d",
-                     confirmButtonText: `Yes, ${action.toLowerCase()} it!`
-                 }).then((result) => {
-                     if (result.isConfirmed) {
-                         button.innerText = action;
-                         button.style.backgroundColor = newColor;
-         
-                         Swal.fire({
-                             title: `${action}ed!`,
-                             text: `Seller has been ${action.toLowerCase()}ed.`,
-                             icon: "success",
-                             timer: 1500,
-                             showConfirmButton: false
-                         });
-                     }
-                 });
-             }
-         
-             function performSearch() {
-                 const searchInput = document.getElementById('searchInput');
-                 const searchTerm = searchInput.value.toLowerCase();
-                 const table = document.getElementById('sellersTable');
-                 const rows = table.getElementsByTagName('tr');
-         
-                 for (let i = 1; i < rows.length; i++) {
-                     const row = rows[i];
-                     const cells = row.getElementsByTagName('td');
-                     let found = false;
-         
-                     for (let j = 0; j < cells.length; j++) {
-                         const cellText = cells[j].textContent.toLowerCase();
-                         if (cellText.includes(searchTerm)) {
-                             found = true;
-                             break;
-                         }
-                     }
-         
-                     row.style.display = found ? '' : 'none';
-                 }
-             }
-         
-             function clearSearch() {
-                 const searchInput = document.getElementById('searchInput');
-                 searchInput.value = '';
-         
-                 const table = document.getElementById('sellersTable');
-                 const rows = table.getElementsByTagName('tr');
-         
-                 for (let i = 1; i < rows.length; i++) {
-                     rows[i].style.display = '';
-                 }
-             }
-         </script> -->
-         
 
          <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
@@ -274,7 +164,6 @@
             }
         }
 
-        // If no users are found, show a Swal alert
         if (!foundAny) {
             Swal.fire({
                 title: "User Not Found!",
@@ -302,76 +191,47 @@
 
 
 <script>
-    function performSearch() {
-    const searchInput = document.getElementById('searchInput').value.trim();
-    
-    if (!searchInput) {
-        alert('Please enter a search term');
-        return;
-    }
-
-    fetch(`/search-category?query=${encodeURIComponent(searchInput)}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('No categories found');
+    function confirmToggleStatus(userId, isActive, button) {
+        // Show confirmation dialog
+        Swal.fire({
+            title: isActive ? "Are you sure?" : "Unblock User?",
+            text: isActive ? "You are about to block this user!" : "You are about to unblock this user!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: isActive ? "#d33" : "#3085d6",
+            cancelButtonColor: "#6c757d",
+            confirmButtonText: isActive ? "Yes, Block!" : "Yes, Unblock!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Make an AJAX request to toggle status
+                fetch('/admin/toggle-status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            title: "Success!",
+                            text: data.isActive ? "User has been unblocked." : "User has been blocked.",
+                            icon: "success",
+                            timer: 1000, // Auto close in 1 sec
+                            showConfirmButton: false
+                        }).then(() => {
+                            location.reload(); // Refresh immediately after SweetAlert closes
+                        });
+                    }
+                })
+                .catch(error => console.error("Error:", error));
             }
-            return response.json();
-        })
-        .then(categories => {
-            // Clear previous search results
-            const tableBody = document.querySelector('#categoriesTable tbody');
-            tableBody.innerHTML = '';
-
-            if (categories.length === 0) {
-                const noResultRow = `
-                    <tr>
-                        <td colspan="5" class="text-center text-danger">
-                            No categories found matching your search.
-                        </td>
-                    </tr>
-                `;
-                tableBody.innerHTML = noResultRow;
-            } else {
-                // Populate table with found categories
-                categories.forEach(category => {
-                    const row = `
-                        <tr>
-                            <td>${category.name}</td>
-                            <td>${category.description || 'No description'}</td>
-                            <td>
-                                <span class="badge ${category.isActive ? 'bg-success' : 'bg-danger'}">
-                                    ${category.isActive ? 'Active' : 'Inactive'}
-                                </span>
-                            </td>
-                            <td class="text-end">
-                                <a href="#" class="btn btn-sm btn-primary">View Details</a>
-                            </td>
-                        </tr>
-                    `;
-                    tableBody.innerHTML += row;
-                });
-            }
-        })
-        .catch(error => {
-            console.error('Search error:', error);
-            const tableBody = document.querySelector('#categoriesTable tbody');
-            const errorRow = `
-                <tr>
-                    <td colspan="5" class="text-center text-danger">
-                        ${error.message || 'An error occurred while searching'}
-                    </td>
-                </tr>
-            `;
-            tableBody.innerHTML = errorRow;
         });
-}
+    }
+    </script>
+    
 
-function clearSearch() {
-    document.getElementById('searchInput').value = '';
-    // Optionally, reload the full list of categories
-    location.reload();
-}
-</script>
+
+
 
 
          <%- include('partials/admin/footer.ejs')  %>

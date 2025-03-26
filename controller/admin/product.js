@@ -100,26 +100,41 @@ const addProduct = async (req,res) => {
   }
 }
 
-const listProduct = async(req,res)=>{
+const listProduct = async (req, res) => {
     try {
-        const page  = parseInt(req.query.page) || 1;
-        const limit = 0;
-        const skip = (page-1)*limit;
+        const page = parseInt(req.query.page) || 1;
+        const limit = 4;
+        const skip = (page - 1) * limit;
 
         const productData = await productModel.find({})
-        .sort({createdAt:-1})
-        .skip(skip)
-        .limit(limit);
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
          
-        const totalProducts = await productModel.find({});
-        const totalPages = Math.ceil(totalProducts/limit)
-        res.render('listProduct',{
-            products:productData,
-            currentPage:page,
-            totalPage:totalPages
+        const totalProducts = await productModel.countDocuments({});
+        const totalPages = Math.ceil(totalProducts / limit);
+
+        const paginationLinks = [];
+        for (let i = 1; i <= totalPages; i++) {
+            paginationLinks.push({
+                number: i,
+                isActive: i === page
+            });
+        }
+
+        res.render('listProduct', {
+            products: productData,
+            currentPage: page,
+            totalPages,
+            paginationLinks,
+            hasPrevPage: page > 1,
+            hasNextPage: page < totalPages,
+            prevPage: page - 1,
+            nextPage: page + 1
         }); 
     } catch (error) {
-        console.log(`error during listing the product ${error}`)
+        console.error(`Error during listing the product: ${error}`);
+        res.status(500).render('error', { message: 'Failed to load products' });
     }
 }
 
@@ -144,7 +159,7 @@ const listProduct = async(req,res)=>{
         const id = req.params.id;
         const product = await productModel.findOne({_id:id});
         const category = await Category.find({})
-        console.log('productData',product)
+        // console.log('productData',product)
         res.render("updateProduct",{
             categories:category,
             product
@@ -161,17 +176,16 @@ const listProduct = async(req,res)=>{
          console.log('fucntion worlasjdfisqanfvdqansvjpawggvio====')
         console.log(req.body)
         const productId = req.params.id;
+        console.log(productId)
         const { imageUrl } = req.body;
 
         const product = await productModel.findById(productId);
-        if (!product) {
+        if (!productId) {
             return res.status(404).json({ success: false, message: "Product not found" });
         }
 
-        // Remove image from the database
         product.productImage = product.productImage.filter(img => img !== imageUrl);
         await product.save();
-
 
         res.json({ success: true, message: "Image removed successfully" });
     } catch (error) {
@@ -182,7 +196,7 @@ const listProduct = async(req,res)=>{
 
 const updateImg = async (req,res) => {
     try {
-        console.log('this body from updateImg function',req.body);
+        // console.log('this body from updateImg function',req.body);
         console.log("your params are ",req.params.id)
     } catch (error) {
         console.log(`error during updateImage function ${error}`)
@@ -191,12 +205,45 @@ const updateImg = async (req,res) => {
 
 
 
+const searchUser = async (req,res) => {
+    try {
+        const query = req.query.query;
+        console.log(`data for searching from clint side${query}`);
+        const product = await productModel.find({
+            productTitle:{$regex:query,$options:"i"}});
+            if(!product){
+                return res.status(404).json({messge:"produt not found"});
+            }
+            console.log(`product for searching ${product}`);
+
+            res.json(product)
+    } catch (error) {
+        console.log(`errord during search user${error}`)
+    }
+}
+
+
+
+
 const editProduct = async (req, res) => {
-    console.log('Your edit product function is working');
 
     try {
+        // console.log("Uploaded Files:", req.files);
         const productId = req.params.id;
-        const existingProduct = await Product.findById(productId);
+        console.log(productId);
+        
+        const {
+            name,
+            writer,
+            category_id,
+            language,
+            regularPrice,
+            salePrice,
+            availableQuantity,
+            description,
+            publishedDate
+        } = req.body;
+        const existingProduct = await productModel.findById(productId);
 
         if (!existingProduct) {
             console.log('Product not found');
@@ -209,19 +256,10 @@ const editProduct = async (req, res) => {
             return res.status(500).json({ message: 'Error fetching categories' });
         }
 
-        const {
-            name,
-            writer,
-            category_id,
-            language,
-            regularPrice,
-            salePrice,
-            availableQuantity,
-            description,
-            publishedDate
-        } = req.body;
+       
 
-        console.log(req.body);
+        console.log('dats for edit the product',description);
+
 
         if (!name || !writer || !category_id || !language || !regularPrice || !availableQuantity || !description) {
             console.log('Problem with finding credentials in req.body in editProduct in productController');
@@ -232,34 +270,42 @@ const editProduct = async (req, res) => {
             });
         }
 
+
+
+        const updateData=  {
+            productTitle:name,
+            authorName:writer,
+                category_id,
+                language,
+                regularPrice,
+                salePrice,
+                availableQuantity,
+                description,
+                publishedDate
+            }
+
         // Handle image updates
         let imagePaths = existingProduct.productImage; // Keep existing images by default
         if (req.files && req.files.length > 0) {
-            imagePaths = req.files.map(file => `/uploadedImages/${file.filename}`);
+            updateData.imagePaths = req.files.map(file => `/uploadedImages/${file.filename}`);
         }
+        console.log('updateData.imagePaths',updateData.imagePaths)
 
         if (!imagePaths || imagePaths.length < 3) {
             console.log('Problem with imagePaths in editProduct in productController');
-            return res.render('Admin/editProduct', { 
+            return res.render('Admin/updateProduct', { 
                 categories, 
                 product: existingProduct, 
                 message: 'Problem with imagePaths - Minimum 3 images required' 
             });
         }
 
-        // Update product details
-        existingProduct.productTitle = name;
-        existingProduct.authorName = writer;
-        existingProduct.category = category_id;
-        existingProduct.language = language;
-        existingProduct.regularPrice = regularPrice;
-        existingProduct.salePrice = salePrice || null;
-        existingProduct.quantity = availableQuantity;
-        existingProduct.description = description;
-        existingProduct.productImage = imagePaths;
-        if (publishedDate) existingProduct.publishedDate = publishedDate;
+    
 
-        await existingProduct.save();
+    console.log('updateData',updateData)
+        // if (publishedDate) existingProduct.publishedDate = publishedDate;
+
+        await productModel.findByIdAndUpdate(productId,updateData,{new:true})
         console.log(`Book Updated
             name: ${name}`);
 
@@ -271,6 +317,7 @@ const editProduct = async (req, res) => {
     }
 };
 
+
 module.exports = {
     getProductaddPage,
     addProduct,
@@ -280,4 +327,5 @@ module.exports = {
     removeProductImage,
     updateImg,
     editProduct,
+    searchUser,
 };

@@ -2,155 +2,149 @@
 <html lang="en">
 
 <%-include('partials/admin/headTag.ejs') %>
-<body>
+
+  <body>
     <div class="screen-overlay"></div>
-   <%- include('partials/admin/navBar.ejs') %>
-    <main class="main-wrap">
-       <%- include('partials/admin/header.ejs') %> 
+    <%- include('partials/admin/navBar.ejs') %>
+      <main class="main-wrap">
+        <%- include('partials/admin/header.ejs') %>
 
-       <section class="content-main">
-        <div class="content-header">
-            <div>
+          <section class="content-main">
+            <div class="content-header">
+              <div>
                 <h2 class="content-title card-title">Products List</h2>
-               
-            </div>
-            <div>
-              
+
+              </div>
+              <div>
+
                 <a href="#" class="btn btn-primary btn-sm rounded">Create new</a>
+              </div>
             </div>
-        </div>
-        <div class="card mb-4">
-            <header class="card-header">
+            <div class="card mb-4">
+              <header class="card-header">
                 <div class="row align-items-center">
-                    <div class="col col-check flex-grow-0">
-                        <div class="form-check ms-2">
-                            <input class="form-check-input" type="checkbox" value="">
-                        </div>
+                  <div class="col col-check flex-grow-0">
+                    <div class="form-check ms-2">
+                      <input class="form-check-input" type="checkbox" value="">
                     </div>
-                    <div class="col-lg-4 col-md-6 me-auto">
-                      <div style="display: flex; align-items: center; gap: 6px;">
-                          <input name="searchUser" type="text" placeholder="Search..." class="form-control" id="searchInput">
-                          <button onclick="performSearch()" class="btn" style="background-color: #4CAF50; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; height: 36px; font-size: 13px;">
-                              <i class="material-icons md-search" style="font-size: 16px; vertical-align: middle;"></i> 
-                          </button>
-                          <button onclick="clearSearch()" class="btn" style="background-color: #f44336; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; height: 36px; font-size: 13px;">
-                              <i class="material-icons md-clear" style="font-size: 16px; vertical-align: middle;"></i> 
-                          </button>
-                      </div>
                   </div>
-                    <div class="col-md-2 col-6">
-                        <input type="date" value="02.05.2022" class="form-control">
+                  <div class="col-lg-4 col-md-6 me-auto">
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                      <input name="searchUser" type="text" placeholder="Search..." class="form-control"
+                        id="searchInput">
+                      <button id="searchButton" class="btn"
+                        style="background-color: #4CAF50; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; height: 36px; font-size: 13px;">
+                        <i class="material-icons md-search" style="font-size: 16px; vertical-align: middle;"></i>
+                      </button>
+                      <button id="searchInput" class="btn"
+                        style="background-color: #f44336; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; height: 36px; font-size: 13px;">
+                        <i class="material-icons md-clear" style="font-size: 16px; vertical-align: middle;"></i>
+                      </button>
                     </div>
-                    <div class="col-md-2 col-6">
-                        <select class="form-select">
-                            <option selected>Status</option>
-                            <option>Active</option>
-                            <option>Disabled</option>
-                            <option>Show all</option>
-                        </select>
-                    </div>
+                  </div>
+                  <div class="col-md-2 col-6">
+                    <input type="date" value="02.05.2022" class="form-control">
+                  </div>
+                  <div class="col-md-2 col-6">
+                    <select class="form-select">
+                      <option selected>Status</option>
+                      <option>Active</option>
+                      <option>Disabled</option>
+                      <option>Show all</option>
+                    </select>
+                  </div>
                 </div>
-            </header> <!-- card-header end// -->
-          
-<div class="card">
-    <div class="card-body p-0">
-      <div class="table-responsive">
-        <table class="table align-middle table-hover">
-          <thead class="bg-light">
-            <tr>
-              <th class="py-3 px-4">Product</th>
-              <th class="py-3 px-4">Price</th>
-              <th class="py-3 px-4">Status</th>
-              <th class="py-3 px-4">Author</th>
-              <th class="py-3 px-4 text-end">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% products.forEach(function(product) { %>
-              <tr>
-                <td class="py-3 px-4">
-                  <div class="d-flex align-items-center">
-                    <div class="flex-shrink-0">
-                      <img 
-                        src="<%= product.productImage[0] || 'assets/imgs/items/placeholder.jpg' %>" 
-                        class="img-sm img-thumbnail" 
-                        alt="<%= product.name || 'Product' %>"
-                      >
-                    </div>
-                    <div class="info ms-3">
-                      <h6 class="mb-0"><%= product.productTitle || 'Unnamed Product' %></h6>
-                    </div>
-                  </div>
-                </td>
-                <td class="py-3 px-4">
-                  <% if (product.regularPrice !== undefined && product.regularPrice !== null) { %>
-                    <% if (typeof product.regularPrice === 'number') { %>
-                      <span>$<%= product.regularPrice.toFixed(2) %></span>
-                    <% } else { %>
-                      <span>$<%= parseFloat(product.regularPrice) ? parseFloat(product.regularPrice).toFixed(2) : '0.00' %></span>
-                    <% } %>
-                  <% } else { %>
-                    <span>$0.00</span>
-                  <% } %>
-                </td>
-                <td class="py-3 px-4">
-                  <span class="badge rounded-pill <%= (product.status === 'Active') ? 'alert-success' : 'alert-secondary' %>">
-                    <%= product.status || 'N/A' %>
-                  </span>
-                </td>
-                <td class="py-3 px-4">
-                  <span><%= product.authorName || 'N/A' %></span>
-                </td>
-                <td class="py-3 px-4 text-end">
-                  <div class="d-flex justify-content-end align-items-center">
-                    <a href="/admin/editProduct/<%= product.id %>" class="btn btn-sm font-sm rounded btn-brand me-2">
-                      <i class="material-icons md-edit"></i> Edit
-                    </a>
-                    <div class="d-flex align-items-center">
-                      <span class="me-2 small">
-                        <%= product.blocked ? 'Blocked' : 'Active' %>
-                      </span>   
-                      <div class="form-check form-switch">
-                        <form class="toggle-form" data-id="<%= product.id %>">
-                            <input 
-                                class="form-check-input toggle-block" 
-                                type="checkbox" 
-                                role="switch" 
-                                id="blockToggle<%= product.id %>" 
-                                <%= !product.isBlocked ? 'checked' : '' %>
-                            >
-                            <input type="hidden" name="blocked" value="<%= !product.isBlocked %>">
-                        </form>
-                      </div>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-            <% }); %>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>                
+              </header> <!-- card-header end// -->
 
-                </article> <!-- itemlist  .// -->
+              <div class="card">
+                <div class="card-body p-0">
+                  <div class="table-responsive">
+                    <table class="table align-middle table-hover">
+                      <thead class="bg-light">
+                        <tr>
+                          <th class="py-3 px-4">Product</th>
+                          <th class="py-3 px-4">Price</th>
+                          <th class="py-3 px-4">Status</th>
+                          <th class="py-3 px-4">Author</th>
+                          <th class="py-3 px-4 text-end">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody id="results">
+                        <% products.forEach(function(product) { %>
+                          <tr>
+                            <td class="py-3 px-4">
+                              <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0">
+                                  <img src="<%= product.productImage[0] || 'assets/imgs/items/placeholder.jpg' %>"
+                                    class="img-sm img-thumbnail" alt="<%= product.name || 'Product' %>">
+                                </div>
+                                <div class="info ms-3">
+                                  <h6 class="mb-0">
+                                    <%= product.productTitle || 'Unnamed Product' %>
+                                  </h6>
+                                </div>
+                              </div>
+                            </td>
+                            <td class="py-3 px-4">
+                              <% if (product.regularPrice !==undefined && product.regularPrice !==null) { %>
+                                <% if (typeof product.regularPrice==='number' ) { %>
+                                  <span>$<%= product.regularPrice.toFixed(2) %></span>
+                                  <% } else { %>
+                                    <span>$<%= parseFloat(product.regularPrice) ?
+                                        parseFloat(product.regularPrice).toFixed(2) : '0.00' %></span>
+                                    <% } %>
+                                      <% } else { %>
+                                        <span>$0.00</span>
+                                        <% } %>
+                            </td>
+                            <td class="py-3 px-4">
+                              <span
+                                class="badge rounded-pill <%= (product.isBlocked === false) ? 'alert-success text-dark' : 'alert-warning text-dark' %>">
+                                <%= product.isBlocked ? 'Inactive' : "Active" %>
+                              </span>
+                            </td>
+
+                            <td class="py-3 px-4">
+                              <span>
+                                <%= product.authorName || 'N/A' %>
+                              </span>
+                            </td>
+                            <td class="py-3 px-4 text-end">
+                              <div class="d-flex justify-content-end align-items-center">
+                                <a href="/admin/editProduct/<%= product.id %>"
+                                  class="btn btn-sm font-sm rounded btn-brand me-2">
+                                  <i class="material-icons md-edit"></i> Edit
+                                </a>
+                                <div class="d-flex align-items-center">
+                                  <span class="me-2 small">
+                                    <%= product.blocked ? 'Blocked' : 'Active' %>
+                                  </span>
+                                  <div class="form-check form-switch">
+                                    <form class="toggle-form" data-id="<%= product.id %>">
+                                      <input class="form-check-input toggle-block" type="checkbox" role="switch"
+                                        id="blockToggle<%= product.id %>" <%=!product.isBlocked ? 'checked' : '' %>
+                                      >
+                                      <input type="hidden" name="blocked" value="<%= !product.isBlocked %>">
+                                    </form>
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                          <% }); %>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              </article> <!-- itemlist  .// -->
             </div> <!-- card-body end// -->
-        </div> <!-- card end// -->
-        <div class="pagination-area mt-30 mb-50">
-            <nav aria-label="Page navigation example">
-                <ul class="pagination justify-content-start">
-                    <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                    <li class="page-item"><a class="page-link" href="#">02</a></li>
-                    <li class="page-item"><a class="page-link" href="#">03</a></li>
-                    <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                    <li class="page-item"><a class="page-link" href="#">16</a></li>
-                    <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
-                </ul>
-            </nav>
-        </div>
-    </section>
+            </div> <!-- card end// -->
+            <%- include('partials/admin/pagination') %>
+          </section>
 
-    <!-- <script>
+          <!-- <script>
         document.querySelectorAll('.toggle-form').forEach(form => {
             form.addEventListener('change', function (event) {
                 event.preventDefault(); // Prevent the default form submission
@@ -178,52 +172,232 @@
             });
         });
     </script> -->
-    
-    
 
-    
-    
-    
-    
-    <script>
-        document.querySelectorAll('.toggle-form').forEach(form => {
-            form.addEventListener('change', function (event) {
-                event.preventDefault(); // Prevent default form submission
-    
-                const checkbox = this.querySelector('.toggle-block');
-                const productId = this.dataset.id;
-                const isBlocked = !checkbox.checked; // Determine new status
-                const actionText = isBlocked ? "block" : "unblock"; // Alert message
-    
-                // Show confirmation popup
-                if (!confirm(`Are you sure you want to ${actionText} this product?`)) {
-                    checkbox.checked = !checkbox.checked; // Revert checkbox state if canceled
-                    return;
-                }
-    
-                // Proceed with fetch request
-                fetch(`/blockUnblockProduct/toggle-block/${productId}`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ blocked: isBlocked })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    alert(`Product is now ${data.blocked ? 'Blocked' : 'Active'}`);
-                })
-                .catch(error => console.error('Error:', error));
+
+          <script>
+
+            document.getElementById("searchButton").addEventListener("click", async function () {
+              let query = document.getElementById("searchInput").value.trim();
+              if (query.length < 3) {
+                alert("Please enter at least 3 characters to search.");
+                return;
+              }
+
+              try {
+                let response = await fetch(`/admin/searchProduct?query=${query}`);
+                if (!response.ok) throw new Error("Failed to fetch data");
+
+                let products = await response.json();
+                console.log(products)
+                updateTable(products);
+              } catch (error) {
+                console.error("Error fetching search results:", error);
+              }
+            });
+
+            function updateTable(products) {
+              let resultsContainer = document.getElementById("results");
+              resultsContainer.innerHTML = ""; // Clear previous results
+
+              if (products.length === 0) {
+                resultsContainer.innerHTML = `<tr><td colspan="5" class="text-center">No products found</td></tr>`;
+                return;
+              }
+
+              //     products.forEach(product => {
+              //         let productImage = product.productImage?.[0] || 'assets/imgs/items/placeholder.jpg';
+              //         let productTitle = product.productTitle || 'Unnamed Product';
+              //         let regularPrice = product.regularPrice 
+              //         let statusBadge = (product.status === true) ? 'alert-success' : 'alert-secondary';
+              //         let authorName = product.authorName || 'N/A';
+              //         let isBlocked = product.isBlocked ? '' : 'checked';
+              //         let blockedStatus = product.isBlocked  ? 'Blocked' : 'Active'; 
+
+              //         let row = `
+              //             <tr>
+              //                 <td class="py-3 px-4">
+              //                     <div class="d-flex align-items-center">
+              //                         <div class="flex-shrink-0">
+              //                             <img src="${productImage}" class="img-sm img-thumbnail" alt="${productTitle}">
+              //                         </div>
+              //                         <div class="info ms-3">
+              //                             <h6 class="mb-0">${productTitle}</h6>
+              //                         </div>
+              //                     </div>
+              //                 </td>
+              //                 <td class="py-3 px-4">
+              //                     <span>$${regularPrice}</span>
+              //                 </td>
+              //                 <td class="py-3 px-4">
+              //     <span class="badge rounded-pill ${statusBadge}">${product.status || 'N/A'}</span>
+              // </td>
+
+              //                 <td class="py-3 px-4">
+              //                     <span>${authorName}</span>
+              //                 </td>
+              //                 <td class="py-3 px-4 text-end">
+              //                     <div class="d-flex justify-content-end align-items-center">
+              //                         <a href="/admin/editProduct/${product.id}" class="btn btn-sm font-sm rounded btn-brand me-2">
+              //                             <i class="material-icons md-edit"></i> Edit
+              //                         </a>
+              //                         <div class="d-flex align-items-center">
+              //                             <span class="me-2 small">${blockedStatus}</span>   
+              //                             <div class="form-check form-switch">
+              //                                 <form class="toggle-form" data-id="${product.id}">
+              //                                     <input 
+              //                                         class="form-check-input toggle-block" 
+              //                                         type="checkbox" 
+              //                                         role="switch" 
+              //                                         id="blockToggle${product.id}" 
+              //                                         ${isBlocked}
+              //                                     >
+              //                                     <input type="hidden" name="blocked" value="${!product.isBlocked}">
+              //                                 </form>
+              //                             </div>
+              //                         </div>
+              //                     </div>
+              //                 </td>
+              //             </tr>
+              //         `;
+
+              //         resultsContainer.innerHTML += row;
+              //     });
+              // }
+
+
+
+
+              products.forEach(product => {
+                let productImage = product.productImage?.[0] || 'assets/imgs/items/placeholder.jpg';
+                let productTitle = product.productTitle || 'Unnamed Product';
+                let description = product.description || "No description available";
+                let category = product.category || "Uncategorized";
+                let regularPrice = product.regularPrice || "0.00";
+                let productOffer = product.productOffer || 0;
+                let quantity = product.quantity || 0;
+                let statusBadge = product.isBlocked ? 'bg-danger text-white' : 'bg-success text-white'; // Red for blocked, Green for active
+                let statusLabel = product.isBlocked ? "Blocked" : "Active";
+                let authorName = product.authorName || 'N/A';
+                let language = product.language || "Unknown";
+                let createdAt = new Date(product.createdAt).toLocaleDateString() || "N/A";
+                let isBlocked = product.isBlocked ? '' : 'checked';
+                let blockedStatus = product.isBlocked ? 'Blocked' : 'Active';
+
+                let row = `
+            <tr>
+                <td class="py-3 px-4">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <img src="${productImage}" class="img-sm img-thumbnail" alt="${productTitle}">
+                        </div>
+                        <div class="info ms-3">
+                            <h6 class="mb-0">${productTitle}</h6>
+                        </div>
+                    </div>
+                </td>
+                <td class="py-3 px-4">
+                    <span>$${regularPrice}</span>
+                </td>
+                <td class="py-3 px-4">
+                    <span>$${regularPrice}</span>
+                </td>
+                <td class="py-3 px-4">
+                    <span class="badge rounded-pill ${statusBadge}">${statusLabel}</span>
+                </td>
+                <td class="py-3 px-4">
+                    <span>${authorName}</span>
+                </td>
+                <td class="py-3 px-4 text-end">
+                    <div class="d-flex justify-content-end align-items-center">
+                        <a href="/admin/editProduct/${product._id}" class="btn btn-sm font-sm rounded btn-brand me-2">
+                            <i class="material-icons md-edit"></i> Edit
+                        </a>
+                        <div class="d-flex align-items-center">
+                            <span class="me-2 small">${blockedStatus}</span>   
+                            <div class="form-check form-switch">
+                                <form class="toggle-form" data-id="${product._id}">
+                                    <input 
+                                        class="form-check-input toggle-block" 
+                                        type="checkbox" 
+                                        role="switch" 
+                                        id="blockToggle${product._id}" 
+                                        ${isBlocked}
+                                    >
+                                    <input type="hidden" name="blocked" value="${!product.isBlocked}">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        `;
+
+                resultsContainer.innerHTML += row;
+              });
+            }
+          </script>
+
+
+          <script>
+
+          document.querySelectorAll('.toggle-form').forEach(form => {
+    form.addEventListener('change', function (event) {
+        event.preventDefault(); 
+
+        const checkbox = this.querySelector('.toggle-block');
+        const productId = this.dataset.id;
+        const isBlocked = !checkbox.checked; 
+        const actionText = isBlocked ? "block" : "unblock"; 
+
+       
+        Swal.fire({
+            title: `Are you sure you want to ${actionText} this product?`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: `Yes, ${actionText} it`,
+            cancelButtonText: "Cancel"
+        }).then((result) => {
+            if (!result.isConfirmed) {
+                checkbox.checked = !checkbox.checked;
+                return;
+            }
+
+            
+            fetch(`/admin/blockUnblockProduct/toggle-block/${productId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ blocked: isBlocked })
+            })
+            .then(response => response.json())
+            .then(data => {
+                Swal.fire({
+                    title: `Product is now ${data.blocked ? 'Blocked' : 'Active'}`,
+                    icon: data.blocked ? "warning" : "success",
+                    confirmButtonText: "OK",
+                }).then(() => {
+                    location.reload(); 
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire("Error!", "Failed to update product status.", "error");
             });
         });
-    </script>
-    
+    });
+});
+
+          </script>
 
 
 
-       <%- include('partials/admin/footer.ejs')  %>
-    </main>
-    <%- include('partials/admin/scriptTags.ejs') %>
-</body>
+
+          <%- include('partials/admin/footer.ejs') %>
+      </main>
+      <%- include('partials/admin/scriptTags.ejs') %>
+  </body>
 
 </html>

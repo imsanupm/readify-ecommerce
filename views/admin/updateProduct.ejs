@@ -3,56 +3,6 @@
 
 <%-include('partials/admin/headTag.ejs') %>
 
-
-<style>
-  .image-preview-container {
-    margin: 20px 0;
-}
-
-.image-label {
-    font-size: 16px;
-    font-weight: 600;
-}
-
-.image-list {
-    display: flex;
-    gap: 10px;
-    overflow-x: auto;
-    padding: 10px 0;
-}
-
-.image-box {
-    position: relative;
-    border-radius: 10px;
-    overflow: hidden;
-    width: 100px;
-    height: 100px;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-.image-box img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 10px;
-}
-
-.delete-btn {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    background: brown;
-    color: white;
-    font-size: 18px;
-    width: 20px;
-    height: 20px;
-    text-align: center;
-    border-radius: 50%;
-    cursor: pointer;
-}
-
-</style>
-
     <body>
         <div class="screen-overlay"></div>
         <%- include('partials/admin/navBar.ejs') %>
@@ -74,7 +24,7 @@
                           </a>
                         </div>
                         <div class="card-body p-4">
-                          <form id="addProductForm" method="post" action="/admin/edit-product/<%=product._id%>"  enctype="multipart/form-data">
+                          <form id="addProductForm" action="/admin/edit-product/<%=product._id%>" method="POST" enctype="multipart/form-data">
                             <div class="row mb-4">
                               <div class="col-md-6">
                                 <div class="card border-0 shadow-sm h-100">
@@ -84,12 +34,12 @@
                                   <div class="card-body">
                                     <div class="mb-3">
                                       <label for="productName" class="form-label">Title <span class="text-danger">*</span></label>
-                                      <input type="text" class="form-control" id="productName" name="name" required value="<%= product.productTitle %>" placeholder="E.g., The Great Gatsby">
+                                      <input type="text" value="<%=product.productTitle%>" class="form-control" id="productName" name="name" required placeholder="E.g., The Great Gatsby">
                                     </div>
                                     
                                     <div class="mb-3">
                                       <label for="writer" class="form-label">Writer <span class="text-danger">*</span></label>
-                                      <input type="text" class="form-control" id="writer" name="writer" required value="<%=product.authorName%>" placeholder="E.g., F. Scott Fitzgerald">
+                                      <input type="text" class="form-control" id="writer" value="<%=product.authorName%>" name="writer" required placeholder="E.g., F. Scott Fitzgerald">
                                     </div>
                                     
                                     <div class="mb-3">
@@ -120,8 +70,8 @@
                                     
                                     <div class="row">
                                       <div class="col-md-6 mb-3">
-                                        <label for="regularPrice" class="form-label">Regular Price (&#8377) <span class="text-danger">*</span></label>
-                                        <input type="number" step="0.01" min="0" class="form-control" id="regularPrice" name="regularPrice" required value="<%=product.regularPrice%>">
+                                        <label for="regularPrice" class="form-label">Regula Price<span class="text-danger">*</span></label>
+                                        <input type="number" step="0.01" min="0" class="form-control" id="regularPrice" name="regularPrice" value="<%=product.regularPrice%>" required>
                                       </div>
                                       <div class="col-md-6 mb-3">
                                         <label for="salePrice" class="form-label">Sale Price (&#8377)</label>
@@ -131,12 +81,12 @@
                                     
                                     <div class="mb-3">
                                       <label for="availableQuantity" class="form-label">Available Quantity <span class="text-danger">*</span></label>
-                                      <input type="number" min="0" class="form-control" id="availableQuantity" name="availableQuantity" required value="<%=product.quantity%>">
+                                      <input type="number" value="<%=product.quantity%>" min="0" class="form-control" id="availableQuantity" name="availableQuantity" required>
                                     </div>
                                   
                                     <div class="mb-3">
                                       <label for="productDescription" class="form-label">Description <span class="text-danger">*</span></label>
-                                      <textarea class="form-control" id="productDescription" name="description"  rows="5" required value="<%=product.description%>" placeholder="Short summary of the book"></textarea>
+                                      <textarea class="form-control" id="productDescription" name="description" rows="5" required placeholder="Short summary of the book"><%=product.description%></textarea>
                                     </div>
                                   </div>
                                 </div>
@@ -165,21 +115,6 @@
                                           
                                           <label class="input-group-text bg-brown text-white" for="productImages">Browse</label>
                                         </div>
-                                    <div class="image-preview-container">
-                                      <label class="image-label">Upload Images <span class="text-danger">*</span> (Minimum 3 required)</label>
-                                      <div class="image-list">
-                                          <% if (product.productImage && product.productImage.length > 0) { %>
-                                              <% product.productImage.forEach((image, index) => { %>
-                                                  <div class="image-box" id="image-box-<%= index %>">
-                                                      <img src="<%= image %>" alt="Product Image <%= index + 1 %>">
-                                                      <span class="delete-btn" onclick="removeImage('<%= image %>', '<%= product._id %>', '<%= index %>')">&times;</span>
-                                                  </div>
-                                              <% }); %>
-                                          <% } else { %>
-                                              <p>No images uploaded yet.</p>
-                                          <% } %>
-                                      </div>
-                                  </div>
                                         <div class="alert alert-light-brown border-0 d-flex align-items-start" role="alert">
                                           <i class="fas fa-info-circle me-2 text-brown mt-1"></i>
                                           <div class="small text-muted">
@@ -237,10 +172,10 @@
                             </div>
                             
                             <div class="d-flex justify-content-between">
-                              <a href="/admin/products" class="btn btn-secondary">
+                              <a href="/admin/edit-product" class="btn btn-secondary">
                                 <i class="fas fa-times me-2"></i>Cancel
                               </a>
-                              <button type="submit" class="btn btn-brown" id="updateBookBtn">
+                              <button type="submit" class="btn btn-brown" id="saveBookBtn">
                                 <i class="fas fa-save me-2"></i>Save Book
                               </button>
                             </div>
@@ -251,7 +186,7 @@
                   </div>
                 </div>
                 
-                <!-- Custom CSS for light brown theme (enhanced) -->
+                
                 <style>
                   :root {
                     --brown-100: #f5f0e8;
@@ -426,12 +361,8 @@
                   }
                 </style>
                 
-                <!-- <script src="/js/Admin/addProduct.js"></script> -->
                 
                 <script>
-
-
-// ===============================you have to work with things ====================================================
                   
                   // Define variables for cropping
                 let cropper;
@@ -696,35 +627,38 @@
                     resetPreviewArea();
                   }
                 }
-                //her you added a new functionality
-
+                
                 function submitFormWithFormData(formData) {
-                const actionUrl = document.getElementById('editProductForm').action;
-                return fetch(actionUrl, {
+                  const actionUrl = document.getElementById('addProductForm').action;
+                  return fetch(actionUrl, {
                     method: 'POST',
                     body: formData
-                })
-                .then(response => {
+                  })
+
+                  .then(response => {
+                    console.log(response)
                     hideLoading();
-                    return response.json().then(data => ({ status: response.status, body: data }));
-                })
-                .then(({ status, body }) => {
-                    if (status === 200 && body.success) {
-                        Swal.fire({
-                            title: 'Success',
-                            icon: 'success',
-                            text: 'Product updated successfully'
-                        }).then(() => window.location.href = '/admin/products');
+                    if (response.ok) {
+                      Swal.fire({
+                        title:'Success',
+                        icon:'success',
+                        text:'New Product added'
+                      })
+                      setTimeout(()=>{
+                        window.location.reload();
+
+                      },2000)
                     } else {
-                        throw new Error(body.message || 'Server error');
+                      throw new Error('Server error');
                     }
-                })
-                .catch(error => {
+                  })
+                  .catch(error => {
                     hideLoading();
                     console.error('Error:', error);
-                    alert('There was an error updating the book: ' + error.message);
-                });
-            } 
+                    alert('There was an error adding the book. Please try again.');
+                  });
+                }
+                
                 function showLoading(message) {
                   // Create loading overlay
                   const overlay = document.createElement('div');
@@ -746,39 +680,13 @@
                 // Make removePreview globally accessible for the onclick handler
                 window.removePreview = removePreview;
                 
-
-//==================================================delete product image====================================================
-
-                function removeImage(imageUrl, productId, index) {
-                  console.log("image ind",index)
-        if (confirm("Are you sure you want to remove this image?")) {
-            fetch(`/admin/remove-image/${productId}`, {
-                method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ imageUrl: imageUrl,index })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.text().then(text => { throw new Error(text) });
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
-                    document.getElementById("image-box-" + index).remove();
-                } else {
-                    alert("Error: " + data.message);
-                }
-
-            })
-            .catch(error => console.error("Error:", error));
-        }
-    }
-
                 </script>
+                
+
+
                     <%- include('partials/admin/footer.ejs') %>
             </main>
             <%- include('partials/admin/scriptTags.ejs') %>
     </body>
 
-</html>
+</html>                    
