@@ -59,8 +59,8 @@
     <div class="otp-container">
         <h2>Verify Your Email</h2>
         <p>Enter the OTP sent to your email</p>
-        <form method="post" action="/verify-otp">
-            <input type="text" name="otp" placeholder="Enter OTP" required>
+        <form id ='verifyOtpForm'>
+            <input type="text" name="otp" placeholder="Enter OTP" id="otpValue" required>
             <div id="timer">Time remaining: 2:00</div>
             <button type="submit">Verify OTP</button>
             <button type="button" id="resendBtn" disabled>Resend OTP</button>
@@ -69,6 +69,7 @@
             <p style="color: red;"><%= message %></p>
         <% } %>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         // OTP Timer (2 minutes = 120 seconds)
@@ -105,6 +106,39 @@
                 };
             }
         }, 1000);
+
+        document.getElementById('verifyOtpForm').addEventListener('submit',async (event)=>{
+            event.preventDefault()
+            let otpValue = document.getElementById('otpValue').value
+            console.log(otpValue,'formdata')
+            try{
+            let response = await fetch('/verify-otp',{
+                method:'post',
+                headers:{'content-type':'application/json'},
+                body:JSON.stringify( {otp:otpValue}),
+            })
+            let result = await response.json()
+            if(result.success){
+                Swal.fire({
+                    icon:"success",
+                    title:'Otp Verified',
+                    text:'OTP Validation successful',
+                }).then(result=>{
+                    setTimeout(()=>{
+                        window.location.href='/signin'
+                    },1500)
+                })
+            }
+            else {
+                Swal.fire({
+                    icon:'error',
+                    title:'otp Validation error',
+                    text:result.message,
+                })
+            }}catch(error){
+                console.log(error)
+            }
+        })
     </script>
 </body>
 </html>

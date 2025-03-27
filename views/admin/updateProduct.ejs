@@ -109,6 +109,25 @@
                                             </div>
                                           </div>
                                         </div>
+
+                                        <div class="existing-images-container d-flex flex-wrap mb-3">
+                                          <% if (product.productImage && product.productImage.length > 0) { %>
+                                            <% product.productImage.slice().reverse().forEach((image, index) => { %>
+                                              <div class="image-box me-2 mb-2" id="existing-image-<%= product.productImage.length - 1 - index %>" 
+                                                   style="width: 80px; height: 80px; position: relative;">
+                                                <img src="<%= image %>" alt="Product Image <%= product.productImage.length - index %>" 
+                                                     style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px;">
+                                                <!-- Cancel/Remove Icon -->
+                                                <span onclick="cancelExistingImage('<%= image %>', <%= product.productImage.length - 1 - index %>)" 
+                                                      style="position: absolute; top: -5px; right: -5px; background: #dc3545; color: #fff; font-size: 12px; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; border-radius: 50%; cursor: pointer;">
+                                                  ✖
+                                                </span>
+                                              </div>
+                                            <% }) %>
+                                          <% } else { %>
+                                            <p>No existing images available.</p>
+                                          <% } %>
+                                        </div>
                                         <div class="input-group mb-3">
                 
                                           <input type="file" class="form-control" id="productImages" name="productImages" accept="image/*" multiple>
@@ -642,7 +661,7 @@
                       Swal.fire({
                         title:'Success',
                         icon:'success',
-                        text:'New Product added'
+                        text:'Product updated successfully'
                       })
                       setTimeout(()=>{
                         window.location.reload();
@@ -681,6 +700,48 @@
                 window.removePreview = removePreview;
                 
                 </script>
+
+                <script>
+
+
+                  function cancelExistingImage(imageUrl, index) {
+  Swal.fire({
+    title: 'Are you sure?',
+    text: "Do you want to remove this image?",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#dc3545',
+    cancelButtonColor: '#6c757d',
+    confirmButtonText: 'Yes, remove it!',
+    cancelButtonText: 'Cancel'
+  }).then((result) => {
+    if (result.isConfirmed) {
+    
+      const imageDiv = document.getElementById("existing-image-" + index);
+      if (imageDiv) {
+        imageDiv.remove();
+      }
+      
+      const hiddenInput = document.getElementById("imagesToDelete");
+      let imagesToDelete = [];
+      try {
+        imagesToDelete = JSON.parse(hiddenInput.value);
+      } catch (e) {
+        imagesToDelete = [];
+      }
+      imagesToDelete.push(imageUrl);
+      hiddenInput.value = JSON.stringify(imagesToDelete);
+      
+      Swal.fire(
+        'Removed!',
+        'The image has been removed.',
+        'success'
+      );
+    }
+  });
+}
+
+                </script>
                 
 
 
@@ -689,4 +750,4 @@
             <%- include('partials/admin/scriptTags.ejs') %>
     </body>
 
-</html>                    
+</html>

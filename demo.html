@@ -1,867 +1,855 @@
-<!DOCTYPE HTML>
-<html lang="en">
-
-<%-include('partials /admin/headTag.ejs') %>
+<%-include('partials/user/header')%>
 
 
-    <style>
-        .image-preview-container {
-            margin: 20px 0;
+<style>
+    .product-image {
+        max-height: 400px;
+        object-fit: cover;
+    }
+    .thumbnail {
+
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        cursor: pointer;
+        opacity: 0.6;
+        transition: opacity 0.3s ease;
+    }
+    .thumbnail:hover, .thumbnail.active {
+        opacity: 1;
+    }
+    .related-product-img {
+        height: 180px;
+        object-fit: cover;
+    }
+    .review-avatar {
+        width: 50px;
+        height: 50px;
+    }
+
+
+  </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+  
+  <div class="container mt-5">
+      <div class="row">
+          <!-- Product Images -->
+           
+          <div class="col-md-6 mb-4" >
+              <img src="<%=product.productImage[0]%>" alt="Product" class="img-fluid rounded mb-3 product-image" id="mainImage">
+              <div class="d-flex gap-3">
+                <% if (Array.isArray(product.productImage)) { %>
+                    <% product.productImage.forEach((image) => { %>
+                        <img src="<%= image %>" alt="Thumbnail" class="thumbnail rounded" onclick="changeImage(event, this.src)">
+                    <% }) %>
+                <% } else { %>
+                    <p>No images available</p>
+                <% } %>
+              </div>
+          </div>
+          <!-- Product Details -->
+          <div class="col-md-6">
+              <h2 class="mb-3"><%=product.productTitle%></h2>
+              <p class="text-muted mb-4">SKU:  <%=product.authorName%></p>
+              
+              <div class="mb-3">
+                  <span class="h4 me-2">&#8377;349.99</span>
+                  <span class="text-muted"><s>$399.99</s></span>
+              </div>
+              <div class="mb-3">
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <i class="bi bi-star-half text-warning"></i>
+                  <span class="ms-2">4.5 (120 reviews)</span>
+              </div>
+              <p class="mb-4">description : <%=product.description%></p>
+              <!-- <div class="mb-4">
+                  <label for="quantity" class="form-label">Available Quantity</label>
+                  <input type="number" class="form-control" id="quantity" value="<%=product.quantity%>" min="1" style="width: 80px;">
+              </div> -->
+              <div class="mb-4">
+                <label for="quantity" class="form-label">Available Quantity</label>
+                <input type="number" class="form-control" id="quantity" value="<%=product.quantity%>" min="0" style="width: 80px;">
+                <small id="stockMessage" class="text-danger d-none">Product is out of stock</small>
+            </div>
+            <!-- <div class="mb-4">
+                <label for="quantity" class="form-label">Available Quantity</label>
+                <p id="quantity" class="form-control" style="width: 80px; display: inline-block;"><%= product.quantity %></p>
+                <small id="stockMessage" class="text-danger <%= product.quantity <= 0 ? '' : 'd-none' %>">
+                    Product is out of stock
+                </small>
+            </div> -->
+            
+              <button class="btn btn-primary btn-lg mb-3 me-2">
+                      <i class="bi bi-cart-plus"></i> Add to Cart
+                  </button>
+              <button class="btn btn-outline-secondary btn-lg mb-3">
+                      <i class="bi bi-heart"></i> Add to Wishlist
+                  </button>
+              <div class="mt-4">
+                  <h5>Key insights from Books       :</h5>
+                  <ul>
+                      <li>Books expand our knowledge.</li>
+                      <li>Stories inspire and educate</li>
+                      <li>Knowledge grows through reading.</li>
+                      <li>Reading enhances critical thinking.</li>
+                  </ul>
+              </div>
+          </div>
+      </div>
+  
+      <!-- Reviews Section -->
+      <div class="row mt-5">
+          <div class="col-12">
+              <h3 class="mb-4">Customer Reviews</h3>
+              <div class="d-flex align-items-center mb-4">
+                  <div>
+                      <h4 class="mb-0">4.5 <small class="text-muted">out of 5</small></h4>
+                      <div>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-half text-warning"></i>
+                      </div>
+                      <p class="mb-0">Based on 120 reviews</p>
+                  </div>
+                  <div class="ms-5">
+                      <div class="d-flex align-items-center mb-1">
+                          <span class="me-2">5</span>
+                          <div class="progress" style="width: 200px; height: 8px;">
+                              <div class="progress-bar bg-success" role="progressbar" style="width: 75%"></div>
+                          </div>
+                          <span class="ms-2">75%</span>
+                      </div>
+                      <div class="d-flex align-items-center mb-1">
+                          <span class="me-2">4</span>
+                          <div class="progress" style="width: 200px; height: 8px;">
+                              <div class="progress-bar bg-success" role="progressbar" style="width: 15%"></div>
+                          </div>
+                          <span class="ms-2">15%</span>
+                      </div>
+                      <div class="d-flex align-items-center mb-1">
+                          <span class="me-2">3</span>
+                          <div class="progress" style="width: 200px; height: 8px;">
+                              <div class="progress-bar bg-warning" role="progressbar" style="width: 5%"></div>
+                          </div>
+                          <span class="ms-2">5%</span>
+                      </div>
+                      <div class="d-flex align-items-center mb-1">
+                          <span class="me-2">2</span>
+                          <div class="progress" style="width: 200px; height: 8px;">
+                              <div class="progress-bar bg-danger" role="progressbar" style="width: 3%"></div>
+                          </div>
+                          <span class="ms-2">3%</span>
+                      </div>
+                      <div class="d-flex align-items-center">
+                          <span class="me-2">1</span>
+                          <div class="progress" style="width: 200px; height: 8px;">
+                              <div class="progress-bar bg-danger" role="progressbar" style="width: 2%"></div>
+                          </div>
+                          <span class="ms-2">2%</span>
+                      </div>
+                  </div>
+                  <div class="ms-auto">
+                      <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#reviewModal">
+                          Write a Review
+                      </button>
+                  </div>
+              </div>
+  
+              <!-- Individual Reviews -->
+              <div class="card mb-4">
+                  <div class="card-body">
+                      <div class="d-flex mb-3">
+                          <img src="/api/placeholder/50/50" alt="User" class="rounded-circle review-avatar me-3">
+                          <div>
+                              <h5 class="mb-0">Sarah Johnson</h5>
+                              <div class="text-muted">Verified Purchase</div>
+                              <div>
+                                  <i class="bi bi-star-fill text-warning"></i>
+                                  <i class="bi bi-star-fill text-warning"></i>
+                                  <i class="bi bi-star-fill text-warning"></i>
+                                  <i class="bi bi-star-fill text-warning"></i>
+                                  <i class="bi bi-star-fill text-warning"></i>
+                                  <span class="ms-2">5.0</span>
+                              </div>
+                          </div>
+                          <div class="ms-auto text-muted">March 12, 2025</div>
+                      </div>
+                      <h5>Amazing sound quality and comfortable fit!</h5>
+                      <p>I've been using these headphones for about a month now and I'm incredibly impressed. The noise cancellation is top-notch - I can barely hear anything from the outside world when I have them on. The sound quality is rich and balanced, and the battery lasts me through several days of use before needing a charge.</p>
+                      <div class="d-flex mt-3">
+                          <button class="btn btn-sm btn-outline-secondary me-2">
+                              <i class="bi bi-hand-thumbs-up"></i> Helpful (24)
+                          </button>
+                          <button class="btn btn-sm btn-outline-secondary">
+                              <i class="bi bi-flag"></i> Report
+                          </button>
+                      </div>
+                  </div>
+              </div>
+  
+              <div class="card mb-4">
+                  <div class="card-body">
+                      <div class="d-flex mb-3">
+                          <img src="/api/placeholder/50/50" alt="User" class="rounded-circle review-avatar me-3">
+                          <div>
+                              <h5 class="mb-0">Michael Rodriguez</h5>
+                              <div class="text-muted">Verified Purchase</div>
+                              <div>
+                                  <i class="bi bi-star-fill text-warning"></i>
+                                  <i class="bi bi-star-fill text-warning"></i>
+                                  <i class="bi bi-star-fill text-warning"></i>
+                                  <i class="bi bi-star-fill text-warning"></i>
+                                  <i class="bi bi-star text-warning"></i>
+                                  <span class="ms-2">4.0</span>
+                              </div>
+                          </div>
+                          <div class="ms-auto text-muted">March 1, 2025</div>
+                      </div>
+                      <h5>Great for travel, but app could be better</h5>
+                      <p>These headphones are perfect for travel - the noise cancellation makes flights much more bearable. Sound quality is excellent and they're comfortable even for long periods. The only downside is the companion app, which could use some improvements in the user interface. Overall, still a great purchase!</p>
+                      <div class="d-flex mt-3">
+                          <button class="btn btn-sm btn-outline-secondary me-2">
+                              <i class="bi bi-hand-thumbs-up"></i> Helpful (17)
+                          </button>
+                          <button class="btn btn-sm btn-outline-secondary">
+                              <i class="bi bi-flag"></i> Report
+                          </button>
+                      </div>
+                  </div>
+              </div>
+  
+              <div class="text-center">
+                  <button class="btn btn-outline-primary">Load More Reviews</button>
+              </div>
+          </div>
+      </div>
+
+      <!-- Related Products Section -->
+      <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="mb-4">You May Also Like</h3>
+        </div>
+    
+        <% relatedProducts.forEach(product => { %>
+            <div class="col-md-3 mb-4">
+                <div class="card h-100">
+                    <img src="<%= product.productImage[0] %>" class="card-img-top related-product-img" alt="<%= product.productTitle %>">
+                    <div class="card-body">
+                        <h5 class="card-title"><%= product.productTitle %></h5>
+                        <div class="mb-2">
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-half text-warning"></i>
+                            <i class="bi bi-star text-warning"></i>
+                            <span class="ms-1 small">(76)</span>
+                        </div>
+                        <p class="card-text fw-bold">$<%= product.regulaPrice %></p>
+                        <button class="btn btn-sm btn-outline-primary">View Details</button>
+                    </div>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+    
+  
+  <!-- Review Modal -->
+  <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="reviewModalLabel">Write a Review</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                  <form>
+                      <div class="mb-3">
+                          <label class="form-label">Rating</label>
+                          <div>
+                              <i class="bi bi-star fs-4 me-1" role="button" onclick="setRating(1)"></i>
+                              <i class="bi bi-star fs-4 me-1" role="button" onclick="setRating(2)"></i>
+                              <i class="bi bi-star fs-4 me-1" role="button" onclick="setRating(3)"></i>
+                              <i class="bi bi-star fs-4 me-1" role="button" onclick="setRating(4)"></i>
+                              <i class="bi bi-star fs-4" role="button" onclick="setRating(5)"></i>
+                          </div>
+                      </div>
+                      <div class="mb-3">
+                          <label for="reviewTitle" class="form-label">Review Title</label>
+                          <input type="text" class="form-control" id="reviewTitle" placeholder="Summarize your experience">
+                      </div>
+                      <div class="mb-3">
+                          <label for="reviewContent" class="form-label">Your Review</label>
+                          <textarea class="form-control" id="reviewContent" rows="4" placeholder="What did you like or dislike? How was your experience using this product?"></textarea>
+                      </div>
+                      <div class="mb-3">
+                          <label for="reviewImages" class="form-label">Add Photos (optional)</label>
+                          <input class="form-control" type="file" id="reviewImages" multiple>
+                      </div>
+                  </form>
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                  <button type="button" class="btn btn-primary">Submit Review</button>
+              </div>
+          </div>
+      </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+      function changeImage(event, src) {
+          document.getElementById('mainImage').src = src;
+          document.querySelectorAll('.thumbnail').forEach(thumb => thumb.classList.remove('active'));
+          event.target.classList.add('active');
+      }
+      
+      function setRating(rating) {
+          const stars = document.querySelectorAll('#reviewModal .bi-star, #reviewModal .bi-star-fill');
+          stars.forEach((star, index) => {
+              if (index < rating) {
+                  star.classList.remove('bi-star');
+                  star.classList.add('bi-star-fill');
+                  star.classList.add('text-warning');
+              } else {
+                  star.classList.remove('bi-star-fill');
+                  star.classList.remove('text-warning');
+                  star.classList.add('bi-star');
+              }
+          });
+      }
+
+
+      
+    document.getElementById('quantity').addEventListener('input', function () {
+        let stockMessage = document.getElementById('stockMessage');
+        if (this.value <= 0) {
+            stockMessage.classList.remove('d-none');
+        } else {
+            stockMessage.classList.add('d-none');
         }
+    });
 
-        .image-label {
-            font-size: 16px;
-            font-weight: 600;
+  </script>
+
+
+
+<%-include('partials/user/footer')%>
+
+
+
+
+
+
+
+
+
+
+
+
+
+=======================
+
+================================================================================
+=============================================
+
+
+---------------------------------------------------zoomer-----------------------------------------
+
+
+
+
+
+<%-include('partials/user/header')%>
+
+
+<style>
+    .product-image {
+        max-height: 400px;
+        object-fit: cover;
+    }
+    .thumbnail {
+
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        cursor: pointer;
+        opacity: 0.6;
+        transition: opacity 0.3s ease;
+    }
+    .thumbnail:hover, .thumbnail.active {
+        opacity: 1;
+    }
+    .related-product-img {
+        height: 180px;
+        object-fit: cover;
+    }
+    .review-avatar {
+        width: 50px;
+        height: 50px;
+    }
+
+
+
+</style>
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+<style>
+    /* Custom Zoom Styles */
+    .zoomContainer {
+        z-index: 999;
+        position: absolute;
+    }
+    
+    .zoomWrapper {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .zoomLens {
+        border: 2px solid rgba(0,0,0,0.2);
+        cursor: zoom-in;
+    }
+    
+    @media (max-width: 768px) {
+        .zoomContainer {
+            display: none !important;
         }
-
-        .image-list {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            padding: 10px 0;
-        }
-
-        .image-box {
-            position: relative;
-            border-radius: 10px;
-            overflow: hidden;
-            width: 100px;
-            height: 100px;
-            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-        }
-
-        .image-box img {
+        
+        .mobile-zoom-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover;
-            border-radius: 10px;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: center;
         }
-
-        .delete-btn {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: brown;
-            color: white;
-            font-size: 18px;
-            width: 20px;
-            height: 20px;
-            text-align: center;
-            border-radius: 50%;
-            cursor: pointer;
+        
+        .mobile-zoom-overlay img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
         }
-    </style>
+    }
+</style>
 
-    <body>
-        <div class="screen-overlay"></div>
-        <%- include('partials/admin/navBar.ejs') %>
-            <main class="main-wrap">
-                <%- include('partials/admin/header.ejs') %>
+<!-- Add this before your closing </body> tag -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.js"></script>
 
-                    <!-- Add these before the closing </body> tag but after jQuery -->
-                    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"
-                        rel="stylesheet">
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
-                    <div class="container-fluid py-4">
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="card bg-white shadow-sm border-0 mb-4">
-                                    <div
-                                        class="card-header bg-gradient-brown d-flex justify-content-between align-items-center">
-                                        <h4 class="text-white mb-0">Add New Book</h4>
-                                        <a href="/admin/products" class="btn btn-light">
-                                            <i class="fas fa-arrow-left me-2"></i>Back to Books
-                                        </a>
-                                    </div>
-                                    <div class="card-body p-4">
-                                        <form id="updateProductForm" method="post"
-                                            action="/admin/edit-product/<%=product._id%>" enctype="multipart/form-data">
-                                            <div class="row mb-4">
-                                                <div class="col-md-6">
-                                                    <div class="card border-0 shadow-sm h-100">
-                                                        <div class="card-header bg-light-brown">
-                                                            <h5 class="text-brown mb-0">Book Information</h5>
-                                                        </div>
-                                                        <div class="card-body">
-                                                            <div class="mb-3">
-                                                                <label for="productName" class="form-label">Title <span
-                                                                        class="text-danger">*</span></label>
-                                                                <input type="text" class="form-control" id="productName"
-                                                                    name="name" required
-                                                                    value="<%= product.productTitle %>"
-                                                                    placeholder="E.g., The Great Gatsby">
-                                                            </div>
 
-                                                            <div class="mb-3">
-                                                                <label for="writer" class="form-label">Writer <span
-                                                                        class="text-danger">*</span></label>
-                                                                <input type="text" class="form-control" id="writer"
-                                                                    name="writer" required
-                                                                    value="<%=product.authorName%>"
-                                                                    placeholder="E.g., F. Scott Fitzgerald">
-                                                            </div>
 
-                                                            <div class="mb-3">
-                                                                <label for="productCategory" class="form-label">Category
-                                                                    <span class="text-danger">*</span></label>
-                                                                <select class="form-select" id="productCategory"
-                                                                    name="category_id" required>
-                                                                    <option value="" disabled selected>Select category
-                                                                    </option>
-                                                                    <% if (categories && categories.length> 0) { %>
-                                                                        <% categories.forEach(category=> { %>
-                                                                            <option value="<%= category._id %>">
-                                                                                <%= category.name %>
-                                                                            </option>
-                                                                            <% }) %>
 
-                                                                                <% } else { %>
-                                                                                    <option value="">Categories not
-                                                                                        fetched</option>
-                                                                                    <% } %>
-                                                                </select>
-                                                            </div>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+  
+  <div class="container mt-5">
+      <div class="row">
+          <!-- Product Images -->
+           
+          <div class="col-md-6 mb-4" >
+              <img src="<%=product.productImage[0]%>" alt="Product" class="img-fluid rounded mb-3 product-image" id="mainImage">
+              <div class="d-flex gap-3">
+                <% if (Array.isArray(product.productImage)) { %>
+                    <% product.productImage.forEach((image) => { %>
+                        <img src="<%= image %>" alt="Thumbnail" class="thumbnail rounded" onclick="changeImage(event, this.src)">
+                    <% }) %>
+                <% } else { %>
+                    <p>No images available</p>
+                <% } %>
+              </div>
+          </div>
+          <!-- Product Details -->
+          <div class="col-md-6">
+              <h2 class="mb-3"><%=product.productTitle%></h2>
+              <p class="text-muted mb-4">SKU:  <%=product.authorName%></p>
+              
+              <div class="mb-3">
+                  <span class="h4 me-2">&#8377;349.99</span>
+                  <span class="text-muted"><s>$399.99</s></span>
+              </div>
+              <div class="mb-3">
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <i class="bi bi-star-half text-warning"></i>
+                  <span class="ms-2">4.5 (120 reviews)</span>
+              </div>
+              <p class="mb-4">description : <%=product.description%></p>
+              <!-- <div class="mb-4">
+                  <label for="quantity" class="form-label">Available Quantity</label>
+                  <input type="number" class="form-control" id="quantity" value="<%=product.quantity%>" min="1" style="width: 80px;">
+              </div> -->
+              <div class="mb-4">
+                <label for="quantity" class="form-label">Available Quantity</label>
+                <input type="number" class="form-control" id="quantity" value="<%=product.quantity%>" min="0" style="width: 80px;">
+                <small id="stockMessage" class="text-danger d-none">Product is out of stock</small>
+            </div>
+            <!-- <div class="mb-4">
+                <label for="quantity" class="form-label">Available Quantity</label>
+                <p id="quantity" class="form-control" style="width: 80px; display: inline-block;"><%= product.quantity %></p>
+                <small id="stockMessage" class="text-danger <%= product.quantity <= 0 ? '' : 'd-none' %>">
+                    Product is out of stock
+                </small>
+            </div> -->
+            
+              <button class="btn btn-primary btn-lg mb-3 me-2">
+                      <i class="bi bi-cart-plus"></i> Add to Cart
+                  </button>
+              <button class="btn btn-outline-secondary btn-lg mb-3">
+                      <i class="bi bi-heart"></i> Add to Wishlist
+                  </button>
+              <div class="mt-4">
+                  <h5>Key insights from Books       :</h5>
+                  <ul>
+                      <li>Books expand our knowledge.</li>
+                      <li>Stories inspire and educate</li>
+                      <li>Knowledge grows through reading.</li>
+                      <li>Reading enhances critical thinking.</li>
+                  </ul>
+              </div>
+          </div>
+      </div>
+  
+      <!-- Reviews Section -->
+      <div class="row mt-5">
+          <div class="col-12">
+              <h3 class="mb-4">Customer Reviews</h3>
+              <div class="d-flex align-items-center mb-4">
+                  <div>
+                      <h4 class="mb-0">4.5 <small class="text-muted">out of 5</small></h4>
+                      <div>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-half text-warning"></i>
+                      </div>
+                      <p class="mb-0">Based on 120 reviews</p>
+                  </div>
+                  <div class="ms-5">
+                      <div class="d-flex align-items-center mb-1">
+                          <span class="me-2">5</span>
+                          <div class="progress" style="width: 200px; height: 8px;">
+                              <div class="progress-bar bg-success" role="progressbar" style="width: 75%"></div>
+                          </div>
+                          <span class="ms-2">75%</span>
+                      </div>
+                      <div class="d-flex align-items-center mb-1">
+                          <span class="me-2">4</span>
+                          <div class="progress" style="width: 200px; height: 8px;">
+                              <div class="progress-bar bg-success" role="progressbar" style="width: 15%"></div>
+                          </div>
+                          <span class="ms-2">15%</span>
+                      </div>
+                      <div class="d-flex align-items-center mb-1">
+                          <span class="me-2">3</span>
+                          <div class="progress" style="width: 200px; height: 8px;">
+                              <div class="progress-bar bg-warning" role="progressbar" style="width: 5%"></div>
+                          </div>
+                          <span class="ms-2">5%</span>
+                      </div>
+                      <div class="d-flex align-items-center mb-1">
+                          <span class="me-2">2</span>
+                          <div class="progress" style="width: 200px; height: 8px;">
+                              <div class="progress-bar bg-danger" role="progressbar" style="width: 3%"></div>
+                          </div>
+                          <span class="ms-2">3%</span>
+                      </div>
+                      <div class="d-flex align-items-center">
+                          <span class="me-2">1</span>
+                          <div class="progress" style="width: 200px; height: 8px;">
+                              <div class="progress-bar bg-danger" role="progressbar" style="width: 2%"></div>
+                          </div>
+                          <span class="ms-2">2%</span>
+                      </div>
+                  </div>
+                  <div class="ms-auto">
+                      <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#reviewModal">
+                          Write a Review
+                      </button>
+                  </div>
+              </div>
+  
+              <!-- Individual Reviews -->
+              <div class="card mb-4">
+                  <div class="card-body">
+                      <div class="d-flex mb-3">
+                          <img src="/api/placeholder/50/50" alt="User" class="rounded-circle review-avatar me-3">
+                          <div>
+                              <h5 class="mb-0">Sarah Johnson</h5>
+                              <div class="text-muted">Verified Purchase</div>
+                              <div>
+                                  <i class="bi bi-star-fill text-warning"></i>
+                                  <i class="bi bi-star-fill text-warning"></i>
+                                  <i class="bi bi-star-fill text-warning"></i>
+                                  <i class="bi bi-star-fill text-warning"></i>
+                                  <i class="bi bi-star-fill text-warning"></i>
+                                  <span class="ms-2">5.0</span>
+                              </div>
+                          </div>
+                          <div class="ms-auto text-muted">March 12, 2025</div>
+                      </div>
+                      <h5>Amazing sound quality and comfortable fit!</h5>
+                      <p>I've been using these headphones for about a month now and I'm incredibly impressed. The noise cancellation is top-notch - I can barely hear anything from the outside world when I have them on. The sound quality is rich and balanced, and the battery lasts me through several days of use before needing a charge.</p>
+                      <div class="d-flex mt-3">
+                          <button class="btn btn-sm btn-outline-secondary me-2">
+                              <i class="bi bi-hand-thumbs-up"></i> Helpful (24)
+                          </button>
+                          <button class="btn btn-sm btn-outline-secondary">
+                              <i class="bi bi-flag"></i> Report
+                          </button>
+                      </div>
+                  </div>
+              </div>
+  
+              <div class="card mb-4">
+                  <div class="card-body">
+                      <div class="d-flex mb-3">
+                          <img src="/api/placeholder/50/50" alt="User" class="rounded-circle review-avatar me-3">
+                          <div>
+                              <h5 class="mb-0">Michael Rodriguez</h5>
+                              <div class="text-muted">Verified Purchase</div>
+                              <div>
+                                  <i class="bi bi-star-fill text-warning"></i>
+                                  <i class="bi bi-star-fill text-warning"></i>
+                                  <i class="bi bi-star-fill text-warning"></i>
+                                  <i class="bi bi-star-fill text-warning"></i>
+                                  <i class="bi bi-star text-warning"></i>
+                                  <span class="ms-2">4.0</span>
+                              </div>
+                          </div>
+                          <div class="ms-auto text-muted">March 1, 2025</div>
+                      </div>
+                      <h5>Great for travel, but app could be better</h5>
+                      <p>These headphones are perfect for travel - the noise cancellation makes flights much more bearable. Sound quality is excellent and they're comfortable even for long periods. The only downside is the companion app, which could use some improvements in the user interface. Overall, still a great purchase!</p>
+                      <div class="d-flex mt-3">
+                          <button class="btn btn-sm btn-outline-secondary me-2">
+                              <i class="bi bi-hand-thumbs-up"></i> Helpful (17)
+                          </button>
+                          <button class="btn btn-sm btn-outline-secondary">
+                              <i class="bi bi-flag"></i> Report
+                          </button>
+                      </div>
+                  </div>
+              </div>
+  
+              <div class="text-center">
+                  <button class="btn btn-outline-primary">Load More Reviews</button>
+              </div>
+          </div>
+      </div>
 
-                                                            <div class="mb-3">
-                                                                <label for="language" class="form-label">Language <span
-                                                                        class="text-danger">*</span></label>
-                                                                <select class="form-select" id="language"
-                                                                    name="language" required>
-                                                                    <option value="" disabled selected>Select language
-                                                                    </option>
-                                                                    <option value="English">English</option>
-                                                                    <option value="Malayalam">Malayalam</option>
-                                                                    <option value="Hindi">Hindi</option>
-                                                                    <option value="Tamil">Tamil</option>
-                                                                </select>
-                                                            </div>
-
-                                                            <div class="row">
-                                                                <div class="col-md-6 mb-3">
-                                                                    <label for="regularPrice" class="form-label">Regular
-                                                                        Price (&#8377) <span
-                                                                            class="text-danger">*</span></label>
-                                                                    <input type="number" step="0.01" min="0"
-                                                                        class="form-control" id="regularPrice"
-                                                                        name="regularPrice" required
-                                                                        value="<%=product.regularPrice%>">
-                                                                </div>
-                                                                <div class="col-md-6 mb-3">
-                                                                    <label for="salePrice" class="form-label">Sale Price
-                                                                        (&#8377)</label>
-                                                                    <input type="number" step="0.01" min="0"
-                                                                        class="form-control" id="salePrice"
-                                                                        name="salePrice" placeholder="Optional">
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="mb-3">
-                                                                <label for="availableQuantity"
-                                                                    class="form-label">Available Quantity <span
-                                                                        class="text-danger">*</span></label>
-                                                                <input type="number" min="0" class="form-control"
-                                                                    id="availableQuantity" name="availableQuantity"
-                                                                    required value="<%=product.quantity%>">
-                                                            </div>
-
-                                                            <div class="mb-3">
-                                                                <label for="productDescription"
-                                                                    class="form-label">Description <span
-                                                                        class="text-danger">*</span></label>
-                                                                <textarea class="form-control" id="productDescription"
-                                                                    name="description" rows="5" required
-                                                                    value="<%=product.description%>"
-                                                                    placeholder="Short summary of the book"></textarea>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-6">
-                                                    <div class="card border-0 shadow-sm h-100">
-                                                        <div class="card-header bg-light-brown">
-                                                            <h5 class="text-brown mb-0">Book Images & Additional Details
-                                                            </h5>
-                                                        </div>
-                                                        <div class="card-body">
-                                                            <div class="mb-4">
-                                                                <label class="form-label d-block">Upload Images <span
-                                                                        class="text-danger">*</span> <small
-                                                                        class="text-muted">(Minimum 3
-                                                                        required)</small></label>
-                                                                <div class="image-upload-container">
-                                                                    <div class="image-preview-area d-flex flex-wrap mb-3"
-                                                                        id="imagePreviewArea">
-                                                                        <div
-                                                                            class="upload-placeholder d-flex align-items-center justify-content-center bg-light-brown rounded p-3 mb-2">
-                                                                            <div class="text-center">
-                                                                                <i
-                                                                                    class="fas fa-cloud-upload-alt fa-2x text-brown mb-2"></i>
-                                                                                <p class="mb-0 small">Click to select at
-                                                                                    least 3 images</p>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="input-group mb-3">
-
-                                                                        <input type="file" class="form-control"
-                                                                            id="productImages" name="productImages"
-                                                                            accept="image/*" multiple>
-
-                                                                        <label
-                                                                            class="input-group-text bg-brown text-white"
-                                                                            for="productImages">Browse</label>
-                                                                    </div>
-                                                                    <div class="image-preview-container">
-                                                                        <label class="image-label">Upload Images <span
-                                                                                class="text-danger">*</span> (Minimum 3
-                                                                            required)</label>
-                                                                        <div class="image-list">
-                                                                            <% if (product.productImage &&
-                                                                                product.productImage.length> 0) { %>
-                                                                                <% product.productImage.forEach((image,
-                                                                                    index)=> { %>
-                                                                                    <div class="image-box"
-                                                                                        id="image-box-<%= index %>">
-                                                                                        <img src="<%= image %>"
-                                                                                            alt="Product Image <%= index + 1 %>">
-                                                                                        <span class="delete-btn"
-                                                                                            onclick="removeImage('<%= image %>', '<%= product._id %>', '<%= index %>')">&times;</span>
-                                                                                    </div>
-                                                                                    <% }); %>
-                                                                                        <% } else { %>
-                                                                                            <p>No images uploaded yet.
-                                                                                            </p>
-                                                                                            <% } %>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="alert alert-light-brown border-0 d-flex align-items-start"
-                                                                        role="alert">
-                                                                        <i
-                                                                            class="fas fa-info-circle me-2 text-brown mt-1"></i>
-                                                                        <div class="small text-muted">
-                                                                            <strong>Image Requirements:</strong>
-                                                                            <ul class="ps-3 mb-0 mt-1">
-                                                                                <li>Minimum 3 high-quality images</li>
-                                                                                <li>Include the book cover and other
-                                                                                    angles</li>
-                                                                                <li>Recommended size: 800x800px (square)
-                                                                                </li>
-                                                                                <li>Maximum file size: 5MB per image
-                                                                                </li>
-                                                                            </ul>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="row">
-                                                                <div class="col-md-12 mb-3">
-                                                                    <label for="publishedDate"
-                                                                        class="form-label">Publication Date</label>
-                                                                    <input type="date" class="form-control"
-                                                                        id="publishedDate" name="publishedDate">
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <!-- CropperJS Modal -->
-                                            <div class="modal fade" id="imageCropperModal" tabindex="-1"
-                                                aria-labelledby="imageCropperModalLabel" aria-hidden="true"
-                                                data-bs-backdrop="static">
-                                                <div class="modal-dialog modal-lg">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header bg-gradient-brown">
-                                                            <h5 class="modal-title text-white"
-                                                                id="imageCropperModalLabel">Crop Image <span
-                                                                    id="currentImageNumber"></span></h5>
-                                                            <button type="button" class="btn-close"
-                                                                data-bs-dismiss="modal" aria-label="Close"
-                                                                id="closeModal"></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <div class="img-container mb-3" style="max-height: 400px;">
-                                                                <img id="cropperImage" src="" alt="Image to crop"
-                                                                    style="max-width: 100%;">
-                                                            </div>
-                                                            <div class="progress mb-3" style="height: 10px;">
-                                                                <div id="cropProgress" class="progress-bar bg-brown"
-                                                                    role="progressbar" style="width: 0%"></div>
-                                                            </div>
-                                                            <div class="alert alert-light-brown border-0" role="alert">
-                                                                <i class="fas fa-info-circle me-2 text-brown"></i>
-                                                                <span class="text-muted">Drag and resize the crop box to
-                                                                    select the book image area you want to keep. Images
-                                                                    will be cropped to a square format for
-                                                                    consistency.</span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary"
-                                                                id="cancelBtn">Cancel</button>
-                                                            <button type="button" class="btn btn-brown"
-                                                                id="cropImageBtn">
-                                                                <i class="fas fa-crop-alt me-2"></i>Crop & Continue
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="d-flex justify-content-between">
-                                                <a href="/admin/products" class="btn btn-secondary">
-                                                    <i class="fas fa-times me-2"></i>Cancel
-                                                </a>
-                                                <button type="submit" class="btn btn-brown" id="updateBookBtn">
-                                                    <i class="fas fa-save me-2"></i>Save Book
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
+      <!-- Related Products Section -->
+      <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="mb-4">You May Also Like</h3>
+        </div>
+    
+        <% relatedProducts.forEach(product => { %>
+            <div class="col-md-3 mb-4">
+                <div class="card h-100">
+                    <img src="<%= product.productImage[0] %>" class="card-img-top related-product-img" alt="<%= product.productTitle %>">
+                    <div class="card-body">
+                        <h5 class="card-title"><%= product.productTitle %></h5>
+                        <div class="mb-2">
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-half text-warning"></i>
+                            <i class="bi bi-star text-warning"></i>
+                            <span class="ms-1 small">(76)</span>
                         </div>
+                        <p class="card-text fw-bold">$<%= product.regulaPrice %></p>
+                        <button class="btn btn-sm btn-outline-primary">View Details</button>
                     </div>
-
-                    <!-- Custom CSS for light brown theme (enhanced) -->
-                    <style>
-                        :root {
-                            --brown-100: #f5f0e8;
-                            --brown-200: #e6d7c3;
-                            --brown-300: #d4bea2;
-                            --brown-400: #c1a68c;
-                            --brown-500: #b08d6c;
-                            --brown-600: #9a7b5f;
-                            --brown-700: #846a51;
-                            --brown-800: #6b5440;
-                            --brown-900: #524030;
-                        }
-
-                        .bg-brown {
-                            background-color: var(--brown-600) !important;
-                        }
-
-                        .bg-light-brown {
-                            background-color: var(--brown-100) !important;
-                        }
-
-                        .bg-gradient-brown {
-                            background: linear-gradient(to right, var(--brown-700), var(--brown-500)) !important;
-                        }
-
-                        .text-brown {
-                            color: var(--brown-700) !important;
-                        }
-
-                        .btn-brown {
-                            background-color: var(--brown-600);
-                            color: white;
-                        }
-
-                        .btn-brown:hover {
-                            background-color: var(--brown-700);
-                            color: white;
-                        }
-
-                        .btn-outline-brown {
-                            border-color: var(--brown-600);
-                            color: var(--brown-600);
-                        }
-
-                        .btn-outline-brown:hover {
-                            background-color: var(--brown-600);
-                            color: white;
-                        }
-
-                        .card {
-                            margin-top: 10px;
-                            border-radius: 10px;
-                            overflow: hidden;
-                            transition: all 0.3s ease;
-                        }
-
-                        .card:hover {
-                            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
-                        }
-
-                        .card-header {
-                            padding: 1rem 1.5rem;
-                        }
-
-                        .upload-placeholder {
-                            width: 100%;
-                            height: 120px;
-                            border: 2px dashed var(--brown-300);
-                            border-radius: 8px;
-                            cursor: pointer;
-                        }
-
-                        .image-preview-item {
-                            width: 100px;
-                            height: 100px;
-                            border-radius: 8px;
-                            object-fit: cover;
-                            margin-right: 10px;
-                            margin-bottom: 10px;
-                            border: 3px solid var(--brown-100);
-                            transition: all 0.2s ease;
-                        }
-
-                        .image-preview-item:hover {
-                            transform: scale(1.05);
-                            border-color: var(--brown-300);
-                        }
-
-                        .image-preview-remove {
-                            position: absolute;
-                            top: -8px;
-                            right: -8px;
-                            background: var(--brown-600);
-                            color: white;
-                            border-radius: 50%;
-                            width: 24px;
-                            height: 24px;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            cursor: pointer;
-                            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-                            transition: all 0.2s ease;
-                        }
-
-                        .image-preview-remove:hover {
-                            background: #dc3545;
-                            transform: scale(1.1);
-                        }
-
-                        .alert-light-brown {
-                            background-color: var(--brown-100);
-                            border-color: var(--brown-200);
-                            color: var(--brown-800);
-                        }
-
-                        .cropper-container {
-                            max-width: 100%;
-                        }
-
-                        .img-container {
-                            background-color: #f8f9fa;
-                            width: 100%;
-                            text-align: center;
-                        }
-
-                        .cropper-view-box,
-                        .cropper-face {
-                            border-radius: 0;
-                        }
-
-                        .cropper-line,
-                        .cropper-point {
-                            background-color: var(--brown-600) !important;
-                        }
-
-                        /* Loading animation */
-                        .loading-overlay {
-                            position: fixed;
-                            top: 0;
-                            left: 0;
-                            width: 100%;
-                            height: 100%;
-                            background: rgba(255, 255, 255, 0.8);
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            z-index: 9999;
-                            flex-direction: column;
-                        }
-
-                        .spinner {
-                            width: 40px;
-                            height: 40px;
-                            border: 4px solid rgba(0, 0, 0, 0.1);
-                            border-radius: 50%;
-                            border-top-color: var(--brown-600);
-                            animation: spin 1s ease-in-out infinite;
-                        }
-
-                        @keyframes spin {
-                            to {
-                                transform: rotate(360deg);
-                            }
-                        }
-
-                        /* Form enhancements */
-                        .form-control:focus,
-                        .form-select:focus {
-                            border-color: var(--brown-400);
-                            box-shadow: 0 0 0 0.25rem rgba(176, 141, 108, 0.25);
-                        }
-
-                        textarea {
-                            resize: vertical;
-                        }
-                    </style>
-
-                    <!-- <script src="/js/Admin/addProduct.js"></script> -->
-
-                    <script>
-
-
-                        // ===============================you have to work with things ====================================================
-
-
-
-                        let cropper;
-                        let currentFileIndex;
-                        let selectedFiles = [];
-                        let croppedImages = [];
-                        let cropperModal;
-
-                        document.addEventListener('DOMContentLoaded', function () {
-                            // Initialize modal
-                            cropperModal = new bootstrap.Modal(document.getElementById('imageCropperModal'));
-
-                            // Set up click on upload placeholder
-                            document.querySelector('.upload-placeholder').addEventListener('click', function () {
-                                document.getElementById('productImages').click();
-                            });
-
-                            // Image input change handler
-                            document.getElementById('productImages').addEventListener('change', function (event) {
-                                // Get the newly selected files
-                                const newFiles = Array.from(this.files);
-
-                                // Add new files to the selected files array
-                                selectedFiles = [...newFiles];
-
-                                // Check if we have enough images
-                                if (selectedFiles.length < 3 && croppedImages.length < 3) {
-                                    const totalImages = selectedFiles.length + croppedImages.length;
-                                    const remaining = 3 - totalImages;
-                                    if (remaining > 0) {
-                                        alert(Please select ${ remaining } more image${ remaining > 1 ? 's' : ''}. Total images should be at least 3.);
-
-                        }
-                    }
-
-                            // Start cropping process with the new files
-                            currentFileIndex = 0;
-                        startCropping();
-                  });
-
-                        // Cancel button event
-                        document.getElementById('cancelBtn').addEventListener('click', function () {
-                            if (confirm('Are you sure you want to cancel image cropping? You will need to select images again.')) {
-                                cropperModal.hide();
-                                if (cropper) {
-                                    cropper.destroy();
-                                    cropper = null;
-                                }
-                                document.getElementById('productImages').value = '';
-                                selectedFiles = [];
-
-                                // Only reset cropped images if there are no images processed yet
-                                if (croppedImages.length === 0) {
-                                    resetPreviewArea();
-                                } else {
-                                    displayCroppedImages(); // Redisplay existing cropped images
-                                }
-                            }
-                        });
-
-                        // Close modal button
-                        document.getElementById('closeModal').addEventListener('click', function () {
-                            document.getElementById('cancelBtn').click(); // Trigger cancel button
-                        });
-
-                        // Crop and continue button
-                        document.getElementById('cropImageBtn').addEventListener('click', function () {
-                            if (!cropper) return;
-
-                            const canvas = cropper.getCroppedCanvas({
-                                width: 800,
-                                height: 800,
-                                imageSmoothingQuality: 'high'
-                            });
-
-                            // Get the cropped image as a data URL
-                            const croppedDataUrl = canvas.toDataURL('image/jpeg');
-
-                            // Save this cropped image
-                            croppedImages.push({
-                                dataUrl: croppedDataUrl,
-                                filename: selectedFiles[currentFileIndex].name
-                            });
-
-                            // Update progress bar
-                            updateProgress();
-
-                            // Destroy current cropper instance
-                            if (cropper) {
-                                cropper.destroy();
-                                cropper = null;
-                            }
-
-                            // Move to next image
-                            currentFileIndex++;
-
-                            // Check if we have more images to process
-                            if (currentFileIndex < selectedFiles.length) {
-                                // Process next image
-                                processNextImage();
-                            } else {
-                                // All images processed, hide modal and display them
-                                cropperModal.hide();
-                                displayCroppedImages();
-                            }
-                        });
-
-                        // Form submission
-                        document.getElementById('addProductForm').addEventListener('submit', function (e) {
-                            e.preventDefault();
-
-                            if (croppedImages.length < 3) {
-                                alert('Please upload and crop at least 3 book images');
-                                return false;
-                            }
-
-                            // Show loading overlay
-                            showLoading('Saving book...');
-
-                            // Convert cropped images to Blob files and append to FormData
-                            const formData = new FormData(this);
-
-                            // Remove the original file input images
-                            formData.delete('productImages');
-
-                            // Create promises for all blob conversions
-                            const blobPromises = croppedImages.map((image, index) => {
-                                return fetch(image.dataUrl)
-                                    .then(res => res.blob())
-                                    .then(blob => {
-                                        const filename = book - image - ${ index+1
-                                    }-${ Date.now() }.jpg;
-                                return new File([blob], filename, { type: 'image/jpeg' });
-                            });
-                        });
-
-                        // When all blobs are ready, add them to formData and submit
-                        Promise.all(blobPromises){
-                      .then(files => {
-                            files.forEach(file => {
-                                formData.append('productImages', file);
-                            });
-                            return submitFormWithFormData(formData);
-                        })
-                                .catch(error => {
-                                    hideLoading();
-                                    console.error('Error:', error);
-                                    alert('There was an error processing your images. Please try again.');
-                                });
-                        });
-                });
-
-                        function startCropping() {
-                            // Start the cropping process with the first image
-                            if (selectedFiles.length > 0) {
-                                processNextImage();
-                            }
-                        }
-
-                        function processNextImage() {
-                            if (currentFileIndex >= selectedFiles.length) {
-                                // All images processed, display them
-                                displayCroppedImages();
-                                return;
-                            }
-
-                            const file = selectedFiles[currentFileIndex];
-
-                            if (!file.type.match('image.*')) {
-                                currentFileIndex++;
-                                processNextImage();
-                                return;
-                            }
-
-                            // Update the modal title to show progress
-                            document.getElementById('currentImageNumber').textContent =
-                                ` (${currentFileIndex + 1} of ${selectedFiles.length})`;
-
-                            // Update progress bar
-                            updateProgress();
-
-                            const reader = new FileReader();
-                            reader.onload = function (e) {
-                                // Set the image in the cropper
-                                const cropperImage = document.getElementById('cropperImage');
-                                cropperImage.src = e.target.result;
-
-                                // Show the modal
-                                cropperModal.show();
-
-                                // Initialize cropper after modal is shown
-                                setTimeout(() => {
-                                    // Initialize cropper
-                                    cropper = new Cropper(cropperImage, {
-                                        aspectRatio: 0, // Square aspect ratio for book images
-                                        viewMode: 2,    // Restrict the crop box to not exceed the size of the canvas
-                                        // autoCropArea: 0.8,
-                                        // responsive: true,
-                                        // guides: true,
-                                        // center: true,
-                                        highlight: false,
-                                        cropBoxMovable: true,
-                                        cropBoxResizable: true,
-                                        toggleDragModeOnDblclick: false
-                                    });
-                                }, 300);
-                            };
-
-                            reader.readAsDataURL(file);
-                        }
-
-                        function updateProgress() {
-                            const progressBar = document.getElementById('cropProgress');
-                            const percentage = ((currentFileIndex) / selectedFiles.length) * 100;
-                            progressBar.style.width = percentage + '%';
-                            progressBar.setAttribute('aria-valuenow', percentage);
-                        }
-
-                        function displayCroppedImages() {
-                            const previewArea = document.getElementById('imagePreviewArea');
-                            previewArea.innerHTML = ''; // Clear existing previews
-
-                            croppedImages.forEach((image, index) => {
-                                const previewItem = document.createElement('div');
-                                previewItem.className = 'position-relative me-2 mb-2';
-                                previewItem.innerHTML = `
-                      <img src="${image.dataUrl}" class="image-preview-item shadow" data-index="${index}" title="Book image ${index + 1}">
-                      <div class="image-preview-remove" onclick="removePreview(${index})">
-                        <i class="fas fa-times fa-xs"></i>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+    
+  
+  <!-- Review Modal -->
+  <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="reviewModalLabel">Write a Review</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                  <form>
+                      <div class="mb-3">
+                          <label class="form-label">Rating</label>
+                          <div>
+                              <i class="bi bi-star fs-4 me-1" role="button" onclick="setRating(1)"></i>
+                              <i class="bi bi-star fs-4 me-1" role="button" onclick="setRating(2)"></i>
+                              <i class="bi bi-star fs-4 me-1" role="button" onclick="setRating(3)"></i>
+                              <i class="bi bi-star fs-4 me-1" role="button" onclick="setRating(4)"></i>
+                              <i class="bi bi-star fs-4" role="button" onclick="setRating(5)"></i>
+                          </div>
                       </div>
-                    `;
-                                previewArea.appendChild(previewItem);
-                            });
-
-                            // Add upload more button if needed
-                            const uploadMoreBtn = document.createElement('div');
-                            uploadMoreBtn.className = 'image-preview-item d-flex align-items-center justify-content-center bg-light-brown me-2 mb-2';
-                            uploadMoreBtn.style.cursor = 'pointer';
-                            uploadMoreBtn.innerHTML = '<i class="fas fa-plus text-brown"></i>';
-                            uploadMoreBtn.addEventListener('click', function () {
-                                document.getElementById('productImages').click();
-                            });
-                            previewArea.appendChild(uploadMoreBtn);
-                        }
-
-                        function resetPreviewArea() {    //ivide our backtick undaayirunnu
-                            const previewArea = document.getElementById('imagePreviewArea');
-                            previewArea.innerHTML = `
-                    <div class="upload-placeholder d-flex align-items-center justify-content-center bg-light-brown rounded p-3 mb-2">
-                      <div class="text-center">
-                        <i class="fas fa-cloud-upload-alt fa-2x text-brown mb-2"></i>
-                        <p class="mb-0 small">Click to select at least 3 images</p>
+                      <div class="mb-3">
+                          <label for="reviewTitle" class="form-label">Review Title</label>
+                          <input type="text" class="form-control" id="reviewTitle" placeholder="Summarize your experience">
                       </div>
+                      <div class="mb-3">
+                          <label for="reviewContent" class="form-label">Your Review</label>
+                          <textarea class="form-control" id="reviewContent" rows="4" placeholder="What did you like or dislike? How was your experience using this product?"></textarea>
+                      </div>
+                      <div class="mb-3">
+                          <label for="reviewImages" class="form-label">Add Photos (optional)</label>
+                          <input class="form-control" type="file" id="reviewImages" multiple>
+                      </div>
+                  </form>
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                  <button type="button" class="btn btn-primary">Submit Review</button>
+              </div>
+          </div>
+      </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+      function changeImage(event, src) {
+          document.getElementById('mainImage').src = src;
+          document.querySelectorAll('.thumbnail').forEach(thumb => thumb.classList.remove('active'));
+          event.target.classList.add('active');
+      }
+      
+      function setRating(rating) {
+          const stars = document.querySelectorAll('#reviewModal .bi-star, #reviewModal .bi-star-fill');
+          stars.forEach((star, index) => {
+              if (index < rating) {
+                  star.classList.remove('bi-star');
+                  star.classList.add('bi-star-fill');
+                  star.classList.add('text-warning');
+              } else {
+                  star.classList.remove('bi-star-fill');
+                  star.classList.remove('text-warning');
+                  star.classList.add('bi-star');
+              }
+          });
+      }
+
+
+      
+    document.getElementById('quantity').addEventListener('input', function () {
+        let stockMessage = document.getElementById('stockMessage');
+        if (this.value <= 0) {
+            stockMessage.classList.remove('d-none');
+        } else {
+            stockMessage.classList.add('d-none');
+        }
+    });
+
+  </script>
+
+
+<script>
+    $(document).ready(function() {
+        // Function to initialize zoom
+        function initImageZoom() {
+            // Destroy existing zoom to prevent multiple instances
+            if ($('#mainImage').data('elevateZoom')) {
+                $('.zoomContainer').remove();
+                $('#mainImage').removeData('elevateZoom');
+            }
+    
+            // Mobile-specific handling
+            if ($(window).width() <= 768) {
+                setupMobileZoom();
+            } else {
+                setupDesktopZoom();
+            }
+        }
+    
+        // Desktop zoom setup
+        function setupDesktopZoom() {
+            $('#mainImage').elevateZoom({
+                zoomType: "lens",
+                lensShape: "round",
+                lensSize: 200,
+                borderSize: 1,
+                containLensZoom: true,
+                zoomWindowPosition: 1, // Right of the image
+                zoomWindowWidth: 400,
+                zoomWindowHeight: 400,
+                zoomWindowFadeIn: 500,
+                zoomWindowFadeOut: 500,
+                lensFadeIn: 500,
+                lensFadeOut: 500
+            });
+        }
+    
+        // Mobile zoom setup
+        function setupMobileZoom() {
+            // Create mobile zoom overlay
+            if ($('#mobile-zoom-overlay').length === 0) {
+                $('body').append(`
+                    <div id="mobile-zoom-overlay" class="mobile-zoom-overlay">
+                        <img id="mobile-zoomed-image" src="" alt="Zoomed Image">
+                        <button class="close-zoom btn btn-light position-absolute top-0 end-0 m-3">
+                            <i class="fas fa-times"></i>
+                        </button>
                     </div>
-                 ` ;
-                        }
-
-                        function removePreview(index) {
-                            croppedImages.splice(index, 1);
-                            displayCroppedImages();
-
-                            // If no images left, show the upload placeholder
-                            if (croppedImages.length === 0) {
-                                resetPreviewArea();
-                            }
-                        }
-                        //her you added a new functionality
-
-
-                        document.getElementById('editProductForm').addEventListener('submit', function (event) {
-                            event.preventDefault(); // Prevent default form submission
-                            showLoading('Updating Product...');
-
-                            const form = event.target;
-                            const formData = new FormData(form);
-
-                            // Append new images
-                            const imageInputs = document.querySelectorAll('input[name="productImages"]');
-                            imageInputs.forEach((input) => {
-                                if (input.files.length > 0) {
-                                    for (let i = 0; i < input.files.length; i++) {
-                                        formData.append('productImages', input.files[i]); // Append each image
-                                    }
-                                }
-                            });
-
-                            submitFormWithFormData(formData);
-                        });
-
-                        function submitFormWithFormData(formData) {
-                            const actionUrl = document.getElementById('editProductForm').action;
-
-                            fetch(actionUrl, {
-                                method: 'POST',
-                                body: formData
-                            })
-                                .then(response => response.json().then(data => ({ status: response.status, body: data })))
-                                .then(({ status, body }) => {
-                                    hideLoading();
-                                    if (status === 200 && body.success) {
-                                        Swal.fire({
-                                            title: 'Success',
-                                            icon: 'success',
-                                            text: 'Product updated successfully'
-                                        }).then(() => window.location.href = '/admin/edit-product');
-                                    } else {
-                                        throw new Error(body.message || 'Server error');
-                                    }
-                                })
-                                .catch(error => {
-                                    hideLoading();
-                                    console.error('Error:', error);
-                                    alert('There was an error updating the product: ' + error.message);
-                                });
-                        }
+                `);
+            }
+    
+            // Mobile click to zoom
+            $('#mainImage').on('click', function() {
+                $('#mobile-zoomed-image').attr('src', $(this).attr('src'));
+                $('#mobile-zoom-overlay').fadeIn('fast');
+            });
+    
+            // Close zoom
+            $(document).on('click', '#mobile-zoom-overlay .close-zoom', function() {
+                $('#mobile-zoom-overlay').fadeOut('fast');
+            });
+        }
+    
+        // Initialize zoom on page load
+        initImageZoom();
+    
+        // Reinitialize zoom when thumbnails are clicked
+        $('.thumbnail').on('click', function() {
+            // Update main image
+            $('#mainImage').attr('src', $(this).attr('src'));
+            
+            // Reinitialize zoom
+            initImageZoom();
+        });
+    
+        // Reinitialize on window resize
+        $(window).on('resize', initImageZoom);
+    });
+    
+    // Optional: Add manual trigger for zoom reset
+    function resetProductZoom() {
+        if ($(window).width() > 768) {
+            $('#mainImage').elevateZoom('destroy');
+            $('#mainImage').elevateZoom({
+                zoomType: "lens",
+                lensShape: "round",
+                lensSize: 200,
+                // ... other previous options
+            });
+        }
+    }
+    </script>
 
 
-                        //==================================================delete product image====================================================
-
-                        function removeImage(imageUrl, productId, index) {
-                            console.log("image ind", index)
-                            if (confirm("Are you sure you want to remove this image?")) {
-                                fetch(/admin/remove - image / ${ productId }, {
-                                    method: 'DELETE',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ imageUrl: imageUrl, index })
-                                })
-                                    .then(response => {
-                                        if (!response.ok) {
-                                            return response.text().then(text => { throw new Error(text) });
-                                        }
-                                        return response.json();
-                                    })
-                                    .then(data => {
-                                        if (data.success) {
-                                            document.getElementById("image-box-" + index).remove();
-                                        } else {
-                                            alert("Error: " + data.message);
-                                        }
-
-                                    })
-                                    .catch(error => console.error("Error:", error));
-                            }
-                        }
-
-                    </script>
-                    <%- include('partials/admin/footer.ejs') %>
-            </main>
-            <%- include('partials/admin/scriptTags.ejs') %>
-    </body>
-
-</html>
+<%-include('partials/user/footer')%>

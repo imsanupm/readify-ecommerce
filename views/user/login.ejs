@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
     <style>
         body {
             display: flex;
@@ -74,7 +77,8 @@
 <body>
     <div class="login-container">
         <h1>Login</h1>
-        <form action="/signin" method="post">
+        <!-- <form action="/signin" method="post"> -->
+            <form id="formData" novalidate >
             <div class="form-group">
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" placeholder="Enter your email">
@@ -92,3 +96,47 @@
     </div>
 </body>
 </html>
+
+
+
+<script>
+    
+    document.getElementById("formData").addEventListener("submit",async function (event) {
+       event.preventDefault();
+       let emailvalue = document.getElementById('email').value;
+       let passwordvalue = document.getElementById('password').value;
+       console.log('values of front end body',emailvalue,passwordvalue);
+        
+       try {
+        let response = await fetch('/signin',{
+            method:'POST',
+            headers:{'content-type':'application/json'},
+            body:JSON.stringify({
+                password:passwordvalue,
+                email:emailvalue
+            })
+        })
+        let result = await response.json()
+        if(result.success){
+            Swal.fire({
+                icon:"success",
+                title:"Login sucessfull",
+                text:"rdirecting to home page",
+            }).then(result=>{
+                setTimeout(()=>{
+                    window.location.href='/'
+                },1500)
+            })
+        }else{
+            Swal.fire({
+                icon:"error",
+                title:"login faild ",
+                text:result.message||"an error occured please try again"
+            })
+        }
+       } catch (error) {
+        console.log('error from login ',error)
+       }
+        
+    })
+</script>

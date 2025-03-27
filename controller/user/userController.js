@@ -25,18 +25,30 @@ const loadLogin = async(req,res)=>{
 const signin = async(req,res)=>{
      try {
         const {email,password} = req.body;
+        console.log('body for login',req.body);
+
+      let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailPattern.test(email)) {
+        
+        return res.json({message:"plaese enter a valid Email"})
+    }
+
+         if(email==''||password==''){
+            return res.json({message:"all fields are required"})
+         }        
         const userData = await User.findOne({email:email})
         if(userData){
             const passwordMatch = await bcrypt.compare(password,userData.password)
             if(passwordMatch){
                   req.session.user_id = userData._id;
-                  res.redirect('/home');
+                //   res.redirect('/home');
+              return  res.status(200).json({success:true,message:"login successfully"})
             }else {
-                res.render('login',{message:'Incorrect password'})
+              return  res.status(400).json({message:"Incorect password"});
             }
         }else{
           
-            res.render('login',{message:'user with this email id is not exist'})
+            res.json({message:'user with this email id is not exist'})
         }
      } catch (error) {
         console.error('Error verifying user:', error.message);
@@ -142,18 +154,21 @@ const signup = async (req, res) => {
 const verifyOtp = async (req, res) => {
     try {
         const { otp } = req.body;
+        console.log('otp form ',req.body);
         const { userOtp, userData, otpExpiry } = req.session;
+        console.log("session : ",userOtp,userData,otpExpiry)
+        console.log('req session ', req.session)
 
         if (!userOtp || !userData) {
             return res.redirect('/signup');
         }
 
         if (Date.now() > otpExpiry) {
-            return res.render('verifyOtp', { message: 'OTP has expired' });
+            return res.render('verify-otp', { message: 'OTP has expired' });
         }
 
         if (otp !== userOtp) {
-            return res.render('verifyOtp', { message: 'Invalid OTP' });
+            return res.status(400).json({ message: 'Invalid OTP' });
         }
 
         // Create new user
@@ -173,7 +188,7 @@ const verifyOtp = async (req, res) => {
         req.session.userData = null;
         req.session.otpExpiry = null;
 
-        res.redirect('/'); // Redirect to homepage after successful verification
+        res.status(200).json({success:true,message:'otp verified'}); // Redirect to homepage after successful verification
     } catch (error) {
         console.log(`error during verifyOtp ${error}`);
         res.redirect('/pagenotfound');

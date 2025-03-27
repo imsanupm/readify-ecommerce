@@ -36,7 +36,9 @@ const Product = require('../../models/admin/productSchema')
 const getProductDetailPage = async (req, res) => {
     try {
         const id = req.params.id;
-        const products = await Product.findOne({_id: id}).populate('category').lean();
+        const products = await Product.findOne({_id:id}).populate('category').lean();
+        console.log("product new console",products);
+        
         
         if (!products) {
             return res.status(404).render('pagenotFound', { message: "Product not found" });

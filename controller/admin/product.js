@@ -225,13 +225,109 @@ const searchUser = async (req,res) => {
 
 
 
-const editProduct = async (req, res) => {
+// const editProduct = async (req, res) => {
 
-    try {
-        // console.log("Uploaded Files:", req.files);
-        const productId = req.params.id;
-        console.log(productId);
+//     try {
+//         // console.log("Uploaded Files:", req.files);
+//         const productId = req.params.id;
+//         console.log(productId);
         
+//         const {
+//             name,
+//             writer,
+//             category_id,
+//             language,
+//             regularPrice,
+//             salePrice,
+//             availableQuantity,
+//             description,
+//             publishedDate
+//         } = req.body;
+//         const existingProduct = await productModel.findById(productId);
+
+//         if (!existingProduct) {
+//             console.log('Product not found');
+//             return res.status(404).json({ message: 'Product not found' });
+//         }
+
+//         const categories = await Category.find({});
+//         if (!categories) {
+//             console.log('Error when finding categories');
+//             return res.status(500).json({ message: 'Error fetching categories' });
+//         }
+
+       
+
+//         console.log('dats for edit the product',description);
+
+
+//         if (!name || !writer || !category_id || !language || !regularPrice || !availableQuantity || !description) {
+//             console.log('Problem with finding credentials in req.body in editProduct in productController');
+//             return res.render('Admin/editProduct', { 
+//                 categories, 
+//                 product: existingProduct, 
+//                 message: 'Need Credentials' 
+//             });
+//         }
+
+
+
+//         const updateData=  {
+//             productTitle:name,
+//             authorName:writer,
+//                 category_id,
+//                 language,
+//                 regularPrice,
+//                 salePrice,
+//                 availableQuantity,
+//                 description,
+//                 publishedDate
+//             }
+
+//         // Handle image updates
+//         let imagePaths = existingProduct.productImage; // Keep existing images by default
+//         if (req.files && req.files.length > 0&&req.files.productImage) {
+//             if(existingProduct.productImage&&existingProduct.productImage>0){
+//                 updateData.productImage=[...existingProduct.productImage,...req.files.productImage.map(file=>file.path.replace(/\\/g,"/")).replace("public/",'')]
+//             }else{
+//                 updateData.productImage=req.files.productImage.map(file=>file.path.replace(/\\/g,"/")).replace("public/",'')
+//             }
+//         }
+//         console.log('updateData.imagePaths',updateData.imagePaths)
+
+//         if (!imagePaths || imagePaths.length < 3) {
+//             console.log('Problem with imagePaths in editProduct in productController');
+//             return res.render('Admin/updateProduct', { 
+//                 categories, 
+//                 product: existingProduct, 
+//                 message: 'Problem with imagePaths - Minimum 3 images required' 
+//             });
+//         }
+
+    
+
+//     console.log('updateData',updateData)
+//         // if (publishedDate) existingProduct.publishedDate = publishedDate;
+
+//         await productModel.findByIdAndUpdate(productId,updateData,{new:true})
+//         console.log(`Book Updated
+//             name: ${name}`);
+
+//         return res.status(200).json({ success: true, message: 'Product updated successfully!' });
+
+//     } catch (error) {
+//         console.log(`Error in editProduct: ${error}`);
+//         return res.status(500).json({ success: false, message: 'Server error' });
+//     }
+// };
+
+
+
+const editProduct = async (req, res) => {
+    try {
+        const productId = req.params.id;
+        console.log("Product ID:", productId);
+
         const {
             name,
             writer,
@@ -243,26 +339,23 @@ const editProduct = async (req, res) => {
             description,
             publishedDate
         } = req.body;
-        const existingProduct = await productModel.findById(productId);
 
+        const existingProduct = await productModel.findById(productId);
         if (!existingProduct) {
             console.log('Product not found');
             return res.status(404).json({ message: 'Product not found' });
         }
 
         const categories = await Category.find({});
-        if (!categories) {
+        if (!categories || categories.length === 0) {
             console.log('Error when finding categories');
             return res.status(500).json({ message: 'Error fetching categories' });
         }
 
-       
-
-        console.log('dats for edit the product',description);
-
+        console.log('Data for editing the product:', description);
 
         if (!name || !writer || !category_id || !language || !regularPrice || !availableQuantity || !description) {
-            console.log('Problem with finding credentials in req.body in editProduct in productController');
+            console.log('Missing required fields in editProduct');
             return res.render('Admin/editProduct', { 
                 categories, 
                 product: existingProduct, 
@@ -270,44 +363,75 @@ const editProduct = async (req, res) => {
             });
         }
 
+        // Prepare update data
+        const updateData = {
+            productTitle: name,
+            authorName: writer,
+            category_id,
+            language,
+            regularPrice,
+            salePrice,
+            availableQuantity,
+            description,
+            publishedDate
+        };
 
+        // Log uploaded files
+        console.log("Uploaded Files:", req.files);
 
-        const updateData=  {
-            productTitle:name,
-            authorName:writer,
-                category_id,
-                language,
-                regularPrice,
-                salePrice,
-                availableQuantity,
-                description,
-                publishedDate
-            }
+        // **Step 1: Remove old images if new ones are uploaded**
+        // if (req.files && req.files.productImage) {
+        //     // Delete old images (optional: use Cloudinary API if stored there)
+        //     existingProduct.productImage = []; // Clear old images
 
-        // Handle image updates
-        let imagePaths = existingProduct.productImage; // Keep existing images by default
-        if (req.files && req.files.length > 0) {
-            updateData.imagePaths = req.files.map(file => `/uploadedImages/${file.filename}`);
+        //     // Add new images
+        //     updateData.productImage = req.files.productImage.map(file =>
+        //         file.path.replace(/\\/g, "/").replace("public/uploadedImages", "")
+        //     );
+        // } else {
+            if (req.files && req.files.length > 0) {
+                // Remove old images from the file system
+                if (existingProduct.productImage && existingProduct.productImage.length > 0) {
+                    existingProduct.productImage.forEach(imagePath => {
+                        const fullPath = path.join(__dirname, '../public/uploadedImages', path.basename(imagePath));
+                        if (fs.existsSync(fullPath)) {
+                            fs.unlinkSync(fullPath);
+                        }
+                    });
+                }
+    
+                // Add new images
+                updateData.productImage = req.files.map(file => 
+                    `/uploadedImages/${file.filename}`
+                );
+            } else {
+            updateData.productImage = existingProduct.productImage; // Keep old images if no new ones are uploaded
         }
-        console.log('updateData.imagePaths',updateData.imagePaths)
 
-        if (!imagePaths || imagePaths.length < 3) {
-            console.log('Problem with imagePaths in editProduct in productController');
+        // **Step 2: Ensure at least 3 images exist**
+        if (!updateData.productImage || updateData.productImage.length < 3) {
+            console.log('Problem with imagePaths - Minimum 3 images required');
             return res.render('Admin/updateProduct', { 
                 categories, 
                 product: existingProduct, 
-                message: 'Problem with imagePaths - Minimum 3 images required' 
+                message: 'Minimum 3 images required' 
             });
         }
 
-    
+        console.log('Updated Data:', updateData);
 
-    console.log('updateData',updateData)
-        // if (publishedDate) existingProduct.publishedDate = publishedDate;
+        // **Step 3: Use updateOne() to enforce replacement**
+        const updateResult = await productModel.updateOne(
+            { _id: productId },
+            { $set: updateData }
+        );
 
-        await productModel.findByIdAndUpdate(productId,updateData,{new:true})
-        console.log(`Book Updated
-            name: ${name}`);
+        if (updateResult.modifiedCount === 0) {
+            console.log("Failed to update product.");
+            return res.status(500).json({ success: false, message: "Failed to update product" });
+        }
+
+        console.log(`Book Updated: ${name}`);
 
         return res.status(200).json({ success: true, message: 'Product updated successfully!' });
 
@@ -316,6 +440,8 @@ const editProduct = async (req, res) => {
         return res.status(500).json({ success: false, message: 'Server error' });
     }
 };
+
+
 
 
 module.exports = {

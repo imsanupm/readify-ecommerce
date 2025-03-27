@@ -1,3 +1,5 @@
+
+
 <%-include('partials/user/header')%>
 
 
@@ -26,7 +28,65 @@
         width: 50px;
         height: 50px;
     }
-  </style>
+
+
+
+</style>
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+<style>
+    /* Custom Zoom Styles */
+    .zoomContainer {
+        z-index: 999;
+        position: absolute;
+    }
+    
+    .zoomWrapper {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .zoomLens {
+        border: 2px solid rgba(0,0,0,0.2);
+        cursor: zoom-in;
+    }
+    
+    @media (max-width: 768px) {
+        .zoomContainer {
+            display: none !important;
+        }
+        
+        .mobile-zoom-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .mobile-zoom-overlay img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+        }
+    }
+</style>
+
+<!-- Add this before your closing </body> tag -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.js"></script>
+
+
+
+
+
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
   
   <div class="container mt-5">
@@ -334,6 +394,98 @@
 
   </script>
 
+
+<script>
+    $(document).ready(function() {
+        // Function to initialize zoom
+        function initImageZoom() {
+            // Destroy existing zoom to prevent multiple instances
+            if ($('#mainImage').data('elevateZoom')) {
+                $('.zoomContainer').remove();
+                $('#mainImage').removeData('elevateZoom');
+            }
+    
+            // Mobile-specific handling
+            if ($(window).width() <= 768) {
+                setupMobileZoom();
+            } else {
+                setupDesktopZoom();
+            }
+        }
+    
+        // Desktop zoom setup
+        function setupDesktopZoom() {
+            $('#mainImage').elevateZoom({
+                zoomType: "lens",
+                lensShape: "round",
+                lensSize: 200,
+                borderSize: 1,
+                containLensZoom: true,
+                zoomWindowPosition: 1, // Right of the image
+                zoomWindowWidth: 400,
+                zoomWindowHeight: 400,
+                zoomWindowFadeIn: 500,
+                zoomWindowFadeOut: 500,
+                lensFadeIn: 500,
+                lensFadeOut: 500
+            });
+        }
+    
+        // Mobile zoom setup
+        function setupMobileZoom() {
+            // Create mobile zoom overlay
+            if ($('#mobile-zoom-overlay').length === 0) {
+                $('body').append(`
+                    <div id="mobile-zoom-overlay" class="mobile-zoom-overlay">
+                        <img id="mobile-zoomed-image" src="" alt="Zoomed Image">
+                        <button class="close-zoom btn btn-light position-absolute top-0 end-0 m-3">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `);
+            }
+    
+            // Mobile click to zoom
+            $('#mainImage').on('click', function() {
+                $('#mobile-zoomed-image').attr('src', $(this).attr('src'));
+                $('#mobile-zoom-overlay').fadeIn('fast');
+            });
+    
+            // Close zoom
+            $(document).on('click', '#mobile-zoom-overlay .close-zoom', function() {
+                $('#mobile-zoom-overlay').fadeOut('fast');
+            });
+        }
+    
+        // Initialize zoom on page load
+        initImageZoom();
+    
+        // Reinitialize zoom when thumbnails are clicked
+        $('.thumbnail').on('click', function() {
+            // Update main image
+            $('#mainImage').attr('src', $(this).attr('src'));
+            
+            // Reinitialize zoom
+            initImageZoom();
+        });
+    
+        // Reinitialize on window resize
+        $(window).on('resize', initImageZoom);
+    });
+    
+    // Optional: Add manual trigger for zoom reset
+    function resetProductZoom() {
+        if ($(window).width() > 768) {
+            $('#mainImage').elevateZoom('destroy');
+            $('#mainImage').elevateZoom({
+                zoomType: "lens",
+                lensShape: "round",
+                lensSize: 200,
+                // ... other previous options
+            });
+        }
+    }
+    </script>
 
 
 <%-include('partials/user/footer')%>
