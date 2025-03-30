@@ -33,7 +33,7 @@ const verifyAdmin = async (req, res) => {
 
         req.session.user_id = userData._id;
         console.log('Admin authenticated, redirecting to dashboard...');
-        return res.redirect('/admin/dashboard');
+        return res.render('dashboard');
     } catch (error) {
         console.error('Error verifying admin:', error.message);
         if (!res.headersSent) {

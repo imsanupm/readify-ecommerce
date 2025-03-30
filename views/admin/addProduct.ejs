@@ -24,7 +24,7 @@
                           </a>
                         </div>
                         <div class="card-body p-4">
-                          <form id="addProductForm" action="/admin/addProducts" method="POST" enctype="multipart/form-data">
+                          <form id="addProductForm" action="/admin/addProducts" method="POST" enctype="multipart/form-data" novalidate>
                             <div class="row mb-4">
                               <div class="col-md-6">
                                 <div class="card border-0 shadow-sm h-100">
@@ -393,7 +393,13 @@
                       const totalImages = selectedFiles.length + croppedImages.length;
                       const remaining = 3 - totalImages;
                       if (remaining > 0) {
-                        alert(`Please select ${remaining} more image${remaining > 1 ? 's' : ''}. Total images should be at least 3.`);
+                        // alert(`Please select ${remaining} more image${remaining > 1 ? 's' : ''}. Total images should be at least 3.`);
+                        Swal.fire({
+    icon: 'warning',
+    title: 'Insufficient Images',
+    text: `Please select ${remaining} more image${remaining > 1 ? 's' : ''}. Total images should be at least 3.`,
+    confirmButtonText: 'OK'
+});
                       }
                     }
                     
@@ -472,11 +478,11 @@
                   // Form submission
                   document.getElementById('addProductForm').addEventListener('submit', function(e) {
                     e.preventDefault();
-                    
-                    if (croppedImages.length < 3) {
-                      alert('Please upload and crop at least 3 book images');
-                      return false;
-                    }
+                    //====================================here you=================================================
+                    // if (croppedImages.length < 3) {
+                    //   alert('Please upload and crop at least 3 book images');
+                    //   return false;
+                    // }
                     
                     // Show loading overlay
                     showLoading('Saving book...');
@@ -557,10 +563,6 @@
                       cropper = new Cropper(cropperImage, {
                         aspectRatio: 0, // Square aspect ratio for book images
                         viewMode: 2,    // Restrict the crop box to not exceed the size of the canvas
-                        // autoCropArea: 0.8,
-                        // responsive: true,
-                        // guides: true,
-                        // center: true,
                         highlight: false,
                         cropBoxMovable: true,
                         cropBoxResizable: true,
@@ -649,16 +651,27 @@
 
                       },2000)
                     } else {
+                      Swal.fire({
+                        title:'Faild',
+                        icon:"error",
+                        text:response.message
+                      })
+                    
                       throw new Error('Server error');
                     }
                   })
                   .catch(error => {
                     hideLoading();
                     console.error('Error:', error);
-                    alert('There was an error adding the book. Please try again.');
+                    
+                    Swal.fire({
+                      title:"fail",
+                      icon:"error",
+                      text:"All fields are required"
+                    })
                   });
                 }
-                
+                    
                 function showLoading(message) {
                   // Create loading overlay
                   const overlay = document.createElement('div');

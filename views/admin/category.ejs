@@ -19,7 +19,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="editCategoryForm">
+                <form id="editCategoryForm" novalidate>
                     <input type="hidden" id="categoryId" name="categoryId">
 
                     <div class="mb-3">
@@ -57,7 +57,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-3">
-                        <form id="addCategoryForm">
+                        <form id="addCategoryForm" novalidate>
                             <div class="mb-4">
                                 <label for="product_name" class="form-label">Name</label>
                                 <input name="categoryName" type="text" placeholder="Type here" class="form-control" id="product_name" />
@@ -237,9 +237,9 @@ document.querySelectorAll(".edit-category-btn").forEach(button => {
     }
     else{
         Swal.fire({
+            icon: "error",
             title: "error!",
             text: result.message,
-            icon: "error",
             confirmButtonText: "OK",
         })
     }
@@ -286,6 +286,7 @@ document.querySelectorAll(".edit-category-btn").forEach(button => {
                     })
                     .catch(error => {
                         Swal.fire('Error!', 'Something went wrong!', 'error');
+                        console.log('error from line 289',error)
                     });
                 }
             });

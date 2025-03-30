@@ -6,7 +6,7 @@ const Product=require('../../models/admin/productSchema')
 
 const loadHomepage = async (req,res)=>{
     try {
-       const product  = await Product.find({isBlocked:false}).sort({createdAt:-1}).limit(6)
+       const product  = await Product.find({isBlocked:false}).sort({createdAt:-1}).limit(7)
        console.log("produt from home page",product)
         res.render('home',{products:product})
     } catch (error) {
@@ -33,10 +33,15 @@ const signin = async(req,res)=>{
         return res.json({message:"plaese enter a valid Email"})
     }
 
+
          if(email==''||password==''){
             return res.json({message:"all fields are required"})
          }        
         const userData = await User.findOne({email:email})
+        if(!userData.isActive){
+            return res.json({message:"User blocked by the admin"})
+        }
+
         if(userData){
             const passwordMatch = await bcrypt.compare(password,userData.password)
             if(passwordMatch){
@@ -252,3 +257,4 @@ module.exports = {
     loadLogin,
     signin,
 }
+

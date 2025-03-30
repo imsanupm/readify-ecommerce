@@ -22,7 +22,6 @@ const getProductaddPage = async(req, res) => {
     }
 };
 
-// add product function
 
 const addProduct = async (req,res) => {
   console.log('your add product functioin is working ')
@@ -52,7 +51,7 @@ const addProduct = async (req,res) => {
           
           console.log('Problem with finding credentials in req.body in addProduct in productController')
 
-          return res.render('Admin/addProduct',{categories,massege:'Need Credentials'})
+        return res.status(400).json({messge:"All fields are required ",success:false})
       }
 
       const imagePaths = req.files.map(file => `/uploadedImages/${file.filename}`);
@@ -89,12 +88,12 @@ const addProduct = async (req,res) => {
       console.log(`New Book Added
           name : ${name},`)
 
-      // res.status(200).redirect('/addProducts');
+    
       return res.status(201).json({ success: true, message: 'Product added successfully!' });
 
 
   } catch (error) {
-      // res.render('500');
+      
       console.log(`Error show in addProducts and the 
           Error is ${error}`)
   }
@@ -159,14 +158,14 @@ const listProduct = async (req, res) => {
         const id = req.params.id;
         const product = await productModel.findOne({_id:id});
         const category = await Category.find({})
-        // console.log('productData',product)
+       
         res.render("updateProduct",{
             categories:category,
             product
         })
     } catch (error) {
         console.log(`error during getProductEditPage${error}`)
-        //add page not found here
+        
     }
  }
 
@@ -196,7 +195,7 @@ const listProduct = async (req, res) => {
 
 const updateImg = async (req,res) => {
     try {
-        // console.log('this body from updateImg function',req.body);
+        
         console.log("your params are ",req.params.id)
     } catch (error) {
         console.log(`error during updateImage function ${error}`)
@@ -363,7 +362,6 @@ const editProduct = async (req, res) => {
             });
         }
 
-        // Prepare update data
         const updateData = {
             productTitle: name,
             authorName: writer,
@@ -376,19 +374,10 @@ const editProduct = async (req, res) => {
             publishedDate
         };
 
-        // Log uploaded files
+        
         console.log("Uploaded Files:", req.files);
 
-        // **Step 1: Remove old images if new ones are uploaded**
-        // if (req.files && req.files.productImage) {
-        //     // Delete old images (optional: use Cloudinary API if stored there)
-        //     existingProduct.productImage = []; // Clear old images
-
-        //     // Add new images
-        //     updateData.productImage = req.files.productImage.map(file =>
-        //         file.path.replace(/\\/g, "/").replace("public/uploadedImages", "")
-        //     );
-        // } else {
+        
             if (req.files && req.files.length > 0) {
                 // Remove old images from the file system
                 if (existingProduct.productImage && existingProduct.productImage.length > 0) {
@@ -400,15 +389,15 @@ const editProduct = async (req, res) => {
                     });
                 }
     
-                // Add new images
+                
                 updateData.productImage = req.files.map(file => 
                     `/uploadedImages/${file.filename}`
                 );
             } else {
-            updateData.productImage = existingProduct.productImage; // Keep old images if no new ones are uploaded
+            updateData.productImage = existingProduct.productImage;
         }
 
-        // **Step 2: Ensure at least 3 images exist**
+        
         if (!updateData.productImage || updateData.productImage.length < 3) {
             console.log('Problem with imagePaths - Minimum 3 images required');
             return res.render('Admin/updateProduct', { 
@@ -420,7 +409,7 @@ const editProduct = async (req, res) => {
 
         console.log('Updated Data:', updateData);
 
-        // **Step 3: Use updateOne() to enforce replacement**
+       
         const updateResult = await productModel.updateOne(
             { _id: productId },
             { $set: updateData }

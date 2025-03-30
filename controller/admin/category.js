@@ -45,9 +45,20 @@ const addCategory = async(req,res)=>{
     try {
         console.log('category add body ',req.body)
         const {categoryName,description} = req.body
-        const existingCategory = await categoryModel.findOne({name:categoryName});
+
+        const containsNumbers = (input) => /\d/.test(input);  
+        if (containsNumbers(categoryName) || containsNumbers(description)) {
+           return res.status(400).json({
+               message: "Category name and description should not contain numbers!",
+               status: "error"
+           });
+       }
+
+        const existingCategory = await categoryModel.findOne({
+            name: { $regex: new RegExp(`^${categoryName}$`, "i") }
+        });
         if(existingCategory){
-            return res.status(400).json({message:'Category Already Exisits',redirectUrl:"/admin/adminlogin"})
+            return res.json({message:'Category Already Exisits',redirectUrl:"/admin/adminlogin"})
         }
        
        
@@ -99,6 +110,7 @@ const updateCategory = async (req,res) => {
         });
 
     }
+
     const updatedCategory = await categoryModel.findByIdAndUpdate(
         categoryId, 
         { name: categoryName, description:categoryDescription }, 

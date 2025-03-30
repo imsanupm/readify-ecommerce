@@ -4,7 +4,7 @@ const product = require("../../models/admin/productSchema")
 
 const getProductListPage = async (req,res) => {
     try {
-        const product = await Product.find({isBlocked:false}).sort({createdAt:-1}).limit(8)
+        const product = await Product.find({isBlocked:false}).sort({createdAt:-1})
         const category = await Category.find({})
         res.render('productList',{
             products:product,
