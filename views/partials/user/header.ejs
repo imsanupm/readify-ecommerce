@@ -32,24 +32,33 @@
 					<span class="navbar-toggler-icon"></span>
 				</button>
 
-				<div class="collapse navbar-collapse" id="navbarsFurni">
-					<ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+				<ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+					<% if (user) { %>
+
 						<li class="nav-item active">
 							<a class="nav-link" href="/">Home</a>
 						</li>
 						<li><a class="nav-link" href="/productListPage">Shop</a></li>
-						<li><a class="nav-link" href="about.html">About us</a></li>
-						<li><a class="nav-link" href="#">Services</a></li>
-						<!-- service.html if needed -->
-						<li><a class="nav-link" href="/signup">signup</a></li>
-						<li><a class="nav-link" href="/signin">signin</a></li>
-					</ul>
 
-					<ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
-						<li><a class="nav-link" href="#"><img src="/images/user.svg"></a></li>
-						<li><a class="nav-link" href="cart.html"><img src="/images/cart.svg"></a></li>
-					</ul>
-				</div>
+						<li class="nav-item dropdown">
+							<a href="#" class="nav-link dropdown-toggle" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<%= user.name %>
+							</a>
+							<ul class="dropdown-menu" aria-labelledby="userDropdown">
+								<li><a class="dropdown-item" href="/userProfile" style="color:blue;">Profile</a></li>
+								<li><a class="dropdown-item" href="/logout" >Logout</a></li>
+							</ul>
+						</li>
+					<% } else { %>
+						<li class="nav-item active">
+							<a class="nav-link" href="/">Home</a>
+						</li>
+						<li><a class="nav-link" href="/productListPage">Shop</a></li>
+						<li><a class="nav-link" href="/signup">Signup</a></li>
+						<li><a class="nav-link" href="/signin">Signin</a></li>
+					<% } %>
+				</ul>
+				
 			</div>
 				
 		</nav>

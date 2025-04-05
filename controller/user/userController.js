@@ -2,15 +2,25 @@ const User = require('../../models/user/userSchema');
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcrypt');
 const  env = require('dotenv').config();
-const Product=require('../../models/admin/productSchema')
+const Product=require('../../models/admin/productSchema');
+const { session } = require('passport');
+
 
 const loadHomepage = async (req,res)=>{
-    try {
-       const product  = await Product.find({isBlocked:false}).sort({createdAt:-1}).limit(7)
-       console.log("produt from home page",product)
-        res.render('home',{products:product})
-    } catch (error) {
-        console.log(`error during ${error}`);
+    try{
+        const product = await Product.find({isBlocked:false}).sort({createdAt:-1}).limit(7);
+        const user = req.session.user_id;
+        console.log('user details from the session',user);
+
+        if(user){
+            const userData = await User.findOne({_id:user})
+            console.log('user data for logut',userData);
+            res.render('home',{products:product,user:userData});
+        }else{
+            return res.render('home',{products:product});
+        }
+    }catch(error){
+        console.log('error during load homepage ', error)
     }
 }
 
@@ -25,7 +35,7 @@ const loadLogin = async(req,res)=>{
 const signin = async(req,res)=>{
      try {
         const {email,password} = req.body;
-        console.log('body for login',req.body);
+        
 
       let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailPattern.test(email)) {
@@ -246,6 +256,25 @@ const securePassword = async (password)=>{
       }
 }
 
+
+
+
+const logout = async (req,res) => {
+    try {
+        req.session.destroy((erro)=>{
+            if(erro){
+                console.log('error during logout');
+                return res.redirect('/pageNotFound')
+            }
+        })
+        return res.redirect('/signin')
+    } catch (error) {
+        console.log('error during user logout');
+    }
+}
+
+
+
 module.exports = {
     loadHomepage,
     pageNotfound,
@@ -256,5 +285,6 @@ module.exports = {
     resendOtp,
     loadLogin,
     signin,
+    logout,
 }
 

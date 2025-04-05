@@ -7,6 +7,7 @@ const connectDb = require('./config/connectDB');
 const userRouter = require('./router/userRouter');
 const adminRouter = require('./router/adminRoutes');
 const passportConfig = require('./config/passport');
+const authMiddleware = require('./middlewares/authMiddleware');
 const passport = passportConfig.passport;
 
 
@@ -36,7 +37,7 @@ app.set('views', [
     path.join(__dirname, 'views/admin')
   ]);
 
-
+  app.use(authMiddleware.main);
   app.use('/',userRouter);
   app.use('/admin',adminRouter);
 

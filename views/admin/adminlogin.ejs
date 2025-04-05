@@ -60,7 +60,7 @@
 <body>
     <div class="login-container">
         <h2>Admin Login</h2>
-        <form id="admin-login-form" method="post" action="/admin/adminlogin">
+        <form id="admin-login-form" novalidate>
             <div class="form-group">
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" placeholder="Enter your email" required>
@@ -74,3 +74,43 @@
     </div>
 </body>
 </html>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.getElementById('admin-login-form').addEventListener('submit',async function (event) {
+        event.preventDefault();
+        let emailvalue = document.getElementById('email').value;
+        let passwordvalue = document.getElementById('password').value;
+        console.log('password from the front end ',emailvalue,passwordvalue);
+
+        try {
+            let response = await fetch('/admin/adminLogin',{
+                method:"POST",
+                headers:{'content-type':'application/json'},
+                body:JSON.stringify({
+                    email : emailvalue,
+                    password:passwordvalue
+                })
+            })
+
+            let result = await response.json()
+            if(result.success){
+                swal.fire({
+                    icon:"success",
+                    title:"login Successfully",
+                    text:result.message
+                }).then(()=>{
+                    window.location.href = '/admin/dashboard'
+                })
+            }else{
+                  swal.fire({
+                    icon:"error",
+                    title:"login failed",
+                    text:result.message||'an error occured please try again'
+                  })
+            }
+            
+        } catch (error) {
+            console.log('an error during admin login',error)
+        }
+    })
+</script>

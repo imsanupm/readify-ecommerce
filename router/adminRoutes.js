@@ -4,16 +4,15 @@ const adminController = require('../controller/admin/adminSignup')
 const adminDashBoard = require('../controller/admin/dashboard')
 const adminUserList = require('../controller/admin/userList');
 const adminCategory = require('../controller/admin/category');
-const product = require('../models/admin/productSchema');
 const productController = require('../controller/admin/product');
-const multer= require('multer')
+const authMiddleware = require('../middlewares/authMiddleware')
 const uploads = require('../helpers/multer')
 
 
 
 adminRouter.get('/adminlogin', adminController.loadLogin);
 adminRouter.post('/adminlogin',adminController.verifyAdmin);
-adminRouter.get('/dashboard',adminDashBoard.loadDashBoard);
+adminRouter.get('/dashboard',authMiddleware.adminAuth,adminDashBoard.loadDashBoard);
 //user management
 adminRouter.get('/userList',adminUserList.loadUserList);
 adminRouter.post("/toggle-status", adminUserList.toggleUserStatus);

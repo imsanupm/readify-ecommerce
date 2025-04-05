@@ -1,0 +1,769 @@
+<%- include("../../views/partials/user/header") %>
+<style>
+body {
+    background-color: #f8f9fa;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  /* Main color scheme */
+  :root {
+    --primary-color: #3b5d50;
+    --white-color: #ffffff;
+    --light-gray: #f5f5f5;
+    --text-color: #333333;
+    --text-muted: #666666;
+    --border-color: #e0e0e0;
+  }
+  
+  /* Sidebar styles */
+  .sidebar {
+    background-color: var(--white-color);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    height: 100%;
+  }
+  
+  .sidebar-title {
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: var(--primary-color);
+  }
+  
+  .sidebar-link {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    color: var(--text-color);
+    text-decoration: none;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    transition: all 0.3s;
+  }
+  
+  .sidebar-link:hover {
+    background-color: var(--primary-color);
+    color: var(--white-color);
+  }
+  
+  .sidebar-link.active {
+    background-color: var(--primary-color);
+    color: var(--white-color);
+  }
+  
+  .sidebar-link.logout {
+    color: #e74c3c;
+  }
+  
+  .sidebar-link.logout:hover {
+    background-color: #e74c3c;
+    color: var(--white-color);
+  }
+  
+  .sidebar-link i {
+    margin-right: 10px;
+  }
+  
+  /* Profile card styles */
+  .profile-card {
+    background-color: var(--white-color);
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+  }
+  
+  .profile-image {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 auto;
+    display: block;
+    position: relative;
+    border: 3px solid var(--primary-color);
+  }
+  
+  .profile-image-container {
+    position: relative;
+    width: 120px;
+    margin: 0 auto;
+  }
+  
+  .camera-icon {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: var(--white-color);
+    border-radius: 50%;
+    padding: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: var(--primary-color);
+    cursor: pointer;
+  }
+  
+  .profile-details {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .profile-name {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: var(--primary-color);
+  }
+  
+  .profile-contact {
+    color: var(--text-muted);
+    margin-bottom: 5px;
+  }
+  
+  .action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  
+  .action-button {
+    padding: 8px 15px;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    background-color: var(--white-color);
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+  
+  .action-button:hover {
+    background-color: var(--primary-color);
+    color: var(--white-color);
+    border-color: var(--primary-color);
+  }
+  
+  /* Stat cards styles */
+  .stat-card {
+    background-color: var(--white-color);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    height: 100%;
+    transition: transform 0.3s;
+  }
+  
+  .stat-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .stat-icon {
+    font-size: 24px;
+    margin-bottom: 15px;
+  }
+  
+  .stat-icon.orders {
+    color: var(--primary-color);
+  }
+  
+  .stat-icon.wallet {
+    color: var(--primary-color);
+  }
+  
+  .stat-icon.referrals {
+    color: var(--primary-color);
+  }
+  
+  .stat-value {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: var(--primary-color);
+  }
+  
+  .stat-label {
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 992px) {
+    .sidebar {
+      margin-bottom: 20px;
+    }
+  }
+  
+</style>
+<style>
+    /* Modal Styles */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .modal-container {
+      background-color: white;
+      border-radius: 8px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+    
+    .modal-header {
+      background-color: #3b5d50;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .modal-header h2 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    
+    .close-button {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    
+    .modal-body {
+      padding: 20px;
+    }
+    
+    /* Form Styles */
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: #333;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: #3b5d50;
+      box-shadow: 0 0 0 2px rgba(59, 93, 80, 0.2);
+    }
+    
+    .error-message {
+      color: #e74c3c;
+      font-size: 0.875rem;
+      margin-top: 5px;
+      min-height: 18px;
+    }
+    
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.2s;
+    }
+    
+    .btn-primary {
+      background-color: #3b5d50;
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background-color: #2e4a40;
+    }
+    
+    .btn-secondary {
+      background-color: #e2e8f0;
+      color: #333;
+    }
+    
+    .btn-secondary:hover {
+      background-color: #cbd5e0;
+    }
+  </style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Home | My Account</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container py-5">
+    <div class="row g-4">
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <div class="sidebar-title">MY ACCOUNT</div>
+          
+          <a href="#" class="sidebar-link active">
+            <i class="bi bi-grid"></i> Dashboard
+          </a>
+          
+          <a href="#" class="sidebar-link">
+            <i class="bi bi-geo-alt"></i> My Address
+          </a>
+          
+          <a href="#" class="sidebar-link">
+            <i class="bi bi-bag"></i> Orders
+          </a>
+          
+          <a href="#" class="sidebar-link">
+            <i class="bi bi-wallet2"></i> Wallet Status
+          </a>
+          
+          <a href="#" class="sidebar-link">
+            <i class="bi bi-clock-history"></i> Wallet History
+          </a>
+          
+          <a href="#" class="sidebar-link">
+            <i class="bi bi-people"></i> Referrals
+          </a>
+          
+          <a href="#" class="sidebar-link logout">
+            <i class="bi bi-box-arrow-right"></i> Logout
+          </a>
+        </div>
+      </div>
+      
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <!-- Profile Card -->
+        <div class="profile-card">
+          <h5 class="mb-4">
+            <i class="bi bi-person-circle"></i> User Profile
+          </h5>
+          
+          <div class="profile-image-container">
+            <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-IJg75dhohqEAFLos5YV00JrkfYWMBc.png" alt="Profile Picture" class="profile-image">
+            <div class="camera-icon">
+              <i class="bi bi-camera"></i>
+            </div>
+          </div>
+          
+          <div class="profile-details">
+            <p class="text-muted small mb-2">Click the camera icon to upload profile picture</p>
+            <h3 class="profile-name"><%=user.name%></h3>
+            <p class="profile-contact"><i class="bi bi-telephone"></i> <%=user.phonenumber%></p>
+            <p class="profile-contact"><i class="bi bi-envelope"></i> <%=user.email%></p>
+            
+            <div class="action-buttons">
+              <button class="action-button" id="openEmailModalBtn">
+                <i class="bi bi-envelope"></i> Change Email
+              </button>
+              <button class="action-button" onclick="openChangePasswordModal()">
+                <i class="bi bi-lock" ></i> Change Password
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Stats Row -->
+        <div class="row g-4">
+          <!-- Orders Stat -->
+          <div class="col-md-4">
+            <div class="stat-card">
+              <div class="stat-icon orders">
+                <i class="bi bi-bag"></i>
+              </div>
+              <div class="stat-value">3</div>
+              <div class="stat-label">Total Orders</div>
+            </div>
+          </div>
+          
+          <!-- Wallet Stat -->
+          <div class="col-md-4">
+            <div class="stat-card">
+              <div class="stat-icon wallet">
+                <i class="bi bi-wallet2"></i>
+              </div>
+              <div class="stat-value">₹2,500</div>
+              <div class="stat-label">Available Balance</div>
+            </div>
+          </div>
+          
+          <!-- Referrals Stat -->
+          <div class="col-md-4">
+            <div class="stat-card">
+              <div class="stat-icon referrals">
+                <i class="bi bi-people"></i>
+              </div>
+              <div class="stat-value">₹500</div>
+              <div class="stat-label">Earned So Far</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+        //change password modal 
+<div id="changePasswordModal" class="modal-overlay">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h2>Change Password</h2>
+        <button type="button" class="close-button" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="changePasswordForm"  novalidate>
+          <div class="form-group">
+            <label for="oldPassword">Current Password</label>
+            <input 
+              type="password" 
+              id="oldPassword" 
+              name="oldPassword" 
+              required 
+              class="form-control"
+            >
+          </div>
+          
+          <div class="form-group">
+            <label for="newPassword">New Password</label>
+            <input 
+              type="password" 
+              id="newPassword" 
+              name="newPassword" 
+              required 
+              class="form-control"
+              minlength="8"
+            >
+          </div>
+          
+          <div class="form-group">
+            <label for="confirmPassword">Confirm New Password</label>
+            <input 
+              type="password" 
+              id="confirmPassword" 
+              name="confirmPassword" 
+              required 
+              class="form-control"
+            >
+            <div id="passwordMatchError" class="error-message"></div>
+          </div>
+          
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary">Update Password</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Custom CSS -->
+<style>
+  .modal-backdrop.show {
+    opacity: 0.5;
+  }
+  
+  .otp-timer {
+    font-weight: bold;
+    color: #dc3545;
+  }
+  
+  .hidden {
+    display: none;
+  }
+</style>
+
+<!-- Button to trigger the email modal -->
+<!-- <button type="button" class="btn btn-primary" id="openEmailModalBtn">
+  Verify Email
+</button> -->
+
+<!-- Email Modal -->
+<div class="modal fade" id="emailModal" tabindex="-1" aria-labelledby="emailModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="emailModalLabel">Enter Your Email</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="emailForm">
+          <div class="mb-3">
+            <label for="email" class="form-label">Email address</label>
+            <input type="email" class="form-control" id="email" placeholder="name@example.com" required>
+            <div class="form-text">We'll send a verification code to this email.</div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- OTP Modal -->
+<div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="otpModalLabel">Enter Verification Code</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>We've sent a verification code to <span id="emailDisplay" class="fw-bold"></span></p>
+        <p>Code expires in: <span id="timerDisplay" class="otp-timer">02:00</span></p>
+        
+        <form id="otpForm">
+          <div class="mb-3">
+            <label for="otp" class="form-label">Verification Code</label>
+            <input type="text" class="form-control" id="otp" placeholder="Enter code" required>
+          </div>
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="text-muted small">Time remaining: <span id="timeRemaining" class="otp-timer">02:00</span></span>
+            <button type="button" id="resendBtn" class="btn btn-link p-0" disabled>Resend code</button>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" id="verifyBtn" class="btn btn-primary">Verify</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</html>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Bootstrap Modal instances
+      const emailModalEl = document.getElementById('emailModal');
+      const otpModalEl = document.getElementById('otpModal');
+      const emailModal = new bootstrap.Modal(emailModalEl);
+      const otpModal = new bootstrap.Modal(otpModalEl);
+      
+      // Form elements
+      const emailForm = document.getElementById('emailForm');
+      const otpForm = document.getElementById('otpForm');
+      const emailInput = document.getElementById('email');
+      const otpInput = document.getElementById('otp');
+      const emailDisplay = document.getElementById('emailDisplay');
+      const timeRemaining = document.getElementById('timeRemaining');
+      const timerDisplay = document.getElementById('timerDisplay');
+      const resendBtn = document.getElementById('resendBtn');
+      const verifyBtn = document.getElementById('verifyBtn');
+      const openEmailModalBtn = document.getElementById('openEmailModalBtn');
+      
+      let timer;
+      let timeLeft = 120; // 2 minutes in seconds
+      
+      // Open email modal
+      openEmailModalBtn.addEventListener('click', function() {
+        emailModal.show();
+      });
+      
+      // Handle email form submission
+      emailForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const email = emailInput.value;
+        if (email) {
+          emailModal.hide();
+          emailDisplay.textContent = email;
+          otpModal.show();
+          startTimer();
+        }
+      });
+      
+      // Handle OTP form submission
+      otpForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const otp = otpInput.value;
+        if (otp) {
+          // Here you would verify the OTP with your backend
+          alert(`OTP verification successful for ${emailDisplay.textContent}`);
+          otpModal.hide();
+          resetFlow();
+        }
+      });
+      
+      // Reset when modals are closed
+      emailModalEl.addEventListener('hidden.bs.modal', function() {
+        emailForm.reset();
+      });
+      
+      otpModalEl.addEventListener('hidden.bs.modal', function() {
+        resetFlow();
+      });
+      
+      // Start the timer
+      function startTimer() {
+        timeLeft = 120; // Reset to 2 minutes
+        clearInterval(timer);
+        
+        updateTimerDisplay();
+        
+        timer = setInterval(function() {
+          timeLeft--;
+          updateTimerDisplay();
+          
+          if (timeLeft <= 0) {
+            clearInterval(timer);
+            resendBtn.disabled = false;
+            verifyBtn.disabled = true;
+          }
+        }, 1000);
+      }
+      
+      // Update timer display
+      function updateTimerDisplay() {
+        const mins = Math.floor(timeLeft / 60);
+        const secs = timeLeft % 60;
+        const display = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        timeRemaining.textContent = display;
+        timerDisplay.textContent = display;
+      }
+      
+      // Reset the flow
+      function resetFlow() {
+        otpForm.reset();
+        clearInterval(timer);
+        resendBtn.disabled = true;
+        verifyBtn.disabled = false;
+      }
+      
+      // Resend OTP
+      resendBtn.addEventListener('click', function() {
+        // Here you would call your API to resend the OTP
+        startTimer();
+        resendBtn.disabled = true;
+        verifyBtn.disabled = false;
+        alert(`OTP resent to ${emailDisplay.textContent}`);
+      });
+    });
+  </script>
+
+
+ <script>
+    // Function to open the modal
+    function openChangePasswordModal() {
+      document.getElementById('changePasswordModal').style.display = 'flex';
+      document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
+    }
+    
+    // Function to close the modal
+    function closeModal() {
+      document.getElementById('changePasswordModal').style.display = 'none';
+      document.body.style.overflow = 'auto'; // Re-enable scrolling
+      
+      // Reset form
+      document.getElementById('changePasswordForm').reset();
+      document.getElementById('passwordMatchError').textContent = '';
+    }
+    
+    // Form validation
+    document.getElementById('changePasswordForm').addEventListener('submit', function(event) {
+      const newPassword = document.getElementById('newPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      const errorElement = document.getElementById('passwordMatchError');
+      
+      if (newPassword !== confirmPassword) {
+        event.preventDefault();
+        errorElement.textContent = 'Passwords do not match';
+      } else {
+        errorElement.textContent = '';
+      }
+    });
+    
+    // Check password match on input
+    document.getElementById('confirmPassword').addEventListener('input', function() {
+      const newPassword = document.getElementById('newPassword').value;
+      const confirmPassword = this.value;
+      const errorElement = document.getElementById('passwordMatchError');
+      
+      if (confirmPassword && newPassword !== confirmPassword) {
+        errorElement.textContent = 'Passwords do not match';
+      } else {
+        errorElement.textContent = '';
+      }
+    });
+  </script>
+
+  <script>
+    document.getElementById("changePasswordForm").addEventListener('submit',async (event) => {
+        event.preventDefault()
+        const oldPasswordValue = document.getElementById('oldPassword').value;
+        const newPasswordValue = document.getElementById('newPassword').value;
+        const confirmPasswordValue = document.getElementById('confirmPassword').value
+
+        const response = await fetch('/changePassword',{
+             method:"PATCH",
+             headers:{'content-type':"application/json"},
+             body:JSON.stringify({
+             oldPassword : oldPasswordValue,
+             newPassword : newPasswordValue,
+             confirmPassword: confirmPasswordValue,
+             }) 
+        })
+        const result = await response.json();
+        if(result.success){
+            Swal.fire({
+                icon:"success",
+                title:"success",
+                text:result.message
+            }).then(()=>{
+                window.location.reload();
+            })
+        }else{
+            Swal.fire({
+                icon:"error",
+                title:"Action Failed",
+                text:result.message||'an error occured from changing the password'
+            })
+        }
+    })
+  </script>
+<%- include("../../views/partials/user/footer") %>
+
+
+
+
+

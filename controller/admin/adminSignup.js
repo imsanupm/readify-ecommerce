@@ -18,22 +18,26 @@ const verifyAdmin = async (req, res) => {
         
         const userData = await User.findOne({ email });
 
+        if(!email||!password){
+            return res.json({message:"all fields are required"})
+        }
+
         if (!userData) {
-            return res.render('login', { message: 'Invalid User' });
+            return res.json( { message: 'Invalid User',success:false});
         }
 
         const passwordMatch = await bcrypt.compare(password, userData.password);
         if (!passwordMatch) {
-            return res.render('login', { message: 'Invalid Password' });
+            return res.json('adminLogin', { message: 'Invalid Password' });
         }
 
         if (userData.is_admin !== 1) {
-            return res.render('login', { message: 'Invalid admin' });
+            return res.json('adminLogin', { message: 'Invalid admin' });
         }
 
-        req.session.user_id = userData._id;
-        console.log('Admin authenticated, redirecting to dashboard...');
-        return res.render('dashboard');
+        req.session.admin_id = userData._id;
+        console.log('amdin id',userData._id);
+        return res.json({success:true,message:'Login successfully',redirecturl:'/dahsboard'})
     } catch (error) {
         console.error('Error verifying admin:', error.message);
         if (!res.headersSent) {
