@@ -1,4 +1,5 @@
 const mongoose = require("mongoose")
+const { Schema } = mongoose;
 const mongoosePaginate = require('mongoose-paginate-v2');
 const userSchema = new mongoose.Schema({
     name: {
@@ -56,6 +57,11 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default:0
       },
+      addresses:[{
+        type:Schema.Types.ObjectId,
+        ref:'Address'
+    }],
+
 
 }, { timestamps: true });
 userSchema.plugin(mongoosePaginate);

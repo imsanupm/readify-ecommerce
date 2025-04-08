@@ -18,6 +18,8 @@ const validateChangePassword = async (req,res,next) => {
     
 }
 
+
+
 module.exports={
     validateChangePassword
 }

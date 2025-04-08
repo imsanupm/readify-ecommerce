@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Address</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
+  <style>
+    /* Base Styles & Variables */
+    :root {
+      --primary: #3b5d50;
+      --primary-dark: #2d4a3e;
+      --primary-light: rgba(59, 93, 80, 0.1);
+      --white: #ffffff;
+      --light-gray: #f8f9fa;
+      --medium-gray: #e0e0e0;
+      --dark-gray: #333333;
+      --text-color: #212529;
+      --border-radius: 10px;
+      --input-radius: 8px;
+      --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      --transition: all 0.3s ease;
+    }
+
+    /* Global Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--light-gray);
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+
+    /* Layout */
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px 15px;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      margin: 0 -15px;
+    }
+
+    .col-lg-3, .col-lg-9 {
+      padding: 0 15px;
+      width: 100%;
+    }
+
+    @media (min-width: 992px) {
+      .col-lg-3 {
+        flex: 0 0 25%;
+        max-width: 25%;
+      }
+      .col-lg-9 {
+        flex: 0 0 75%;
+        max-width: 75%;
+      }
+    }
+
+    /* Form Container */
+    .form-container {
+      background-color: var(--white);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      overflow: hidden;
+    }
+
+    .form-header {
+      background-color: var(--primary);
+      color: var(--white);
+      padding: 20px 25px;
+    }
+
+    .form-title {
+      font-size: 24px;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .form-subtitle {
+      font-size: 14px;
+      opacity: 0.9;
+      margin-top: 5px;
+    }
+
+    .form-body {
+      padding: 25px;
+    }
+
+    /* Form Grid */
+    .form-row {
+      display: flex;
+      flex-wrap: wrap;
+      margin: 0 -10px 15px;
+    }
+
+    .form-group {
+      padding: 0 10px;
+      margin-bottom: 20px;
+      flex: 0 0 100%;
+    }
+
+    @media (min-width: 768px) {
+      .form-group.col-md-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+      }
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--text-color);
+    }
+
+    .required::after {
+      content: "*";
+      color: #dc3545;
+      margin-left: 4px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px 15px;
+      font-size: 16px;
+      border: 1px solid var(--medium-gray);
+      border-radius: var(--input-radius);
+      background-color: var(--white);
+      transition: var(--transition);
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 93, 80, 0.2);
+    }
+
+    .form-select {
+      width: 100%;
+      padding: 10px 15px;
+      font-size: 16px;
+      border: 1px solid var(--medium-gray);
+      border-radius: var(--input-radius);
+      background-color: var(--white);
+      transition: var(--transition);
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%233b5d50' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 15px center;
+      padding-right: 35px;
+    }
+
+    .form-select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 93, 80, 0.2);
+    }
+
+    /* Buttons */
+    .btn-container {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      font-size: 16px;
+      font-weight: 500;
+      border: none;
+      border-radius: var(--input-radius);
+      cursor: pointer;
+      transition: var(--transition);
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: var(--white);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      border: 1px solid var(--primary);
+      color: var(--primary);
+    }
+
+    .btn-outline:hover {
+      background-color: var(--primary-light);
+    }
+
+    .btn-danger {
+      background-color: #dc3545;
+      color: var(--white);
+    }
+
+    .btn-danger:hover {
+      background-color: #c82333;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      .btn-container {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .btn {
+        width: 100%;
+      }
+    }
+
+    /* Default Address Badge */
+    .default-badge {
+      display: inline-block;
+      background-color: var(--primary-light);
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 4px;
+      margin-left: 10px;
+    }
+
+    /* Make Default Checkbox */
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .form-checkbox {
+      margin-right: 10px;
+      width: 18px;
+      height: 18px;
+      accent-color: var(--primary);
+    }
+
+    .checkbox-label {
+      font-size: 14px;
+      color: var(--text-color);
+    }
+  </style>
+</head>
+<body>
+  <!-- Header placeholder -->
+  <header>
+    <%- include('partials/user/header') %>
+  </header>
+
+  <div class="container">
+    <div class="row">
+      <!-- Sidebar placeholder - will be included via EJS partial -->
+      <div class="col-lg-3">
+        <%- include('partials/user/profileSidebar') %>
+      </div>
+
+      <!-- Main content -->
+      <div class="col-lg-9">
+        <div class="form-container">
+          <div class="form-header">
+            <h1 class="form-title">Edit Address <span class="default-badge">Default</span></h1>
+            <p class="form-subtitle">Update your delivery address details below</p>
+          </div>
+          
+          <div class="form-body">
+            <form id="editAddressForm"  novalidate>
+              <input type="hidden" name="addressId" value="<%= address._id %>">
+              
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="fullName" class="form-label required">Full Name</label>
+                  <input type="text" class="form-control" id="fullName" name="fullName" value="<%= address.fullname %>" placeholder="Enter your full name" required>
+                </div>
+                
+                <div class="form-group col-md-6">
+                  <label for="mobile" class="form-label required">Mobile Number</label>
+                  <input type="tel" class="form-control" id="mobile" name="mobile" value="<%= address.mobile %>" placeholder="Enter your mobile number" required>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="pincode" class="form-label required">Pincode</label>
+                  <input type="text" class="form-control" id="pincode" name="pincode" value="<%= address.pincode %>" placeholder="Enter pincode" required>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="state" class="form-label required">State</label>
+                  <input type="text" class="form-control" id="state" name="state" value="<%= address.state %>" placeholder="Enter state" required>
+                </div>
+                
+                <div class="form-group col-md-6">
+                  <label for="district" class="form-label required">District</label>
+                  <input type="text" class="form-control" id="district" name="district" value="<%= address.district %>" placeholder="Enter district" required>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="villageCity" class="form-label">Village/City</label>
+                  <input type="text" class="form-control" id="villageCity" name="villageCity" value="<%= address.village_city %>" placeholder="Enter village or city">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="houseFlat" class="form-label">House/Flat</label>
+                  <input type="text" class="form-control" id="houseFlat" name="houseFlat" value="<%= address.house_flat %>" placeholder="Enter house or flat number">
+                </div>
+                
+                <div class="form-group col-md-6">
+                  <label for="landmark" class="form-label">Landmark</label>
+                  <input type="text" class="form-control" id="landmark" name="landmark" value="<%= address.landmark %>" placeholder="Enter nearby landmark">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="addressType" class="form-label">Address Type</label>
+                  <select class="form-select" id="addressType" name="addressType">
+                    <option value="Home" <%= address.addressType === 'Home' ? 'selected' : '' %>>Home</option>
+                    <option value="Work" <%= address.addressType === 'Work' ? 'selected' : '' %>>Work</option>
+                    <option value="Other" <%= address.addressType === 'Other' ? 'selected' : '' %>>Other</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="checkbox-container">
+                <input type="checkbox" class="form-checkbox" id="makeDefault" name="makeDefault" <%= address.isDefault ? 'checked' : '' %>>
+                <label for="makeDefault" class="checkbox-label">Make this my default address</label>
+              </div>
+
+              <div class="btn-container">
+                <div>
+                  <a href="/myAdress" class="btn btn-outline">Cancel</a>
+                  <button type="button" class="btn btn-danger" onclick="confirmDelete('<%= address._id %>')">Delete</button>
+                </div>
+                <button type="submit" class="btn btn-primary">Update Address</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer placeholder -->
+  <footer>
+    <%- include('partials/user/footer') %>
+  </footer>
+
+   
+  <div id="deleteModal" class="modal-overlay">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h2>Confirm Deletion</h2>
+        <button class="close-button" onclick="closeDeleteModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete this address? This action cannot be undone.</p>
+        <div class="form-actions">
+          <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+          <form id="deleteForm" action="/deleteAddress" method="POST">
+            <input type="hidden" id="deleteAddressId" name="addressId">
+            <button type="submit" class="btn btn-danger">Delete</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div> 
+
+  <script>
+    console.log('script is loading')
+    document.getElementById('editAddressForm').addEventListener('submit',async (event) => {
+      event.preventDefault()
+      const formData = new FormData(event.target);
+      const data = Object.fromEntries(formData.entries());
+      data.addressType = document.getElementById('addressType').value;
+  
+  console.log('updateData', data); 
+      try {
+        const response = await fetch(`/addresses/edit/${data.addressId}`,{
+        method:"PUT",
+        headers:{"content-type":"application/json"},
+        body:JSON.stringify(data),
+      })
+        const result = await response.json()
+        if(result.success){
+          Swal.fire({
+            icon:"success",
+            title:"success",
+            text:result.message||"Your address updated Well"
+          }).then(()=>{
+            window.location.href = '/myAdress'
+          })
+        }else{
+          Swal.fire({
+            icon:"error",
+            title:"Please Try Again",
+            text:result.message
+          })
+        }
+      } catch (error) {
+        console.log('error during the edit address',error);
+      }
+   
+    })
+  </script>
+
+
+    // Function to show delete confirmation modal
+    function confirmDelete(addressId) {
+      document.getElementById('deleteAddressId').value = addressId;
+      document.getElementById('deleteModal').style.display = 'flex';
+    }
+
+    // Function to close delete confirmation modal
+    function closeDeleteModal() {
+      document.getElementById('deleteModal').style.display = 'none';
+    }
+
+    // Close modal if user clicks outside of it
+    window.onclick = function(event) {
+      const modal = document.getElementById('deleteModal');
+      if (event.target === modal) {
+        closeDeleteModal();
+      }
+    }
+
+    // Form validation
+    document.getElementById('editAddressForm').addEventListener('submit', function(event) {
+      const requiredFields = this.querySelectorAll('[required]');
+      let isValid = true;
+
+      requiredFields.forEach(field => {
+        if (!field.value.trim()) {
+          isValid = false;
+          field.style.borderColor = '#dc3545';
+        } else {
+          field.style.borderColor = '';
+        }
+      });
+
+      if (!isValid) {
+        event.preventDefault();
+        alert('Please fill in all required fields.');
+      }
+    });
+  </script> -->
+</body>
+</html>
+

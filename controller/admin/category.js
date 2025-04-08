@@ -78,8 +78,7 @@ const addCategory = async(req,res)=>{
 const updateCategory = async (req,res) => {
   try {
       
-    console.log("req params",req.params)
-    console.log("req body",req.body)
+
      
      const {categoryName,categoryDescription} = req.body
      const {categoryId} = req.params
@@ -101,7 +100,7 @@ const updateCategory = async (req,res) => {
      const existingCategory = await categoryModel.findOne({
         _id:categoryId,
     });
-     console.log(`category from database ${existingCategory}`);
+    
 
      if (!existingCategory) {
         return res.status(400).json({

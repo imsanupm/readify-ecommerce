@@ -1,0 +1,300 @@
+<%- include('../partials/user/header') %>
+
+<div class="main-container">
+  <%- include('../partials/user/profileSidebar') %>
+  
+  <!-- Main content -->
+
+  <style>
+    /* Main Styles */
+:root {
+  --primary-color: #3b5d50;
+  --white: #ffffff;
+  --light-gray: #f8f9fa;
+  --dark-gray: #333333;
+  --border-radius: 8px;
+  --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --transition: all 0.3s ease;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--light-gray);
+  color: var(--dark-gray);
+  margin: 0;
+  padding: 0;
+}
+
+/* Main container for sidebar and content */
+.main-container {
+  display: flex;
+  min-height: calc(100vh - 100px); /* Adjust based on your header/footer height */
+}
+
+/* Container for the address content */
+.container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+  flex: 1;
+}
+
+h1 {
+  color: var(--primary-color);
+  margin-bottom: 1.5rem;
+}
+
+/* Address Grid */
+.address-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Address Card */
+.address-card {
+  background-color: var(--white);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 1.5rem;
+  transition: var(--transition);
+}
+
+.address-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.address-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+}
+
+.address-phone {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  color: var(--dark-gray);
+}
+
+.address-details {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+}
+
+/* Buttons */
+.btn-container {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: var(--border-radius);
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: var(--white);
+}
+
+.btn-primary:hover {
+  background-color: #2d4a3e;
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+}
+
+.btn-outline:hover {
+  background-color: var(--primary-color);
+  color: var(--white);
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: var(--white);
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
+}
+
+.add-address-container {
+  margin: 2rem 0;
+  text-align: center;
+}
+
+.add-address-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+}
+
+.add-address-btn::before {
+  content: "+";
+  font-size: 1.25rem;
+}
+
+/* Pagination styles */
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+  gap: 0.5rem;
+}
+
+.pagination-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--primary-color);
+  border-radius: var(--border-radius);
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.pagination-btn:hover {
+  background-color: var(--primary-color);
+  color: var(--white);
+}
+
+.pagination-btn.active {
+  background-color: var(--primary-color);
+  color: var(--white);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .main-container {
+    flex-direction: column;
+  }
+
+  .address-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pagination {
+    flex-wrap: wrap;
+  }
+}
+
+
+  </style>
+  <div class="container">
+    <h1>My Addresses</h1>
+    
+    <!-- Add New Address Button -->
+    <div class="add-address-container">
+      <a href="/addNewAddress" class="btn btn-primary add-address-btn">Add New Address</a>
+    </div>
+    
+    <!-- Address Grid -->
+    <% if(addresses.length > 0) { %>
+      <div class="address-grid grid grid-cols-1 md:grid-cols-2 gap-4">
+        <% addresses.forEach(address => { %>
+          <div class="address-card bg-white rounded-lg shadow-md p-5 border-l-4" style="border-left-color: #3b5d50;">
+            <div class="flex justify-between items-start mb-3">
+              <div class="address-name text-xl font-semibold" style="color: #3b5d50;"><%=address.fullname%></div>
+              <span class="address-type px-2 py-1 text-xs rounded-full text-white" style="background-color: #3b5d50;"><%=address.addressType%></span>
+            </div>
+            
+            <div class="address-phone text-gray-700 mb-3">
+              <i class="fas fa-phone-alt mr-2" style="color: #3b5d50;"></i><%=address.mobile%>
+            </div>
+            
+            <div class="address-details text-gray-600 mb-4">
+              <%=address.house_flat%><br>
+              <%=address.village_city%><br>
+              <%=address.district%>, <%=address.state%> <%=address.pincode%><br>
+              <% if(address.landmark) { %>
+                <span class="text-gray-500"><i class="fas fa-map-marker-alt mr-1" style="color: #3b5d50;"></i><%=address.landmark%></span>
+              <% } %>
+            </div>
+            
+            <div class="btn-container flex gap-3 mt-3">
+              <a href="/addresses/edit/<%=address._id%>" class="btn btn-outline px-4 py-2 border rounded-md transition-colors" style="border-color: #3b5d50; color: #3b5d50; hover:background-color: #f0f5f3;">Update</a>
+              <form action="/addresses/delete/<%=address._id%>"  style="display: inline;">
+                <button type="button"
+                class="btn btn-danger px-4 py-2 rounded-md text-white transition-colors"
+                style="background-color: #d64545;"
+                onclick="confirmDelete('<%= address._id %>')">
+                Delete
+              </button>
+              </form>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+    <% } else { %>
+      <div class="empty-state bg-white rounded-lg p-8 text-center">
+        <div class="text-5xl mb-4" style="color: #3b5d50;">📭</div>
+        <p class="text-gray-500 mb-4">You don't have any saved addresses yet.</p>
+        <a href="/addresses/add" class="px-4 py-2 rounded-md text-white transition-colors" style="background-color: #3b5d50; hover:background-color: #2d4a40;">Add New Address</a>
+      </div>
+    <% } %>
+   
+    <!-- Simple Pagination -->
+    <div class="pagination">
+      <a href="/addresses?page=1" class="pagination-btn active">1</a>
+      <a href="/addresses?page=2" class="pagination-btn">2</a>
+      <a href="/addresses?page=2" class="pagination-btn">Next &raquo;</a>
+    </div>
+  </div>
+</div>
+
+
+
+ <script>
+  function confirmDelete(addressId) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "Do you really want to delete this address?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fetch(`/addresses/delete/${addressId}`, {
+          method: 'DELETE',
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            Swal.fire({
+              title: 'Deleted!',
+              text: 'The address has been deleted.',
+              icon: 'success',
+              confirmButtonColor: '#3085d6'
+            }).then(() => {
+              // Optionally reload page or remove element from DOM
+              location.reload();
+            });
+          } else {
+            Swal.fire('Error', data.message || 'Something went wrong.', 'error');
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          Swal.fire('Error', 'Something went wrong.', 'error');
+        });
+      }
+    });
+  }
+</script>
+
+
+
+<%- include('../partials/user/footer') %>
+

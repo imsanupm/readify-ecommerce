@@ -4,17 +4,17 @@ const bcrypt = require('bcrypt');
 const  env = require('dotenv').config();
 const Product=require('../../models/admin/productSchema');
 const { session } = require('passport');
+const { json } = require('body-parser');
 
 
 const loadHomepage = async (req,res)=>{
     try{
         const product = await Product.find({isBlocked:false}).sort({createdAt:-1}).limit(7);
         const user = req.session.user_id;
-        console.log('user details from the session',user);
 
         if(user){
             const userData = await User.findOne({_id:user})
-            console.log('user data for logut',userData);
+           
             res.render('home',{products:product,user:userData});
         }else{
             return res.render('home',{products:product});
@@ -102,6 +102,7 @@ const sendVarificationEmail = async (email, otp) => {
             text: `Your OTP is ${otp}`,
             html: `<b>Your OTP is ${otp}</b>`,
         });
+         
         return info?.accepted?.length > 0;
     } catch (error) {
         console.log(`error during sendVarificationEmail function in controller ${error}`);
@@ -194,11 +195,10 @@ const verifyOtp = async (req, res) => {
             phonenumber: userData.Phone,
             isVerified: true
         });   
-                  //you also have to add the signup user into session 
-
+                 
         await newUser.save();
 
-        // Clear session data
+        
         req.session.userOtp = null;
         req.session.userData = null;
         req.session.otpExpiry = null;
@@ -263,13 +263,13 @@ const logout = async (req,res) => {
     try {
         req.session.destroy((erro)=>{
             if(erro){
-                console.log('error during logout');
+                console.log('error during logout',erro);
                 return res.redirect('/pageNotFound')
             }
         })
         return res.redirect('/signin')
     } catch (error) {
-        console.log('error during user logout');
+        console.log('error during user logout',error);
     }
 }
 
@@ -286,5 +286,7 @@ module.exports = {
     loadLogin,
     signin,
     logout,
+    generateOTP,
+    sendVarificationEmail,
 }
 

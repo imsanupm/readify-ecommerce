@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add New Address</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
+  <style>
+    /* Base Styles & Variables */
+    :root {
+      --primary: #3b5d50;
+      --primary-dark: #2d4a3e;
+      --primary-light: rgba(59, 93, 80, 0.1);
+      --white: #ffffff;
+      --light-gray: #f8f9fa;
+      --medium-gray: #e0e0e0;
+      --dark-gray: #333333;
+      --text-color: #212529;
+      --border-radius: 10px;
+      --input-radius: 8px;
+      --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      --transition: all 0.3s ease;
+    }
+
+    /* Global Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--light-gray);
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+
+    /* Layout */
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px 15px;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      margin: 0 -15px;
+    }
+
+    .col-lg-3, .col-lg-9 {
+      padding: 0 15px;
+      width: 100%;
+    }
+
+    @media (min-width: 992px) {
+      .col-lg-3 {
+        flex: 0 0 25%;
+        max-width: 25%;
+      }
+      .col-lg-9 {
+        flex: 0 0 75%;
+        max-width: 75%;
+      }
+    }
+
+    /* Form Container */
+    .form-container {
+      background-color: var(--white);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      overflow: hidden;
+    }
+
+    .form-header {
+      background-color: var(--primary);
+      color: var(--white);
+      padding: 20px 25px;
+    }
+
+    .form-title {
+      font-size: 24px;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .form-subtitle {
+      font-size: 14px;
+      opacity: 0.9;
+      margin-top: 5px;
+    }
+
+    .form-body {
+      padding: 25px;
+    }
+
+    /* Form Grid */
+    .form-row {
+      display: flex;
+      flex-wrap: wrap;
+      margin: 0 -10px 15px;
+    }
+
+    .form-group {
+      padding: 0 10px;
+      margin-bottom: 20px;
+      flex: 0 0 100%;
+    }
+
+    @media (min-width: 768px) {
+      .form-group.col-md-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+      }
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--text-color);
+    }
+
+    .required::after {
+      content: "*";
+      color: #dc3545;
+      margin-left: 4px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px 15px;
+      font-size: 16px;
+      border: 1px solid var(--medium-gray);
+      border-radius: var(--input-radius);
+      background-color: var(--white);
+      transition: var(--transition);
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 93, 80, 0.2);
+    }
+
+    .form-select {
+      width: 100%;
+      padding: 10px 15px;
+      font-size: 16px;
+      border: 1px solid var(--medium-gray);
+      border-radius: var(--input-radius);
+      background-color: var(--white);
+      transition: var(--transition);
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%233b5d50' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 15px center;
+      padding-right: 35px;
+    }
+
+    .form-select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 93, 80, 0.2);
+    }
+
+    /* Buttons */
+    .btn-container {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      font-size: 16px;
+      font-weight: 500;
+      border: none;
+      border-radius: var(--input-radius);
+      cursor: pointer;
+      transition: var(--transition);
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: var(--white);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      border: 1px solid var(--primary);
+      color: var(--primary);
+    }
+
+    .btn-outline:hover {
+      background-color: var(--primary-light);
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      .btn-container {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header placeholder -->
+  <header>
+    <%- include('partials/user/header') %>
+  </header>
+
+  <div class="container">
+    <div class="row">
+      <!-- Sidebar placeholder - will be included via EJS partial -->
+      <div class="col-lg-3">
+        <%- include('partials/user/profileSidebar') %>
+      </div>
+
+      <!-- Main content -->
+      <div class="col-lg-9">
+        <div class="form-container">
+          <div class="form-header">
+            <h1 class="form-title">Add New Address</h1>
+            <p class="form-subtitle">Please fill in the details below to add a new delivery address</p>
+          </div>
+          
+          <div class="form-body">
+            <form id="addressForm" novalidate>
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="fullName" class="form-label required">Full Name</label>
+                  <input type="text" class="form-control" id="fullName" name="fullName" placeholder="Enter your full name" required>
+                </div>
+                
+                <div class="form-group col-md-6">
+                  <label for="mobile" class="form-label required">Mobile Number</label>
+                  <input type="tel" class="form-control" id="mobile" name="mobile" placeholder="Enter your mobile number" required>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <!-- <div class="form-group col-md-6">
+                  <label for="alternatePhone" class="form-label">Alternate Phone</label>
+                  <input type="tel" class="form-control" id="alternatePhone" name="alternatePhone" placeholder="Enter alternate phone (optional)">
+                </div> -->
+                
+                <div class="form-group col-md-6">
+                  <label for="pincode" class="form-label required">Pincode</label>
+                  <input type="text" class="form-control" id="pincode" name="pincode" placeholder="Enter pincode" required>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="state" class="form-label required">State</label>
+                  <input type="text" class="form-control" id="state" name="state" placeholder="Enter state" required>
+                </div>
+                
+                <div class="form-group col-md-6">
+                  <label for="district" class="form-label required">District</label>
+                  <input type="text" class="form-control" id="district" name="district" placeholder="Enter district" required>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="villageCity" class="form-label">Village/City</label>
+                  <input type="text" class="form-control" id="villageCity" name="villageCity" placeholder="Enter village or city">
+                </div>
+                
+                <!-- <div class="form-group col-md-6">
+                  <label for="street" class="form-label">Street</label>
+                  <input type="text" class="form-control" id="street" name="street" placeholder="Enter street name">
+                </div> -->
+              </div>
+
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="houseFlat" class="form-label">House/Flat</label>
+                  <input type="text" class="form-control" id="houseFlat" name="houseFlat" placeholder="Enter house or flat number">
+                </div>
+                
+                <div class="form-group col-md-6">
+                  <label for="landmark" class="form-label">Landmark</label>
+                  <input type="text" class="form-control" id="landmark" name="landmark" placeholder="Enter nearby landmark">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="addressType" class="form-label">Address Type</label>
+                  <select class="form-select" id="addressType" name="addressType">
+                    <option value="Home" selected>Home</option>
+                    <option value="Work">Work</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="btn-container">
+                <a href="/myAdress" class="btn btn-outline">Cancel</a>
+                <button type="submit" class="btn btn-primary">Save Address</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer placeholder -->
+  <footer>
+    <%- include('partials/user/footer') %>
+  </footer>
+
+  <script>
+    console.log('script loadeed');
+    document.getElementById("addressForm").addEventListener('submit',async (event) => {
+        event.preventDefault();
+        const fullNameValue = document.getElementById('fullName').value;
+        const pinCodeValue = document.getElementById('pincode').value;
+        const stateValue = document.getElementById('state').value;
+        const villageOrCityValue = document.getElementById('villageCity').value;
+        const houseOrFlatValue = document.getElementById('houseFlat').value;
+        const mobileValue = document.getElementById('mobile').value;
+        const districtValue = document.getElementById('district').value;
+        const landmarkValue = document.getElementById('landmark').value;
+        const addressTypeValue = document.getElementById('addressType').value;
+        console.log(stateValue, villageOrCityValue, mobileValue, districtValue, fullNameValue);
+        const response = await fetch('/addNewAddress',{
+            method:"POST",
+            headers:{"content-type":"application/json"},
+            body:JSON.stringify({
+              fullName : fullNameValue,
+               pincode: pinCodeValue,
+               state:stateValue,
+               villagecity:villageOrCityValue,
+               houseFlat : houseOrFlatValue,
+               mobile : mobileValue,
+               district : districtValue,
+               landMark : landmarkValue,
+               adressType : addressTypeValue,
+            })
+        })
+        const result = await response.json();
+        if(result.success){
+            Swal.fire({
+                icon:"success",
+                title:"Success",
+                text:result.message||'your datad saved successfully enjoy your shpping'
+            }).then(()=>{
+                setTimeout(()=>{
+                    window.location.reload()
+                },1000)
+            })
+        }else{
+            Swal.fire({
+                icon:"error",
+                title:"Please Try Again",
+                text:result.message,
+            })
+        }
+    })
+</script>
+
+</body>
+</html>
+
