@@ -10,6 +10,8 @@ const userProfile = require('../controller/user/userProfile');
 const validateChangePassword = require("../validators/user/changePassword");
 const addresManageMent = require('../controller/user/address')
 const validateAddressForm = require('../validators/user/addressValidator')
+const forgotPassword = require('../controller/user/forgotPassword');
+
 
 
 router.get('/', userController.loadHomepage);
@@ -22,11 +24,17 @@ router.get('/verify-otp', userController.loadVerifyOtp);
 router.post('/verify-otp', userController.verifyOtp);
 router.get('/resend-otp', userController.resendOtp);
 router.get('/pagenotfound', userController.pageNotfound);
+//forgotPassword
+router.get('/forgot-password',forgotPassword.getForgotPassword)
+router.post('/forgot-password',forgotPassword.forgotPassword)
+router.get('/confirmPassword',forgotPassword.confirmPasswordGet)
+router.patch('/confirmPassword',forgotPassword.updatePassword)
 //product
-router.get('/productListPage',userAuth.userAuth,listProduct.getProductListPage)
-router.get('/productListPage/sort', listProduct.productSorting);
-router.get('/productListPage/filter', listProduct.filterProducts);
-router.get('/productDetilPage/:id',productDetailPage.getProductDetailPage)
+// router.get('/productListPage',userAuth.userAuth,listProduct.getProductListPage)
+// router.get('/productListPage/sort', listProduct.productSorting);
+// router.get('/productListPage/filter', listProduct.filterProducts);
+// router.get('/productDetilPage/:id',productDetailPage.getProductDetailPage)
+router.get('/books',productDetailPage.getProductListPage)
 //profile
 router.get('/userProfile',userProfile.loadUserProfile)
 router.patch('/changePassword',validateChangePassword.validateChangePassword,userProfile.changePassword)

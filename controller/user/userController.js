@@ -275,6 +275,7 @@ const logout = async (req,res) => {
 
 
 
+
 module.exports = {
     loadHomepage,
     pageNotfound,
@@ -288,5 +289,6 @@ module.exports = {
     logout,
     generateOTP,
     sendVarificationEmail,
+    securePassword,
+ 
 }
-

@@ -115,10 +115,12 @@
 
 
 
-				<!-- Start Footer Section -->
+
+
+			
 				
 
-					<script>
+					<!-- <script>
 						document.querySelectorAll('.sort-option').forEach(item => {
 							item.addEventListener('click', function () {
 								const selectedSort = this.getAttribute('data-sort');
@@ -166,6 +168,720 @@
 
 
 						
-					</script>
+					</script> -->
 
 <%-include('partials/user/footer')%>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Store - Product Listing</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
+  <style>
+    /* Variables */
+    :root {
+      --primary: #3b5d50;
+      --primary-light: rgba(59, 93, 80, 0.1);
+      --primary-dark: #2d4a3e;
+      --white: #ffffff;
+      --light-gray: #f8f9fa;
+      --medium-gray: #e0e0e0;
+      --dark-gray: #333333;
+      --text-color: #212529;
+      --star-color: #ffc107;
+      --border-radius: 8px;
+      --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      --transition: all 0.3s ease;
+    }
+
+    /* Reset & Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--light-gray);
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+
+    /* Container */
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* Page Title */
+    .page-title {
+      margin-bottom: 30px;
+      color: var(--primary);
+      font-size: 32px;
+      font-weight: 600;
+    }
+
+    /* Search Bar */
+    .search-container {
+      display: flex;
+      margin-bottom: 30px;
+      position: relative;
+    }
+
+    .search-input {
+      flex: 1;
+      padding: 12px 20px;
+      border: 1px solid var(--medium-gray);
+      border-radius: var(--border-radius);
+      font-size: 16px;
+      transition: var(--transition);
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 93, 80, 0.2);
+    }
+
+    .search-btn {
+      position: absolute;
+      right: 120px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--primary);
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .clear-btn {
+      margin-left: 10px;
+      padding: 0 20px;
+      background-color: var(--white);
+      border: 1px solid var(--medium-gray);
+      border-radius: var(--border-radius);
+      color: var(--dark-gray);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .clear-btn:hover {
+      background-color: var(--light-gray);
+    }
+
+    /* Filter and Sort Section */
+    .filter-sort-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--medium-gray);
+    }
+
+    .filter-section, .sort-section {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: var(--primary);
+    }
+
+    /* Sort Options */
+    .sort-select {
+      width: 100%;
+      padding: 10px 15px;
+      border: 1px solid var(--medium-gray);
+      border-radius: var(--border-radius);
+      background-color: var(--white);
+      font-size: 16px;
+      color: var(--text-color);
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%233b5d50' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 15px center;
+      padding-right: 40px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .sort-select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 93, 80, 0.2);
+    }
+
+    /* Filter Options */
+    .filter-group {
+      margin-bottom: 20px;
+    }
+
+    .filter-group-title {
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 10px;
+      color: var(--text-color);
+    }
+
+    /* Category Filter */
+    .category-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .category-option {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .category-checkbox {
+      margin-right: 10px;
+      width: 18px;
+      height: 18px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    .category-label {
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    /* Price Range Filter */
+    .price-range-select {
+      width: 100%;
+      padding: 10px 15px;
+      border: 1px solid var(--medium-gray);
+      border-radius: var(--border-radius);
+      background-color: var(--white);
+      font-size: 16px;
+      color: var(--text-color);
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%233b5d50' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 15px center;
+      padding-right: 40px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .price-range-select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 93, 80, 0.2);
+    }
+
+    /* Product Grid */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+
+    /* Product Card */
+    .product-card {
+      background-color: var(--white);
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      box-shadow: var(--box-shadow);
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-bottom: 1px solid var(--medium-gray);
+      background-color: var(--light-gray);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--medium-gray);
+      font-size: 24px;
+    }
+
+    .product-details {
+      padding: 20px;
+    }
+
+    .product-name {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--text-color);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      height: 56px;
+    }
+
+    .product-price {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+
+    .product-rating {
+      color: var(--star-color);
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+
+    .product-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 8px 15px;
+      border: none;
+      border-radius: var(--border-radius);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: var(--white);
+      flex: 1;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+    }
+
+    .btn-wishlist {
+      background-color: var(--white);
+      color: var(--primary);
+      border: 1px solid var(--primary);
+      width: 40px;
+      padding: 0;
+    }
+
+    .btn-wishlist:hover {
+      background-color: var(--primary-light);
+    }
+
+    /* Pagination */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-top: 40px;
+      margin-bottom: 20px;
+    }
+
+    .page-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: var(--white);
+      color: var(--text-color);
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      text-decoration: none;
+    }
+
+    .page-item:hover {
+      background-color: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .page-item.active {
+      background-color: var(--primary);
+      color: var(--white);
+    }
+
+    .page-item.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      .filter-sort-container {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .filter-section, .sort-section {
+        width: 100%;
+      }
+
+      .product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
+      }
+
+      .search-container {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .search-btn {
+        right: 20px;
+      }
+
+      .clear-btn {
+        margin-left: 0;
+        width: 100%;
+        padding: 12px 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .product-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .page-item {
+        width: 35px;
+        height: 35px;
+      }
+    }
+
+    /* No Results Message */
+    .no-results {
+      text-align: center;
+      padding: 40px 0;
+      color: var(--dark-gray);
+    }
+
+    .no-results-icon {
+      font-size: 48px;
+      color: var(--medium-gray);
+      margin-bottom: 20px;
+    }
+
+    .no-results-title {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .no-results-message {
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="page-title">Browse Books</h1>
+
+    <!-- Search Bar -->
+    <div class="search-container">
+      <input type="text" class="search-input" placeholder="Search for books by title, author, or ISBN...">
+      <button type="button" class="search-btn">
+        <i class="bi bi-search"></i>
+      </button>
+      <button type="button" class="clear-btn">Clear</button>
+    </div>
+
+    <!-- Filter and Sort Section -->
+    <div class="filter-sort-container">
+      <!-- Filter Section -->
+      <div class="filter-section">
+        <h2 class="section-title">Filters</h2>
+        
+        <!-- Category Filter -->
+        <div class="filter-group">
+          <h3 class="filter-group-title">Category</h3>
+          <div class="category-options">
+            <label class="category-option">
+              <input type="checkbox" class="category-checkbox" name="category" value="fiction">
+              <span class="category-label">Fiction</span>
+            </label>
+            <label class="category-option">
+              <input type="checkbox" class="category-checkbox" name="category" value="non-fiction">
+              <span class="category-label">Non-Fiction</span>
+            </label>
+            <label class="category-option">
+              <input type="checkbox" class="category-checkbox" name="category" value="science">
+              <span class="category-label">Science & Technology</span>
+            </label>
+            <label class="category-option">
+              <input type="checkbox" class="category-checkbox" name="category" value="business">
+              <span class="category-label">Business & Economics</span>
+            </label>
+            <label class="category-option">
+              <input type="checkbox" class="category-checkbox" name="category" value="biography">
+              <span class="category-label">Biography & Memoir</span>
+            </label>
+          </div>
+        </div>
+        
+        <!-- Price Range Filter -->
+        <div class="filter-group">
+          <h3 class="filter-group-title">Price Range</h3>
+          <select class="price-range-select">
+            <option value="">All Prices</option>
+            <option value="0-10">Under $10</option>
+            <option value="10-20">$10 - $20</option>
+            <option value="20-30">$20 - $30</option>
+            <option value="30-50">$30 - $50</option>
+            <option value="50+">$50 & Above</option>
+          </select>
+        </div>
+      </div>
+      
+      <!-- Sort Section -->
+      <div class="sort-section">
+        <h2 class="section-title">Sort By</h2>
+        <select class="sort-select">
+          <option value="relevance">Relevance</option>
+          <option value="price-low-high">Price: Low to High</option>
+          <option value="price-high-low">Price: High to Low</option>
+          <option value="name-a-z">Name: A-Z</option>
+          <option value="name-z-a">Name: Z-A</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="product-grid">
+      <!-- Product Card 1 -->
+      <div class="product-card">
+        <div class="product-image">
+          <i class="bi bi-book"></i>
+        </div>
+        <div class="product-details">
+          <h3 class="product-name">The Art of Programming</h3>
+          <div class="product-price">$24.99</div>
+          <div class="product-rating">★★★★☆</div>
+          <div class="product-actions">
+            <button class="btn btn-primary">
+              <i class="bi bi-cart-plus"></i> Add to Cart
+            </button>
+            <button class="btn btn-wishlist">
+              <i class="bi bi-heart"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Card 2 -->
+      <div class="product-card">
+        <div class="product-image">
+          <i class="bi bi-book"></i>
+        </div>
+        <div class="product-details">
+          <h3 class="product-name">Business Strategy: A Guide to Effective Decision-Making</h3>
+          <div class="product-price">$32.50</div>
+          <div class="product-rating">★★★★★</div>
+          <div class="product-actions">
+            <button class="btn btn-primary">
+              <i class="bi bi-cart-plus"></i> Add to Cart
+            </button>
+            <button class="btn btn-wishlist">
+              <i class="bi bi-heart"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Card 3 -->
+      <div class="product-card">
+        <div class="product-image">
+          <i class="bi bi-book"></i>
+        </div>
+        <div class="product-details">
+          <h3 class="product-name">The History of Everything</h3>
+          <div class="product-price">$19.95</div>
+          <div class="product-rating">★★★☆☆</div>
+          <div class="product-actions">
+            <button class="btn btn-primary">
+              <i class="bi bi-cart-plus"></i> Add to Cart
+            </button>
+            <button class="btn btn-wishlist">
+              <i class="bi bi-heart"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Card 4 -->
+      <div class="product-card">
+        <div class="product-image">
+          <i class="bi bi-book"></i>
+        </div>
+        <div class="product-details">
+          <h3 class="product-name">Modern Cooking Techniques</h3>
+          <div class="product-price">$45.00</div>
+          <div class="product-rating">★★★★☆</div>
+          <div class="product-actions">
+            <button class="btn btn-primary">
+              <i class="bi bi-cart-plus"></i> Add to Cart
+            </button>
+            <button class="btn btn-wishlist">
+              <i class="bi bi-heart"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Card 5 -->
+      <div class="product-card">
+        <div class="product-image">
+          <i class="bi bi-book"></i>
+        </div>
+        <div class="product-details">
+          <h3 class="product-name">Science of the Mind</h3>
+          <div class="product-price">$28.75</div>
+          <div class="product-rating">★★★★★</div>
+          <div class="product-actions">
+            <button class="btn btn-primary">
+              <i class="bi bi-cart-plus"></i> Add to Cart
+            </button>
+            <button class="btn btn-wishlist">
+              <i class="bi bi-heart"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Card 6 -->
+      <div class="product-card">
+        <div class="product-image">
+          <i class="bi bi-book"></i>
+        </div>
+        <div class="product-details">
+          <h3 class="product-name">Financial Freedom</h3>
+          <div class="product-price">$15.99</div>
+          <div class="product-rating">★★★☆☆</div>
+          <div class="product-actions">
+            <button class="btn btn-primary">
+              <i class="bi bi-cart-plus"></i> Add to Cart
+            </button>
+            <button class="btn btn-wishlist">
+              <i class="bi bi-heart"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Card 7 -->
+      <div class="product-card">
+        <div class="product-image">
+          <i class="bi bi-book"></i>
+        </div>
+        <div class="product-details">
+          <h3 class="product-name">The Future of Technology</h3>
+          <div class="product-price">$34.99</div>
+          <div class="product-rating">★★★★☆</div>
+          <div class="product-actions">
+            <button class="btn btn-primary">
+              <i class="bi bi-cart-plus"></i> Add to Cart
+            </button>
+            <button class="btn btn-wishlist">
+              <i class="bi bi-heart"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Card 8 -->
+      <div class="product-card">
+        <div class="product-image">
+          <i class="bi bi-book"></i>
+        </div>
+        <div class="product-details">
+          <h3 class="product-name">Creative Writing Workshop</h3>
+          <div class="product-price">$22.50</div>
+          <div class="product-rating">★★★★★</div>
+          <div class="product-actions">
+            <button class="btn btn-primary">
+              <i class="bi bi-cart-plus"></i> Add to Cart
+            </button>
+            <button class="btn btn-wishlist">
+              <i class="bi bi-heart"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination">
+      <a href="#" class="page-item disabled">
+        <i class="bi bi-chevron-left"></i>
+      </a>
+      <a href="#" class="page-item active">1</a>
+      <a href="#" class="page-item">2</a>
+      <a href="#" class="page-item">3</a>
+      <a href="#" class="page-item">
+        <i class="bi bi-chevron-right"></i>
+      </a>
+    </div>
+
+    <!-- No Results Template (hidden by default) -->
+    <div class="no-results" style="display: none;">
+      <div class="no-results-icon">
+        <i class="bi bi-search"></i>
+      </div>
+      <h2 class="no-results-title">No Results Found</h2>
+      <p class="no-results-message">We couldn't find any books matching your search criteria.</p>
+      <button class="btn btn-primary">Clear All Filters</button>
+    </div>
+  </div>
+</body>
+</html>
