@@ -292,3 +292,22 @@ module.exports = {
     securePassword,
  
 }
+
+
+
+// const user = async (req,res) => {
+//     try {
+//         const {password, email, phone , name} = req.body
+
+
+// const user = new User {
+//     name : name,
+//     password
+// };
+
+//     await user.save()
+//      return res.json({message: "ahopfiaih9pah"})
+//     } catch (error) {
+        
+//     }
+// }

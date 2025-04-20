@@ -11,43 +11,41 @@ const validateChangePassword = require("../validators/user/changePassword");
 const addresManageMent = require('../controller/user/address')
 const validateAddressForm = require('../validators/user/addressValidator')
 const forgotPassword = require('../controller/user/forgotPassword');
-
+const cartController = require('../controller/user/cart');
 
 
 router.get('/', userController.loadHomepage);
 router.get('/signup', userController.loadSignup);
-router.post('/signup', userController.signup);
-router.get('/signin',userController.loadLogin);
+router.post('/signup',userAuth.isUserLoggedOut, userController.signup);
+router.get('/signin',userAuth.isUserLoggedOut,userController.loadLogin);
 router.post('/signin',userController.signin);
 router.get('/logout',userController.logout)
-router.get('/verify-otp', userController.loadVerifyOtp);
+router.get('/verify-otp',userAuth.isUserLoggedOut, userController.loadVerifyOtp);
 router.post('/verify-otp', userController.verifyOtp);
-router.get('/resend-otp', userController.resendOtp);
+router.get('/resend-otp',userAuth.isUserLoggedOut, userController.resendOtp);
 router.get('/pagenotfound', userController.pageNotfound);
 //forgotPassword
-router.get('/forgot-password',forgotPassword.getForgotPassword)
+router.get('/forgot-password',userAuth.isUserLoggedOut,forgotPassword.getForgotPassword)
 router.post('/forgot-password',forgotPassword.forgotPassword)
-router.get('/confirmPassword',forgotPassword.confirmPasswordGet)
+router.get('/confirmPassword',userAuth.isUserLoggedOut,forgotPassword.confirmPasswordGet)
 router.patch('/confirmPassword',forgotPassword.updatePassword)
 //product
-// router.get('/productListPage',userAuth.userAuth,listProduct.getProductListPage)
-// router.get('/productListPage/sort', listProduct.productSorting);
-// router.get('/productListPage/filter', listProduct.filterProducts);
-// router.get('/productDetilPage/:id',productDetailPage.getProductDetailPage)
-router.get('/books',productDetailPage.getProductListPage)
+router.get('/productDetailPage/:id',userAuth.isUserSignedIn,productDetailPage.getProductDetailPage)
+router.get('/books',userAuth.isUserSignedIn,productDetailPage.getProductListPage)
 //profile
-router.get('/userProfile',userProfile.loadUserProfile)
+router.get('/userProfile',userAuth.isUserSignedIn,userProfile.loadUserProfile)
 router.patch('/changePassword',validateChangePassword.validateChangePassword,userProfile.changePassword)
 router.post('/changeEmail',userProfile.changeEmail);
 router.patch('/changeEmail',userProfile.verifyOtp)
-router.get('/myAdress',addresManageMent.getAdressPage);
-router.get('/addNewAddress',addresManageMent.getAddProductFomr)
+router.get('/myAdress',userAuth.isUserSignedIn,addresManageMent.getAdressPage);
+router.get('/addNewAddress',userAuth.isUserSignedIn,addresManageMent.getAddAdressForm)
 router.post('/addNewAddress',validateAddressForm.addressFormValidate, addresManageMent.saveAddress)
-router.get('/addresses/edit/:AddressId',addresManageMent.getUpdateAddress);
+router.get('/addresses/edit/:AddressId',userAuth.isUserSignedIn,addresManageMent.getUpdateAddress);
 router.put('/addresses/edit/:addressId',validateAddressForm.updateAddress,addresManageMent.updateAddress)
 router.delete('/addresses/delete/:addressId',addresManageMent.deleteAddress)
 
-
+router.get('/cart',userAuth.isUserSignedIn,cartController.getCart);
+router.post('/addToCart',cartController.addToCart)
 
 
 

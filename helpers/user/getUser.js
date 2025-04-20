@@ -16,6 +16,8 @@ const getUserByEmail =  async (value) => {
     }
 }
 
+
 module.exports = {
     getUserByEmail
 }
+

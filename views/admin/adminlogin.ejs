@@ -83,7 +83,7 @@
         console.log('password from the front end ',emailvalue,passwordvalue);
 
         try {
-            let response = await fetch('/admin/adminLogin',{
+            let response = await fetch('/admin/adminlogin',{
                 method:"POST",
                 headers:{'content-type':'application/json'},
                 body:JSON.stringify({

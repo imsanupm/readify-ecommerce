@@ -53,6 +53,9 @@ const addProduct = async (req,res) => {
 
         return res.status(400).json({messge:"All fields are required ",success:false})
       }
+      if(regularPrice<100){
+        res.json({message:"price should Morethan 100 Rpees",success:false})
+      }
 
       const imagePaths = req.files.map(file => `/uploadedImages/${file.filename}`);
 
@@ -75,7 +78,6 @@ const addProduct = async (req,res) => {
           quantity:availableQuantity,
           description:description,
           productImage: imagePaths,
-          // publishedDate
       })
 
       if(!newProduct){
@@ -223,105 +225,6 @@ const searchUser = async (req,res) => {
 
 
 
-
-// const editProduct = async (req, res) => {
-
-//     try {
-//         // console.log("Uploaded Files:", req.files);
-//         const productId = req.params.id;
-//         console.log(productId);
-        
-//         const {
-//             name,
-//             writer,
-//             category_id,
-//             language,
-//             regularPrice,
-//             salePrice,
-//             availableQuantity,
-//             description,
-//             publishedDate
-//         } = req.body;
-//         const existingProduct = await productModel.findById(productId);
-
-//         if (!existingProduct) {
-//             console.log('Product not found');
-//             return res.status(404).json({ message: 'Product not found' });
-//         }
-
-//         const categories = await Category.find({});
-//         if (!categories) {
-//             console.log('Error when finding categories');
-//             return res.status(500).json({ message: 'Error fetching categories' });
-//         }
-
-       
-
-//         console.log('dats for edit the product',description);
-
-
-//         if (!name || !writer || !category_id || !language || !regularPrice || !availableQuantity || !description) {
-//             console.log('Problem with finding credentials in req.body in editProduct in productController');
-//             return res.render('Admin/editProduct', { 
-//                 categories, 
-//                 product: existingProduct, 
-//                 message: 'Need Credentials' 
-//             });
-//         }
-
-
-
-//         const updateData=  {
-//             productTitle:name,
-//             authorName:writer,
-//                 category_id,
-//                 language,
-//                 regularPrice,
-//                 salePrice,
-//                 availableQuantity,
-//                 description,
-//                 publishedDate
-//             }
-
-//         // Handle image updates
-//         let imagePaths = existingProduct.productImage; // Keep existing images by default
-//         if (req.files && req.files.length > 0&&req.files.productImage) {
-//             if(existingProduct.productImage&&existingProduct.productImage>0){
-//                 updateData.productImage=[...existingProduct.productImage,...req.files.productImage.map(file=>file.path.replace(/\\/g,"/")).replace("public/",'')]
-//             }else{
-//                 updateData.productImage=req.files.productImage.map(file=>file.path.replace(/\\/g,"/")).replace("public/",'')
-//             }
-//         }
-//         console.log('updateData.imagePaths',updateData.imagePaths)
-
-//         if (!imagePaths || imagePaths.length < 3) {
-//             console.log('Problem with imagePaths in editProduct in productController');
-//             return res.render('Admin/updateProduct', { 
-//                 categories, 
-//                 product: existingProduct, 
-//                 message: 'Problem with imagePaths - Minimum 3 images required' 
-//             });
-//         }
-
-    
-
-//     console.log('updateData',updateData)
-//         // if (publishedDate) existingProduct.publishedDate = publishedDate;
-
-//         await productModel.findByIdAndUpdate(productId,updateData,{new:true})
-//         console.log(`Book Updated
-//             name: ${name}`);
-
-//         return res.status(200).json({ success: true, message: 'Product updated successfully!' });
-
-//     } catch (error) {
-//         console.log(`Error in editProduct: ${error}`);
-//         return res.status(500).json({ success: false, message: 'Server error' });
-//     }
-// };
-
-
-
 const editProduct = async (req, res) => {
     try {
         const productId = req.params.id;
@@ -338,6 +241,7 @@ const editProduct = async (req, res) => {
             description,
             publishedDate
         } = req.body;
+        console.log(req.body);
 
         const existingProduct = await productModel.findById(productId);
         if (!existingProduct) {
@@ -355,21 +259,22 @@ const editProduct = async (req, res) => {
 
         if (!name || !writer || !category_id || !language || !regularPrice || !availableQuantity || !description) {
             console.log('Missing required fields in editProduct');
-            return res.render('Admin/editProduct', { 
+            return res.redirect('/admin/editProduct', { 
                 categories, 
                 product: existingProduct, 
-                message: 'Need Credentials' 
+                message: 'Need Credentials' ,
+                success:false,
             });
         }
 
         const updateData = {
-            productTitle: name,
+            productTitle,
             authorName: writer,
             category_id,
             language,
-            regularPrice,
+            regularPrice:regularPrice,
             salePrice,
-            availableQuantity,
+            quantity:availableQuantity,
             description,
             publishedDate
         };
@@ -444,3 +349,6 @@ module.exports = {
     editProduct,
     searchUser,
 };
+
+
+

@@ -17,13 +17,13 @@ const forgotPassword = async (req,res) => {
         const email = req.body.email;
         console.log('emial for changin the password',req.body);
         if(!email){
-            return res.json({message:"Facing some issues Please try Again",success:false});
+            return res.json({message:"Please Try Again Email Should Not Empty",success:false});
         }
-        // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        // if(emailRegex.test(email)){
-        //     console.log('email validation error')
-        //     return res.json({message:"Invalid Email Fromat"})
-        // }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if(!emailRegex.test(email)){
+            console.log('email validation error')
+            return res.json({message:"Invalid Email Fromat Please Enter Proper Email"})
+        }
         const user  =  await User.findOne({email:email});
         console.log('user for forgt password',user);
         if(!user){
@@ -44,7 +44,7 @@ const forgotPassword = async (req,res) => {
           req.session.resetEmail = email;
           req.session.resetTokenExpiration = Date.now() + 60000; //1 min expiry
           console.log('url for forgot',resetLink);
-          
+            
         }
           console.log('i think the otp sended sucessfuuly');
 
@@ -76,6 +76,7 @@ const confirmPasswordGet = async (req,res) => {
 
 const updatePassword = async (req,res) => {
     try {
+        
        
         const passwordRegex = /^.{6,}$/;
         const {token,password,confirmPassword} = req.body;
@@ -85,14 +86,13 @@ const updatePassword = async (req,res) => {
           if(!password||!confirmPassword){
             return res.json({message:"all Fields are required",success:false})
           }
-          if(!passwordRegex.test(password)||!passwordRegex.test(confimPassword)){
+          if(!passwordRegex.test(password)||!passwordRegex.test(confirmPassword)){
             console.log('your stuck in validation');
             return res.json({message:"Needed A Strong Password Atleast Six Characters With Special Characters"});
           }
-          if (password !== confimPassword) {
+          if (password !== confirmPassword) {
             return res.json({ message: "Passwords do not match", success: false });
           }
-        console.log('before entring to the db');
 
             const hashedPassword = await securePassword.securePassword(password);
             const user = await User.findOneAndUpdate(
@@ -118,3 +118,4 @@ const updatePassword = async (req,res) => {
     confirmPasswordGet,
     updatePassword,
  }
+

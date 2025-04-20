@@ -1,494 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
 
-  <!DOCTYPE html>
-  <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Book Store - Product Listing</title>
-    <link rel="stylesheet" href="styles.css">
-    
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Store - Product Listing</title>
+  <link rel="stylesheet" href="styles.css">
 
-  /* Base Styles */
-  :root {
-    --primary-color: #3b5d50;
-    --white: #ffffff;
-    --light-gray: #f7f7f7;
-    --gray: #e9e9e9;
-    --dark-gray: #666;
-    --text-color: #333;
-    --border-color: #e1e1e1;
-    --shadow-color: rgba(0, 0, 0, 0.05);
-    --hover-shadow: rgba(0, 0, 0, 0.1);
-  }
-
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
-  body {
-    font-family: 'Poppins', sans-serif;
-    color: var(--text-color);
-    background-color: var(--light-gray);
-    line-height: 1.6;
-  }
-
-  .container {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 2rem;
-  }
-
-  /* Typography */
-  h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    color: var(--text-color);
-  }
-
-  h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    color: var(--text-color);
-  }
-
-  h3 {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 0.75rem;
-    color: var(--text-color);
-  }
-
-  p {
-    margin-bottom: 1rem;
-    color: var(--dark-gray);
-  }
-
-  /* Page Title */
-  .page-title {
-    text-align: left;
-    margin-bottom: 2rem;
-  }
-
-  .page-title p {
-    font-size: 1.1rem;
-    color: var(--dark-gray);
-  }
-
-  /* Search Bar */
-  .search-container {
-    margin-bottom: 2rem;
-  }
-
-  .search-bar {
-    display: flex;
-    gap: 0.75rem;
-    width: 100%;
-  }
-
-  .search-input-wrapper {
-    position: relative;
-    flex-grow: 1;
-  }
-
-  .search-input {
-    width: 100%;
-    padding: 0.75rem 1rem 0.75rem 2.5rem;
-    border: 1px solid var(--border-color);
-    border-radius: 0.375rem;
-    font-size: 1rem;
-    outline: none;
-    transition: border-color 0.3s, box-shadow 0.3s;
-  }
-
-  .search-input:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(59, 93, 80, 0.1);
-  }
-
-  .search-icon {
-    position: absolute;
-    left: 0.75rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--dark-gray);
-  }
-
-  .clear-btn {
-    padding: 0.75rem 1rem;
-    background-color: var(--white);
-    color: var(--text-color);
-    border: 1px solid var(--border-color);
-    border-radius: 0.375rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    white-space: nowrap;
-  }
-
-  .clear-btn:hover {
-    background-color: var(--gray);
-  }
-
-  /* Main Content Layout */
-  .content-wrapper {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
-
-  @media (min-width: 992px) {
-    .content-wrapper {
-      grid-template-columns: 250px 1fr;
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Base Styles */
+    :root {
+      --primary-color: #3b5d50;
+      --white: #ffffff;
+      --light-gray: #f7f7f7;
+      --gray: #e9e9e9;
+      --dark-gray: #666;
+      --text-color: #333;
+      --border-color: #e1e1e1;
+      --shadow-color: rgba(0, 0, 0, 0.05);
+      --hover-shadow: rgba(0, 0, 0, 0.1);
     }
-  }
 
-  /* Filters */
-  .filters {
-    margin-bottom: 2rem;
-  }
-
-  .filter-container {
-    background-color: var(--white);
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-    box-shadow: 0 2px 10px var(--shadow-color);
-  }
-
-  .filter-section {
-    margin-bottom: 1.5rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--border-color);
-  }
-
-  .filter-section:last-child {
-    margin-bottom: 0;
-    padding-bottom: 0;
-    border-bottom: none;
-  }
-
-  .checkbox-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .checkbox-label {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    font-size: 0.95rem;
-  }
-
-  .checkbox-label input {
-    margin-right: 0.5rem;
-  }
-
-  .price-range {
-    width: 100%;
-  }
-
-  .price-slider {
-    width: 100%;
-    margin: 0.5rem 0;
-    accent-color: var(--primary-color);
-  }
-
-  .price-labels {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.85rem;
-    color: var(--dark-gray);
-  }
-
-  /* Products Section */
-  .products-section {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .products-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: var(--white);
-    padding: 1rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 2px 10px var(--shadow-color);
-  }
-
-  .product-count {
-    font-size: 0.95rem;
-    margin-bottom: 0;
-  }
-
-  .product-count span {
-    font-weight: 600;
-  }
-
-  .sort-options {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .sort-options label {
-    font-size: 0.95rem;
-    display: none;
-  }
-
-  @media (min-width: 992px) {
-    .sort-options label {
-      display: block;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-  }
 
-  .sort-select {
-    padding: 0.5rem;
-    border: 1px solid var(--border-color);
-    border-radius: 0.375rem;
-    font-size: 0.875rem;
-    outline: none;
-    background-color: var(--white);
-  }
+    body {
+      font-family: 'Poppins', sans-serif;
+      color: var(--text-color);
+      background-color: var(--light-gray);
+      line-height: 1.6;
+    }
 
-  /* Products Grid */
-  .products-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.5rem;
-  }
-
-  /* Product Card */
-  .product-card {
-    background-color: var(--white);
-    border-radius: 0.5rem;
-    overflow: hidden;
-    box-shadow: 0 4px 10px var(--shadow-color);
-    transition: transform 0.3s, box-shadow 0.3s;
-  }
-
-  .product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px var(--hover-shadow);
-  }
-
-  .product-img {
-    position: relative;
-    height: 200px;
-    overflow: hidden;
-  }
-
-  .product-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.5s;
-  }
-
-  .product-card:hover .product-img img {
-    transform: scale(1.05);
-  }
-
-  .product-actions {
-    position: absolute;
-    top: 0.75rem;
-    right: 0.75rem;
-    display: flex;
-    gap: 0.5rem;
-  }
-
-  .wishlist-btn {
-    background-color: var(--white);
-    border: none;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    box-shadow: 0 2px 5px var(--shadow-color);
-    transition: background-color 0.3s, color 0.3s;
-    color: var(--dark-gray);
-  }
-
-  .wishlist-btn:hover {
-    background-color: var(--primary-color);
-    color: var(--white);
-  }
-
-  .product-info {
-    padding: 1rem;
-  }
-
-  .product-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    line-height: 1.4;
-  }
-
-  .product-rating {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-  }
-
-  .stars {
-    color: #FFD700;
-    letter-spacing: 0.1em;
-  }
-
-  .rating-count {
-    font-size: 0.85rem;
-    color: var(--dark-gray);
-  }
-
-  .product-price-cart {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .price {
-    font-weight: 600;
-    font-size: 1.2rem;
-    color: var(--text-color);
-    margin-bottom: 0;
-  }
-
-  .add-to-cart-btn {
-    background-color: var(--primary-color);
-    color: var(--white);
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 0.375rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-
-  .add-to-cart-btn:hover {
-    background-color: #2d4a40;
-  }
-
-  /* Pagination */
-  .pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 2rem;
-    gap: 0.5rem;
-  }
-
-  .pagination-numbers {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .pagination-link {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    border-radius: 0.375rem;
-    text-decoration: none;
-    color: var(--text-color);
-    background-color: var(--white);
-    border: 1px solid var(--border-color);
-    font-size: 0.95rem;
-    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
-  }
-
-  .pagination-link.active {
-    background-color: var(--primary-color);
-    color: var(--white);
-    border-color: var(--primary-color);
-  }
-
-  .pagination-link:hover:not(.active) {
-    background-color: var(--gray);
-  }
-
-  .pagination-ellipsis {
-    color: var(--dark-gray);
-    font-size: 1.2rem;
-  }
-
-  /* Responsive adjustments */
-  @media (max-width: 768px) {
     .container {
-      padding: 1rem;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem;
     }
 
-    .products-grid {
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 1rem;
+    /* Typography */
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--text-color);
     }
 
-    .product-title {
-      font-size: 1rem;
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--text-color);
     }
 
-    .price {
+    h3 {
       font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: var(--text-color);
     }
 
-    .add-to-cart-btn {
-      padding: 0.4rem 0.75rem;
-      font-size: 0.8rem;
+    p {
+      margin-bottom: 1rem;
+      color: var(--dark-gray);
     }
 
-    .pagination {
-      flex-wrap: wrap;
+    /* Page Title */
+    .page-title {
+      text-align: left;
+      margin-bottom: 2rem;
     }
-  }
 
-  @media (max-width: 576px) {
-    .products-grid {
+    .page-title p {
+      font-size: 1.1rem;
+      color: var(--dark-gray);
+    }
+
+    /* Search Bar */
+    .search-container {
+      margin-bottom: 2rem;
+    }
+
+    .search-bar {
+      display: flex;
+      gap: 0.75rem;
+      width: 100%;
+    }
+
+    .search-input-wrapper {
+      position: relative;
+      flex-grow: 1;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.5rem;
+      border: 1px solid var(--border-color);
+      border-radius: 0.375rem;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .search-input:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(59, 93, 80, 0.1);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--dark-gray);
+    }
+
+    .clear-btn {
+      padding: 0.75rem 1rem;
+      background-color: var(--white);
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      white-space: nowrap;
+    }
+
+    .clear-btn:hover {
+      background-color: var(--gray);
+    }
+
+    /* Main Content Layout */
+    .content-wrapper {
+      display: grid;
       grid-template-columns: 1fr;
+      gap: 2rem;
     }
 
-    .pagination-numbers {
+    @media (min-width: 992px) {
+      .content-wrapper {
+        grid-template-columns: 250px 1fr;
+      }
+    }
+
+    /* Filters */
+    .filters {
+      margin-bottom: 2rem;
+    }
+
+    .filter-container {
+      background-color: var(--white);
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      box-shadow: 0 2px 10px var(--shadow-color);
+    }
+
+    .filter-section {
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .filter-section:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    .checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+
+    .checkbox-label input {
+      margin-right: 0.5rem;
+    }
+
+    .price-range {
+      width: 100%;
+    }
+
+    .price-slider {
+      width: 100%;
+      margin: 0.5rem 0;
+      accent-color: var(--primary-color);
+    }
+
+    .price-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--dark-gray);
+    }
+
+    /* Products Section */
+    .products-section {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .products-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: var(--white);
+      padding: 1rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 2px 10px var(--shadow-color);
+    }
+
+    .product-count {
+      font-size: 0.95rem;
+      margin-bottom: 0;
+    }
+
+    .product-count span {
+      font-weight: 600;
+    }
+
+    .sort-options {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .sort-options label {
+      font-size: 0.95rem;
       display: none;
     }
 
-    .pagination {
-      justify-content: space-between;
-      width: 100%;
+    @media (min-width: 992px) {
+      .sort-options label {
+        display: block;
+      }
     }
-  }
 
-    </style>
-  </head>
-  <body>
+    .sort-select {
+      padding: 0.5rem;
+      border: 1px solid var(--border-color);
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      outline: none;
+      background-color: var(--white);
+    }
 
-    <%- include("../../views/partials/user/header") %>
+    /* Products Grid */
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    /* Product Card */
+    .product-card {
+      background-color: var(--white);
+      border-radius: 0.5rem;
+      overflow: hidden;
+      box-shadow: 0 4px 10px var(--shadow-color);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px var(--hover-shadow);
+    }
+
+    .product-img {
+      position: relative;
+      height: 200px;
+      overflow: hidden;
+    }
+
+    .product-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s;
+    }
+
+    .product-card:hover .product-img img {
+      transform: scale(1.05);
+    }
+
+    .product-actions {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .wishlist-btn {
+      background-color: var(--white);
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 2px 5px var(--shadow-color);
+      transition: background-color 0.3s, color 0.3s;
+      color: var(--dark-gray);
+    }
+
+    .wishlist-btn:hover {
+      background-color: var(--primary-color);
+      color: var(--white);
+    }
+
+    .product-info {
+      padding: 1rem;
+    }
+
+    .product-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      line-height: 1.4;
+    }
+
+    .product-rating {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .stars {
+      color: #FFD700;
+      letter-spacing: 0.1em;
+    }
+
+    .rating-count {
+      font-size: 0.85rem;
+      color: var(--dark-gray);
+    }
+
+    .product-price-cart {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .price {
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: var(--text-color);
+      margin-bottom: 0;
+    }
+
+    .add-to-cart-btn {
+      background-color: var(--primary-color);
+      color: var(--white);
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .add-to-cart-btn:hover {
+      background-color: #2d4a40;
+    }
+
+    /* Pagination */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 2rem;
+      gap: 0.5rem;
+    }
+
+    .pagination-numbers {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .pagination-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      text-decoration: none;
+      color: var(--text-color);
+      background-color: var(--white);
+      border: 1px solid var(--border-color);
+      font-size: 0.95rem;
+      transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+    }
+
+    .pagination-link.active {
+      background-color: var(--primary-color);
+      color: var(--white);
+      border-color: var(--primary-color);
+    }
+
+    .pagination-link:hover:not(.active) {
+      background-color: var(--gray);
+    }
+
+    .pagination-ellipsis {
+      color: var(--dark-gray);
+      font-size: 1.2rem;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+
+      .products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 1rem;
+      }
+
+      .product-title {
+        font-size: 1rem;
+      }
+
+      .price {
+        font-size: 1.1rem;
+      }
+
+      .add-to-cart-btn {
+        padding: 0.4rem 0.75rem;
+        font-size: 0.8rem;
+      }
+
+      .pagination {
+        flex-wrap: wrap;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .products-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .pagination-numbers {
+        display: none;
+      }
+
+      .pagination {
+        justify-content: space-between;
+        width: 100%;
+      }
+    }
+  </style>
+
+  <style>
+    .product-img {
+  position: relative;
+  height: 200px; /* You can adjust this height if needed */
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f9f9f9; /* Light background for images */
+}
+
+.product-img img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto; /* Allow natural width */
+  height: auto; /* Allow natural height */
+  object-fit: contain; /* This makes the whole image visible */
+  transition: transform 0.3s;
+}
+
+/* Keep your hover effect */
+.product-card:hover .product-img img {
+  transform: scale(1.05);
+}
+  </style>
+</head>
+
+<body>
+
+  <%- include("../../views/partials/user/header") %>
 
     <main class="container">
-      <!-- Page Title -->
+     
       <div class="page-title">
         <h1>Book Collection</h1>
         <p>Discover your next favorite book</p>
       </div>
 
-      <!-- Search Bar -->
+  
       <div class="search-container">
         <div class="search-bar">
           <div class="search-input-wrapper">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon">
               <circle cx="11" cy="11" r="8"></circle>
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
@@ -498,527 +524,220 @@
         </div>
       </div>
 
-      <!-- Main Content -->
+  
       <div class="content-wrapper">
-        <!-- Filter Sidebar -->
+
         <aside class="filters">
           <div class="filter-container">
             <h2>Filters</h2>
-            
-            <!-- <div class="filter-section">
+
+
+            <div class="filter-section">
               <h3>Categories</h3>
               <div class="checkbox-group">
-                <label class="checkbox-label">
-                  <input type="checkbox" name="category" value="fiction"> Fiction
-                </label>
-                <label class="checkbox-label">
-                  <input type="checkbox" name="category" value="non-fiction"> Non-Fiction
-                </label>
-                <label class="checkbox-label">
-                  <input type="checkbox" name="category" value="mystery"> Mystery
-                </label>
-                <label class="checkbox-label">
-                  <input type="checkbox" name="category" value="sci-fi"> Science Fiction
-                </label>
-                <label class="checkbox-label">
-                  <input type="checkbox" name="category" value="biography"> Biography
-                </label>
-              </div>
-            </div> -->
-            
-            <!-- <div class="filter-section">
-              <h3>Price Range</h3>
-              <div class="price-range">
-                <input type="range" min="0" max="100" value="50" class="price-slider" id="price-slider">
-                <div class="price-labels">
-                  <span>$0</span>
-                  <span>$100</span>
-                </div>
-              </div>
-            </div> -->
-            
-            <!-- <div class="filter-section">
-              <h3>Rating</h3>
-              <div class="checkbox-group">
-                <label class="checkbox-label">
-                  <input type="checkbox" name="rating" value="5"> 5 Stars
-                </label>
-                <label class="checkbox-label">
-                  <input type="checkbox" name="rating" value="4"> 4 Stars & Up
-                </label>
-                <label class="checkbox-label">
-                  <input type="checkbox" name="rating" value="3"> 3 Stars & Up
-                </label>
-              </div>
-            </div> -->
-            
-            <!-- <div class="filter-section">
-
-
-
-
-              
-              <h3>Sort</h3>
-              <div class="checkbox-group">
-                <label class="checkbox-label">
-                  <input type="checkbox" name="format" value="highToLow"> High to low
-                </label>
-                <label class="checkbox-label">
-                  <input type="checkbox" name="format" value="lowToHigh"> Low to high
-                </label>
-                <label class="checkbox-label">
-                  <input type="checkbox" name="format" value="AtoZ"> A to Z 
-                </label>
-                <label class="checkbox-label">
-                  <input type="checkbox" name="format" value="ZtoA"> Z to A
-                </label>
+                <% categories.forEach(cat=> { %>
+                  <label class="checkbox-label">
+                    <input type="checkbox" name="category" value="<%= cat._id %>"
+                      <%=queryParams.category.includes(cat._id) ? 'checked' : '' %>>
+                    <%= cat.name %>
+                  </label>
+                  <% }); %>
               </div>
             </div>
-          </div> -->
 
-          <!-- <h3>Sort</h3>
-<div class="checkbox-group">
-  <label class="checkbox-label">
-    <input type="radio" name="sort" value="highToLow"> High to low
-  </label>
-  <label class="checkbox-label">
-    <input type="radio" name="sort" value="lowToHigh"> Low to high
-  </label>
-  <label class="checkbox-label">
-    <input type="radio" name="sort" value="AtoZ"> A to Z 
-  </label>
-  <label class="checkbox-label">
-    <input type="radio" name="sort" value="ZtoA"> Z to A
-  </label>
-</div> -->
-<div class="filter-section">
-  <h3>Categories</h3>
-  <div class="checkbox-group">
-    <% categories.forEach(cat => { %>
-      <label class="checkbox-label">
-        <input type="checkbox" name="category" value="<%= cat._id %>"
-          <%= queryParams.category.includes(cat._id) ? 'checked' : '' %>>
-        <%= cat.name %>
-      </label>
-    <% }); %>
-  </div>
-</div>
-
-<h3>Sort</h3>
-<div class="checkbox-group">
-  <label class="checkbox-label">
-    <input type="checkbox" name="sort" value="highToLow"> High to low
-  </label>
-  <label class="checkbox-label">
-    <input type="checkbox" name="sort" value="lowToHigh"> Low to high
-  </label>
-  <label class="checkbox-label">
-    <input type="checkbox" name="sort" value="AtoZ"> A to Z 
-  </label>
-  <label class="checkbox-label">
-    <input type="checkbox" name="sort" value="ZtoA"> Z to A
-  </label>
-</div>
+            <h3>Sort</h3>
+            <div class="checkbox-group">
+              <label class="checkbox-label">
+                <input type="checkbox" name="sort" value="highToLow"> High to low
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="sort" value="lowToHigh"> Low to high
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="sort" value="AtoZ"> A to Z
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="sort" value="ZtoA"> Z to A
+              </label>
+            </div>
         </aside>
 
-        <!-- Products Section -->
+     
         <section class="products-section">
-          <!-- <div class="products-header">
-            <p class="product-count"><span>9</span> products found</p>
-            <div class="sort-options">
-              <label for="sort">Sort by:</label>
-              <select id="sort" class="sort-select">
-                <option value="relevance">Relevance</option>
-                <option value="price-asc">Price: Low to High</option>
-                <option value="price-desc">Price: High to Low</option>
-                <option value="name-asc">Name: A-Z</option>
-                <option value="name-desc">Name: Z-A</option>
-              </select>
-            </div>
-          </div> -->
 
-          <!-- Products Grid -->
           <div class="products-grid">
-            <% if (books.length > 0) { %>
-              <% books.forEach(book => { %>
+            <% if (books.length> 0) { %>
+              <% books.forEach(book=> { %>
                 <div class="product-card">
+                  <a href="/productDetailPage/<%=book._id%>">
                   <div class="product-img">
-                    <img src="<%= book.productImage[0] || 'https://via.placeholder.com/200x300?text=No+Image' %>" alt="<%= book.bname %>">
+                    <img src="<%= book.productImage[0] || 'https://via.placeholder.com/200x300?text=No+Image' %>"
+                      alt="<%= book.bname %>">
                     <div class="product-actions">
                       <button class="wishlist-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path
+                            d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                          </path>
                         </svg>
                       </button>
                     </div>
                   </div>
+                </a>
                   <div class="product-info">
-                    <h3 class="product-title"><%= book.productTitle %></h3>
+                    <h3 class="product-title">
+                      <%= book.productTitle %>
+                    </h3>
                     <div class="product-rating">
                       <span class="stars">★★★★☆</span>
                       <span class="rating-count">(<%= book.rating || '4.5' %>)</span>
                     </div>
                     <div class="product-price-cart">
-                      <p class="price">&#8377;<%= book.regularPrice.toFixed(2) %></p>
-                      <button class="add-to-cart-btn">Add to Cart</button>
+                      <p class="price">&#8377;<%= book.regularPrice.toFixed(2) %>
+                      </p>
+                      <button class="add-to-cart-btn" data-product-id="<%=book._id%>" >Add to Cart</button>
                     </div>
                   </div>
                 </div>
-              <% }); %>
-            <% } else { %>
-              <p>No books found matching your criteria.</p>
+                <% }); %>
+                  <% } else { %>
+                    <p>No books found matching your criteria.</p>
+                    <% } %>
+          </div>
+
+
+      
+          <div class="pagination">
+            <% if (currentPage > 1) { %>
+              <a class="pagination-link prev" href="?page=<%= currentPage - 1 %>&search=<%= queryParams.search %>&category=<%= queryParams.category %>&sort=<%= queryParams.sort %>">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+                Previous
+              </a>
+            <% } %>
+          
+            <div class="pagination-numbers">
+              <% for (let i = 1; i <= totalPages; i++) { %>
+                <a href="?page=<%= i %>&search=<%= queryParams.search %>&category=<%= queryParams.category %>&sort=<%= queryParams.sort %>" class="pagination-link <%= currentPage === i ? 'active' : '' %>">
+                  <%= i %>
+                </a>
+              <% } %>
+            </div>
+          
+            <% if (currentPage < totalPages) { %>
+              <a class="pagination-link next" href="?page=<%= currentPage + 1 %>&search=<%= queryParams.search %>&category=<%= queryParams.category %>&sort=<%= queryParams.sort %>">
+                Next
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </a>
             <% } %>
           </div>
           
-
-          <!-- Pagination -->
-          <div class="pagination">
-            <a href="#" class="pagination-link prev">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="15 18 9 12 15 6"></polyline>
-              </svg>
-              Previous
-            </a>
-            <div class="pagination-numbers">
-              <a href="#" class="pagination-link active">1</a>
-              <a href="#" class="pagination-link">2</a>
-              <a href="#" class="pagination-link">3</a>
-              <span class="pagination-ellipsis">...</span>
-              <a href="#" class="pagination-link">5</a>
-            </div>
-            <a href="#" class="pagination-link next">
-              Next
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="9 18 15 12 9 6"></polyline>
-              </svg>
-            </a>
-          </div>
         </section>
       </div>
     </main>
 
     <%- include("../../views/partials/user/footer") %>
-  </body>
-  </html>
+</body>
+
+</html>
 
 
-  <!-- <script>
-
-    document.querySelector('.clear-btn').addEventListener('click',()=>{
-      window.location.href = '/books'
-    })
-
-    document.querySelectorAll('input').forEach(input=>{
-      input.addEventListener('change',()=>{
-        applyfilters();
-      })
-    })
-
-    function applyfilters(){
-      const search = document.querySelector('.search-input').value;
-      const categories = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(cb=>cb.value);
-      const sort = document.querySelector('input[name="sort"]:checked')?.value;
 
 
-       let url = '/books?'
-      if(search) url+= `search=${search}&`;
-      if(categories) url+= `category=${categories.join(',')}&`;
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.querySelector('.search-input');
+
+    // Search on Enter key
+    searchInput.addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        applyFilters();
+      }
+    });
+
+    // Clear button
+    document.querySelector('.clear-btn').addEventListener('click', () => {
+      searchInput.value = '';
+      window.location.href = '/books';
+    });
+
+    // Filter and sort checkboxes
+    document.querySelectorAll('input[name="category"], input[name="sort"]').forEach(input => {
+      input.addEventListener('change', applyFilters);
+    });
+
+    function applyFilters() {
+      const search = searchInput.value.trim();
+      const categories = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(cb => cb.value);
+      const sortOptions = Array.from(document.querySelectorAll('input[name="sort"]:checked')).map(cb => cb.value);
+
       const sortMap = {
-  highToLow: 'price-desc',
-  lowToHigh: 'price-asc',
-  AtoZ: 'a-z',
-  ZtoA: 'z-a'
-};
-      if (sort) url += `sort=${sortMap[sort]}`;
-      console.log(url)
+        highToLow: 'price-desc',
+        lowToHigh: 'price-asc',
+        AtoZ: 'a-z',
+        ZtoA: 'z-a'
+      };
+
+      const params = new URLSearchParams();
+      if (search) params.append('search', search);
+      if (categories.length > 0) params.append('category', categories.join(','));
+      if (sortOptions.length > 0) {
+        const sortValues = sortOptions.map(option => sortMap[option]);
+        params.append('sort', sortValues.join(','));
+      }
+
+      const url = '/books?' + params.toString();
       window.location.href = url;
     }
-  </script> -->
-
-
-  <!-- <script>
-
-    document.addEventListener('DOMContentLoaded', function() {
-  // Add event listener for the search input (both change and keypress)
-  const searchInput = document.querySelector('.search-input');
-  searchInput.addEventListener('keypress', function(e) {
-    // If Enter key is pressed, apply filters
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      applyfilters();
-    }
-  });
-
-  // Clear button event listener
-  document.querySelector('.clear-btn').addEventListener('click', () => {
-    // Clear the search input before redirecting
-    document.querySelector('.search-input').value = '';
-    window.location.href = '/books';
-  });
-
-  // Add change event listeners to all checkboxes and radio buttons
-  document.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(input => {
-    input.addEventListener('change', () => {
-      applyfilters();
-    });
-  });
-
-  // Function to apply all filters
-  function applyfilters() {
-    const search = document.querySelector('.search-input').value.trim();
-    const categories = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(cb => cb.value);
-    const sort = document.querySelector('input[name="sort"]:checked')?.value;
-
-    const sortMap = {
-      highToLow: 'price-desc',
-      lowToHigh: 'price-asc',
-      AtoZ: 'a-z',
-      ZtoA: 'z-a'
-    };
-
-    // Build the URL with all selected filters
-    let url = '/books?';
-    const params = [];
-
-    if (search) {
-      params.push(`search=${encodeURIComponent(search)}`);
-    }
+     // add to cart 
     
-    if (categories.length > 0) {
-      params.push(`category=${encodeURIComponent(categories.join(','))}`);
-    }
     
-    if (sort) {
-      params.push(`sort=${encodeURIComponent(sortMap[sort])}`);
-    }
-
-    url += params.join('&');
-    
-    console.log("Navigating to:", url);
-    window.location.href = url;
-  }
-});
-  </script> -->
-
-
-<!-- <script>
-
-  document.addEventListener('DOMContentLoaded', function() {
-  // Add event listener for the search input
-  const searchInput = document.querySelector('.search-input');
-  searchInput.addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      applyfilters();
-    }
-  });
-
-  // Clear button event listener
-  document.querySelector('.clear-btn').addEventListener('click', () => {
-    document.querySelector('.search-input').value = '';
-    window.location.href = '/books';
-  });
-
-  // Add change event listeners to all checkboxes
-  document.querySelectorAll('input[type="checkbox"]').forEach(input => {
-    input.addEventListener('change', () => {
-      // If this is a sort checkbox, handle conflicts
-      if (input.name === 'sort') {
-        handleSortConflicts(input);
-      }
-      applyfilters();
-    });
-  });
-
-  // Function to handle sort conflicts
-  function handleSortConflicts(changedInput) {
-    // Define conflicting pairs
-    const conflicts = {
-      'highToLow': 'lowToHigh',
-      'lowToHigh': 'highToLow',
-      'AtoZ': 'ZtoA',
-      'ZtoA': 'AtoZ'
-    };
-
-    // If this checkbox was checked, uncheck its conflict
-    if (changedInput.checked && conflicts[changedInput.value]) {
-      const conflictingCheckbox = document.querySelector(`input[name="sort"][value="${conflicts[changedInput.value]}"]`);
-      if (conflictingCheckbox && conflictingCheckbox.checked) {
-        conflictingCheckbox.checked = false;
-      }
-    }
-  }
-
-  // Function to apply all filters
-  function applyfilters() {
-    const search = document.querySelector('.search-input').value.trim();
-    const categories = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(cb => cb.value);
-    const sortOptions = Array.from(document.querySelectorAll('input[name="sort"]:checked')).map(cb => cb.value);
-
-    const sortMap = {
-      highToLow: 'price-desc',
-      lowToHigh: 'price-asc',
-      AtoZ: 'a-z',
-      ZtoA: 'z-a'
-    };
-
-    // Transform sort values to backend format
-    const sortValues = sortOptions.map(option => sortMap[option]);
-
-    // Build the URL with all selected filters
-    let url = '/books?';
-    const params = [];
-
-    if (search) {
-      params.push(`search=${encodeURIComponent(search)}`);
-    }
-    
-    if (categories.length > 0) {
-      params.push(`category=${encodeURIComponent(categories.join(','))}`);
-    }
-    
-    if (sortValues.length > 0) {
-      params.push(`sort=${encodeURIComponent(sortValues.join(','))}`);
-    }
-
-    url += params.join('&');
-    
-    console.log("Navigating to:", url);
-    window.location.href = url;
-  }
-});
-</script>
-  -->
-
-
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const searchInput = document.querySelector('.search-input');
-      
-      // Search on Enter key
-      searchInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          applyFilters();
-        }
-      });
-    
-      // Clear button
-      document.querySelector('.clear-btn').addEventListener('click', () => {
-        searchInput.value = '';
-        window.location.href = '/books';
-      });
-    
-      // Filter and sort checkboxes
-      document.querySelectorAll('input[name="category"], input[name="sort"]').forEach(input => {
-        input.addEventListener('change', applyFilters);
-      });
-    
-      function applyFilters() {
-        const search = searchInput.value.trim();
-        const categories = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(cb => cb.value);
-        const sortOptions = Array.from(document.querySelectorAll('input[name="sort"]:checked')).map(cb => cb.value);
-    
-        const sortMap = {
-          highToLow: 'price-desc',
-          lowToHigh: 'price-asc',
-          AtoZ: 'a-z',
-          ZtoA: 'z-a'
-        };
-    
-        const params = new URLSearchParams();
-        if (search) params.append('search', search);
-        if (categories.length > 0) params.append('category', categories.join(','));
-        if (sortOptions.length > 0) {
-          const sortValues = sortOptions.map(option => sortMap[option]);
-          params.append('sort', sortValues.join(','));
-        }
-    
-        const url = '/books?' + params.toString();
-        window.location.href = url;
-      }
-    });
-    </script>
-
-
-
-  <!-- <script>
-    document.addEventListener('DOMContentLoaded', function() {
-  // Get reference to the search input
-  const searchInput = document.querySelector('.search-input');
+  const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
   
-  // Add event listener for Enter key in search
-  searchInput.addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      applyfilters();
-    }
-  });
+  addToCartButtons.forEach(button => {
+    button.addEventListener('click', async function() {
+      const productId = this.getAttribute('data-product-id');
+      
+      try {
+        const response = await fetch('/addToCart', {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ productId }),
+        });
 
-  // Add Search button event listener (if you have one)
-  const searchButton = document.querySelector('.search-button');
-  if (searchButton) {
-    searchButton.addEventListener('click', function() {
-      applyfilters();
+        const result = await response.json();
+        if (result.success) {
+          Swal.fire({
+            icon: "success", // Fixed capitalization
+            title: "Success",
+            text: result.message || "Product added successfully",
+          });
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: result.message || "Cannot add the product to your cart"
+          });
+        }
+      } catch (error) {
+        console.log('Cannot send product ID for addToCart', error);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Something went wrong. Please try again."
+        });
+      }
     });
-  }
-
-  // Clear button event listener
-  document.querySelector('.clear-btn').addEventListener('click', () => {
-    document.querySelector('.search-input').value = '';
-    window.location.href = '/books';
   });
 
-  // Add change event listeners to all filter checkboxes
-  document.querySelectorAll('input[name="category"], input[name="sort"]').forEach(input => {
-    input.addEventListener('change', () => {
-      applyfilters();
-    });
-  });
-
-  // Function to apply all filters
-  function applyfilters() {
-    // Get search value
-    const search = document.querySelector('.search-input').value.trim();
-    
-    // Get selected categories
-    const categories = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(cb => cb.value);
-    
-    // Get selected sort options
-    const sortOptions = Array.from(document.querySelectorAll('input[name="sort"]:checked')).map(cb => cb.value);
-
-    // Map frontend sort values to backend sort values
-    const sortMap = {
-      highToLow: 'price-desc',
-      lowToHigh: 'price-asc',
-      AtoZ: 'a-z',
-      ZtoA: 'z-a'
-    };
-
-    // Build URL parameters
-    const params = new URLSearchParams();
-    
-    // Add search parameter if present
-    if (search) {
-      params.append('search', search);
-    }
-    
-    // Add category parameter if any selected
-    if (categories.length > 0) {
-      params.append('category', categories.join(','));
-    }
-    
-    // Add each sort option as a separate parameter
-    if (sortOptions.length > 0) {
-      const sortValues = sortOptions.map(option => sortMap[option]);
-      params.append('sort', sortValues.join(','));
-    }
-    
-    // Create the final URL
-    const url = '/books?' + params.toString();
-    
-    console.log("Navigating to:", url);
-    window.location.href = url;
-  }
 });
-  </script> -->
+
+
+</script>

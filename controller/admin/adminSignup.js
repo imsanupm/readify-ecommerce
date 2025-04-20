@@ -28,7 +28,7 @@ const verifyAdmin = async (req, res) => {
 
         const passwordMatch = await bcrypt.compare(password, userData.password);
         if (!passwordMatch) {
-            return res.json('adminLogin', { message: 'Invalid Password' });
+            return res.json( { message: 'Invalid Password',success:false });
         }
 
         if (userData.is_admin !== 1) {
@@ -46,9 +46,24 @@ const verifyAdmin = async (req, res) => {
     }
 };
 
+const logout = async (req,res) => {
+    try {
+        req.session.destroy((error)=>{
+            if(error){
+                console.log('error during logout the admin',error)
+                return res.redirect('admin/dashboard')
+            }
+        })
+        return res.redirect('/admin/adminlogin');
+    } catch (error) {
+        console.log('error during logout',error)
+        return res.status(500).json({message:"Internal server error Please Try Again",success:false});
+    }
+}
 
 
 module.exports={
     verifyAdmin,
     loadLogin,
+    logout,
 }

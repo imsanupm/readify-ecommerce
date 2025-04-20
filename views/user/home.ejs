@@ -44,7 +44,7 @@
 		<!-- Product Listings -->
 		<% products.forEach(function(product) { %>
 		  <div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
-			<a class="product-item" href="/product/<%= product._id %>">
+			<a class="product-item" href="/productDetailPage/<%= product._id %>">
 			  <img src="<%= product.productImage[0] %>" class="img-fluid product-thumbnail" alt="<%= product.productTitle %>">
 			  <h3 class="product-title"><%= product.productTitle %></h3>
 			  

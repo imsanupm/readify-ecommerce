@@ -6,40 +6,30 @@ const main = async (req,res,next) => {
     next();
 }
 
-const userAuth = async (req,res,next) => {
-    
+const isUserSignedIn = async (req,res,next) => {
+
         if(req.session.user_id){
-            User.findById(req.session.user_id)
-            .then(data=>{
-                if(data&&data.isActive){
+                    // console.log('middleware data',req.session.user_id)
                     next()
-                }else{
-                    res.redirect('/signin')
-                }
-            }).catch(error=>{
-                console.log('error during userAuthMiddleware',error)
-                res.status(500).send('internal Server error')
-            })
-        }else{
-            res.redirect('/signin')
+        }else{ 
+           return res.redirect('/signin')
         }
 }
-
-const adminAuth = async (req,res,next) => {
- try {
-    admin = await User.findById(req.session.admin_id)
-    if(!admin||!admin.is_admin){
-      return res.redirect('/admin/adminLogin')
+const isUserLoggedOut = async (req,res,next)=>{
+    if(req.session.user_id){
+        res.redirect('/')
     }
-    next()
- } catch (error) {
-    console.log('error during adminAuth Middleware',error)
- }
+    else{
+        next()
+    }
 }
+
+
 
 
 module.exports = {
     main,
-    userAuth,
-  adminAuth,
+    isUserSignedIn,
+    isUserLoggedOut,
+  
 }

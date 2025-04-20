@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 require('dotenv').config();
 const path = require('path');
+const nocache = require('nocache');
 const session = require('express-session');
 const connectDb = require('./config/connectDB');
 const userRouter = require('./router/userRouter');
@@ -12,11 +13,13 @@ const passport = passportConfig.passport;
 
 
 
+
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.set('view engine', 'ejs');
 // app.use(express.static(__dirname,'public'));
 app.use(express.static(path.join(__dirname, 'public')));
+  app.use(nocache())
 app.use(session({
   secret:process.env.SESSION_SECRET,
   resave:false,
@@ -27,7 +30,6 @@ app.use(session({
     maxAge:72*60*60*1000 // 72 hourse
   }
 }))
-
 app.use(passport.initialize());
 app.use(passport.session());
 

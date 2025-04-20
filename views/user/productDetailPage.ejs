@@ -90,6 +90,22 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
   
   <div class="container mt-5">
+
+    <nav aria-label="breadcrumb" class="my-2">
+        <ol class="breadcrumb mb-0 p-0" style="background: transparent;">
+          <li class="breadcrumb-item">
+            <a href="/">Home</a>
+          </li>
+          <li class="breadcrumb-item">
+            <a href="/books">Shop</a>
+          </li>
+          <li class="breadcrumb-item active" aria-current="page">
+            <a href="/productDetailPage/<%=product._id%>">currentPage</a>
+          </li>
+        </ol>
+      </nav>
+      
+
       <div class="row">
           <!-- Product Images -->
            
@@ -295,8 +311,10 @@
     
         <% relatedProducts.forEach(product => { %>
             <div class="col-md-3 mb-4">
+               
                 <div class="card h-100">
-                    <img src="<%= product.productImage[0] %>" class="card-img-top related-product-img" alt="<%= product.productTitle %>">
+                    <img src="<%= product.productImage[0] %>" class="card-img-top related-product-img" alt="<%= product.productTitle %>" style="object-fit: contain; height: 200px; width: 100%;">
+
                     <div class="card-body">
                         <h5 class="card-title"><%= product.productTitle %></h5>
                         <div class="mb-2">
@@ -307,15 +325,18 @@
                             <i class="bi bi-star text-warning"></i>
                             <span class="ms-1 small">(76)</span>
                         </div>
-                        <p class="card-text fw-bold">$<%= 466 %></p>
-                        <button class="btn btn-sm btn-outline-primary">View Details</button>
+                        <p class="card-text fw-bold">&#8377;<%= product.regularPrice %></p>
+                        <a href="/productDetailPage/<%= product._id %>" class="btn btn-sm btn-outline-primary">View Details</a>
                     </div>
                 </div>
+            
             </div>
         <% }) %>
     </div>
-    
+     
   
+
+
   <!-- Review Modal -->
   <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg">
@@ -487,5 +508,9 @@
     }
     </script>
 
+
+<script>
+    document.getElementById()
+</script>
 
 <%-include('partials/user/footer')%>

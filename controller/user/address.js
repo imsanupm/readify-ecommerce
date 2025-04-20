@@ -14,7 +14,7 @@ const getAdressPage = async (req,res) => {
     }
 }
 
-const getAddProductFomr = async (req,res) => {
+const getAddAdressForm = async (req,res) => {
     try {
         res.render('addAddress');
     } catch (error) {
@@ -131,7 +131,7 @@ const deleteAddress = async (req,res) => {
 
 module.exports = {
     getAdressPage,
-    getAddProductFomr,
+    getAddAdressForm,
     saveAddress,
     getUpdateAddress,
     updateAddress,
