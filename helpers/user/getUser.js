@@ -1,4 +1,5 @@
 const User = require('../../models/user/userSchema');
+const code= require('../../helpers/user/statusCode');
 
 const getUserByEmail =  async (value) => {
     try {
@@ -7,8 +8,9 @@ const getUserByEmail =  async (value) => {
         const user = await User.findOne({email:email});
         console.log('user form the db',user);
         if(!user){
-            return res.json({message:"User with this email Not exits Please Try again",success:false})
+            return res.status(code.HttpStatus.NOT_FOUND).json({message:"User with this email Not exits Please Try again",success:false})
         }
+        
        return user;
     } catch (error) {
         console.log('error duringgetting the getUserByEmail',error);

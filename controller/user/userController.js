@@ -135,7 +135,7 @@ const signup = async (req, res) => {
     try {
         const { email, password, Phone, cPassword, name } = req.body;
         
-        // Fix password comparison
+        
         if (password !== cPassword) {
             return res.render('signin', { message: 'Passwords do not match' });
         }  //optional

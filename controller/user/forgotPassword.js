@@ -62,7 +62,7 @@ const confirmPasswordGet = async (req,res) => {
         const time  = req.session.resetTokenExpiration;
         console.log('rest token from session ')
         if(!token||!email||!time){
-            return res.json({message:"Something Went Wrong"});
+            return res.json({message:"Something Went Wrong",success:false});
         }
         if (Date.now() > time) {
             return res.json({ success: false, message: "Reset token has expired. Please request a new one." });
