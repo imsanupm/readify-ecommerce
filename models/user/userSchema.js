@@ -61,12 +61,7 @@ const userSchema = new mongoose.Schema({
         type:Schema.Types.ObjectId,
         ref:'Address'
     }],
-    cart: [{  
-        productId: { type: Schema.Types.ObjectId, ref: 'Product', required: true }, // ✅ Stores Product ID
-        quantity: { type: Number, required: true, default: 1 } // ✅ Stores quantity
-    }],
-
-
+    cart:{type:Schema.Types.ObjectId,ref:"Cart",default:null},
 
 }, { timestamps: true });
 userSchema.plugin(mongoosePaginate);

@@ -2,18 +2,69 @@
 
 
 <script>
-const mongoose = require("mongoose");
 
-const cartSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-  items: [
-    {
-      productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product", required: true },
-      volume: { type: String, required: true }, // Store size instead of variantId
-      quantity: { type: Number, required: true, min: 1 },
-    },
-  ],
-}, { timestamps: true });
+try {
+        const userId = req.session.user;
+        if (!userId) {
+            return res.redirect('/login');
+        }
 
-module.exports = mongoose.model("Cart", cartSchema);
+
+        const productId = req.body.id || req.query.id;
+        const quantity = parseInt(req.body.quantity) || 1;
+
+        
+        const product = await Product.findById(productId);
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        if (product.quantity === 0) {
+            return res.status(400).json({ message: "Oops! Product is out of stock." });
+        }
+
+        let cartDoc = await Cart.findOne({ userId });
+        if (cartDoc) {
+            const existingItem = cartDoc.items.find(item => item.productId.toString() === productId);
+
+            if (existingItem) {
+                const newQuantity = existingItem.quantity + quantity;
+                if (newQuantity > product.quantity) {
+                    return res.status(400).json({ message: `Only ${product.quantity} items available in stock.` });
+                }
+                existingItem.quantity = newQuantity;
+                existingItem.totalPrice = newQuantity * product.salePrice;
+            } else {
+                if (quantity > product.quantity) {
+                    return res.status(400).json({ message: `Only ${product.quantity} items available in stock.` });
+                }
+                cartDoc.items.push({
+                    productId,
+                    quantity,
+                    price: product.salePrice,
+                    totalPrice: quantity * product.salePrice
+                });
+            }
+        } else {
+            if (quantity > product.quantity) {
+                return res.status(400).json({ message: `Only ${product.quantity} items available in stock.` });
+            }
+            cartDoc = new Cart({
+                userId,
+                items: [{
+                    productId,
+                    quantity,
+                    price: product.salePrice,
+                    totalPrice: quantity * product.salePrice
+                }]
+            });
+        }
+
+        await cartDoc.save();
+        return res.redirect("/getCart")
+    } catch (error) {
+        console.error("Error saving to cart:", error);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+    
 </script>

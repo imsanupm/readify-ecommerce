@@ -44,6 +44,8 @@ router.get('/addresses/edit/:AddressId',userAuth.isUserSignedIn,addresManageMent
 router.put('/addresses/edit/:addressId',validateAddressForm.updateAddress,addresManageMent.updateAddress)
 router.delete('/addresses/delete/:addressId',addresManageMent.deleteAddress)
 
+
+//cart
 router.get('/cart',userAuth.isUserSignedIn,cartController.getCart);
 router.post('/addToCart',cartController.addToCart)
 

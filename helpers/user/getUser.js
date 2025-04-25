@@ -1,14 +1,13 @@
 const User = require('../../models/user/userSchema');
 const code= require('../../helpers/user/statusCode');
 
-const getUserByEmail =  async (value) => {
+const getUserById =  async (value) => {
     try {
-        const email = value;
 
-        const user = await User.findOne({email:email});
-        console.log('user form the db',user);
+        const user = await User.findById(value)
         if(!user){
-            return res.status(code.HttpStatus.NOT_FOUND).json({message:"User with this email Not exits Please Try again",success:false})
+            console.log('user not found');
+            return res.status(code.HttpStatus.NOT_FOUND).json({message:"User Not Found",success:false})
         }
         
        return user;
@@ -20,6 +19,7 @@ const getUserByEmail =  async (value) => {
 
 
 module.exports = {
-    getUserByEmail
+    getUserById
 }
+
 
