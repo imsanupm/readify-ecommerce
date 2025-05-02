@@ -227,8 +227,9 @@ const searchUser = async (req,res) => {
 
 const editProduct = async (req, res) => {
     try {
+       
         const productId = req.params.id;
-        console.log("Product ID:", productId);
+       
 
         const {
             name,
@@ -236,12 +237,10 @@ const editProduct = async (req, res) => {
             category_id,
             language,
             regularPrice,
-            salePrice,
             availableQuantity,
             description,
-            publishedDate
         } = req.body;
-        console.log(req.body);
+        //  console.log(req.body);
 
         const existingProduct = await productModel.findById(productId);
         if (!existingProduct) {
@@ -255,28 +254,30 @@ const editProduct = async (req, res) => {
             return res.status(500).json({ message: 'Error fetching categories' });
         }
 
-        console.log('Data for editing the product:', description);
+      
 
-        if (!name || !writer || !category_id || !language || !regularPrice || !availableQuantity || !description) {
+        if (!name || !writer  || !regularPrice || !availableQuantity || !description) {
             console.log('Missing required fields in editProduct');
-            return res.redirect('/admin/editProduct', { 
+            return res.redirect('/editProduct', { 
                 categories, 
                 product: existingProduct, 
                 message: 'Need Credentials' ,
                 success:false,
             });
+           
+            return res.status(404).redirect('/editProduct/:id');
         }
 
         const updateData = {
-            productTitle,
+            productTitle:name,
             authorName: writer,
-            category_id,
+            category:category_id,
             language,
             regularPrice:regularPrice,
-            salePrice,
+            // salePrice,
             quantity:availableQuantity,
             description,
-            publishedDate
+            // publishedDate
         };
 
         

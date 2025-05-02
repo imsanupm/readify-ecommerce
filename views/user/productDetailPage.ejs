@@ -35,6 +35,7 @@
 
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <style>
     /* Custom Zoom Styles */
@@ -156,9 +157,16 @@
                 </small>
             </div> -->
             
-              <button class="btn btn-primary btn-lg mb-3 me-2">
+              <!-- <button class="btn btn-primary btn-lg mb-3 me-2">
                       <i class="bi bi-cart-plus"></i> Add to Cart
-                  </button>
+                  </button> -->
+
+                  <button 
+                  class="btn btn-primary btn-lg mb-3 me-2 addToCartBtn" 
+                  data-product-id="<%= product._id %>">
+                  <i class="bi bi-cart-plus"></i> Add to Cart
+                </button>
+
               <button class="btn btn-outline-secondary btn-lg mb-3">
                       <i class="bi bi-heart"></i> Add to Wishlist
                   </button>
@@ -508,9 +516,88 @@
     }
     </script>
 
+<!-- 
+<script>
+    // document.getElementById('bi bi-cart-plus').addEventListener('click',async () => {
+        const productId = this.getAttribute('data-product-id')
+
+        try {
+            const response = fetch('/addToCart',{
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify({productId})
+
+            })
+            const result = await response.json();
+            if(result.success){
+                Swal.fire({
+                    icon:success,
+                    tittle:"Success",
+                    text:result.message||"product Added To Your cart Continue Shopping"
+                })
+            }else{
+                Swal.fire({
+                    icon:error,
+                    tittle:"Oops",
+                    text:result.message||"Please try again "
+                })
+            }
+        } catch (error) {
+            console.log('add to cart front end',error)
+            Swal.fire({
+                icon:error,
+                tittle:"Please try again ",
+                text:result.message||"Internal Server Erro we working on it"
+            })
+        }
+    })
+
+
+
+
+</script> -->
+
+
 
 <script>
-    document.getElementById()
-</script>
-
+    document.querySelector('.addToCartBtn').addEventListener('click', async function () {
+        const productId = this.getAttribute('data-product-id');
+    
+        try {
+            const response = await fetch('/addToCart', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ productId })
+            });
+    
+            const result = await response.json();
+    
+            if (result.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: "Success",
+                    text: result.message || "Product added to your cart. Continue shopping!"
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: "Oops",
+                    text: result.message || "Please try again"
+                });
+            }
+        } catch (error) {
+            console.log('Add to cart error (frontend):', error);
+            Swal.fire({
+                icon: 'error',
+                title: "Please try again",
+                text: "Internal server error. We're working on it."
+            });
+        }
+    });
+    </script>
+    
 <%-include('partials/user/footer')%>

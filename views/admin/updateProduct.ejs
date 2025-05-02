@@ -46,7 +46,7 @@
                                   name="writer" required placeholder="E.g., F. Scott Fitzgerald">
                               </div>
 
-                              <div class="mb-3">
+                              <!-- <div class="mb-3">
                                 <label for="productCategory" class="form-label">Category <span
                                     class="text-danger">*</span></label>
                                 <select class="form-select" id="productCategory" name="category_id" required>
@@ -62,9 +62,31 @@
                                           <option value="">Categories not fetched</option>
                                           <% } %>
                                 </select>
-                              </div>
+                              </div> -->
 
-                              <div class="mb-3">
+
+
+
+                            <!-- CATEGORY DROPDOWN -->
+<div class="mb-3">
+  <label for="productCategory" class="form-label">Category <span class="text-danger">*</span></label>
+  <select class="form-select" id="productCategory" name="category_id" required>
+    <% if (categories && categories.length > 0) { %>
+      <% categories.forEach(category => { %>
+        <option value="<%= category._id %>" 
+          <%= (category._id && product.category_id && category._id.toString() === product.category_id.toString()) ? 'selected' : '' %>>
+          <%= category.name %>
+        </option>
+        
+      <% }) %>
+    <% } else { %>
+      <option value="">Categories not fetched</option>
+    <% } %>
+  </select>
+</div>
+
+
+                              <!-- <div class="mb-3">
                                 <label for="language" class="form-label">Language <span
                                     class="text-danger">*</span></label>
                                 <select class="form-select" id="language" name="language" required>
@@ -74,7 +96,19 @@
                                   <option value="Hindi">Hindi</option>
                                   <option value="Tamil">Tamil</option>
                                 </select>
-                              </div>
+                              </div> -->
+
+
+                              <!-- LANGUAGE DROPDOWN -->
+<div class="mb-3">
+  <label for="language" class="form-label">Language <span class="text-danger">*</span></label>
+  <select class="form-select" id="language" name="language" required>
+    <option value="English" <%= product.language === "English" ? "selected" : "" %>>English</option>
+    <option value="Malayalam" <%= product.language === "Malayalam" ? "selected" : "" %>>Malayalam</option>
+    <option value="Hindi" <%= product.language === "Hindi" ? "selected" : "" %>>Hindi</option>
+    <!-- Add other languages if needed -->
+  </select>
+</div>
 
                               <div class="row">
                                 <div class="col-md-6 mb-3">
@@ -777,6 +811,150 @@
 
             // Make removePreview globally accessible for the onclick handler
             window.removePreview = removePreview;
+
+
+
+
+            //for testing
+            
+            // Add this script to your page
+
+// document.addEventListener('DOMContentLoaded', function() {
+//   // Pre-select the current category
+//   const categorySelect = document.getElementById('productCategory');
+//   const currentCategoryId = '<%= product.category_id %>';
+  
+//   if (categorySelect && currentCategoryId) {
+//     for (let i = 0; i < categorySelect.options.length; i++) {
+//       if (categorySelect.options[i].value === currentCategoryId) {
+//         categorySelect.options[i].selected = true;
+//         break;
+//       }
+//     }
+//   }
+  
+//   // Pre-select the current language
+//   const languageSelect = document.getElementById('language');
+//   const currentLanguage = '<%= product.language %>';
+  
+//   if (languageSelect && currentLanguage) {
+//     for (let i = 0; i < languageSelect.options.length; i++) {
+//       if (languageSelect.options[i].value === currentLanguage) {
+//         languageSelect.options[i].selected = true;
+//         break;
+//       }
+//     }
+//   }
+  
+//   // Modify your form submission
+//   const form = document.getElementById('addProductForm');
+  
+//   // Store the original onsubmit handler
+//   const originalSubmit = form.onsubmit;
+  
+//   // Replace with our handler
+//   form.onsubmit = function(e) {
+//     e.preventDefault();
+    
+//     // Get the form data
+//     const formData = new FormData(this);
+    
+//     // Make sure the category and language are included
+//     // (This is just for verification - FormData should already include them)
+//     console.log('Category ID:', formData.get('category_id'));
+//     console.log('Language:', formData.get('language'));
+    
+//     // Remove the original file input images
+//     formData.delete('productImages');
+    
+//     // Show loading overlay
+//     showLoading('Saving book...');
+    
+//     // Convert cropped images to blobs and append to FormData
+//     const blobPromises = croppedImages.map((image, index) => {
+//       return fetch(image.dataUrl)
+//         .then(res => res.blob())
+//         .then(blob => {
+//           const filename = `book-image-${index + 1}-${Date.now()}.jpg`;
+//           return new File([blob], filename, { type: 'image/jpeg' });
+//         });
+//     });
+    
+//     // When all blobs are ready, add them to formData and submit
+//     Promise.all(blobPromises)
+//       .then(files => {
+//         files.forEach(file => {
+//           formData.append('productImages', file);
+//         });
+//         return submitFormWithFormData(formData);
+//       })
+//       .catch(error => {
+//         hideLoading();
+//         console.error('Error:', error);
+//         Swal.fire({
+//           icon: "error",
+//           title: "Error",
+//           text: "There was an error processing your request.",
+//           confirmButtonText: "OK",
+//         });
+//       });
+//   };
+// });
+
+
+form.onsubmit = function(e) {
+  e.preventDefault();
+  
+  const formData = new FormData(this);
+  let categoryId = formData.get('category_id');
+  
+  // If category is not selected, use existing category ID
+  if (!categoryId) {
+    categoryId = '<%= product.category_id %>';
+    formData.set('category_id', categoryId);
+  }
+
+  // Same for language
+  let language = formData.get('language');
+  if (!language) {
+    language = '<%= product.language %>';
+    formData.set('language', language);
+  }
+
+  console.log('Category ID:', formData.get('category_id'));
+  console.log('Language:', formData.get('language'));
+
+  formData.delete('productImages');
+  showLoading('Saving book...');
+
+  const blobPromises = croppedImages.map((image, index) => {
+    return fetch(image.dataUrl)
+      .then(res => res.blob())
+      .then(blob => {
+        const filename = `book-image-${index + 1}-${Date.now()}.jpg`;
+        return new File([blob], filename, { type: 'image/jpeg' });
+      });
+  });
+
+  Promise.all(blobPromises)
+    .then(files => {
+      files.forEach(file => {
+        formData.append('productImages', file);
+      });
+      return submitFormWithFormData(formData);
+    })
+    .catch(error => {
+      hideLoading();
+      console.error('Error:', error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "There was an error processing your request.",
+        confirmButtonText: "OK",
+      });
+    });
+};
+
 
           </script>
 

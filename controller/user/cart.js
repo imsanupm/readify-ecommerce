@@ -9,10 +9,11 @@ const Product = require('../../models/admin/productSchema');
 
 const getCart = async (req,res) => {
     try {
-       const user = await Cart.findOne({})
-    const cartData = user.cart;
-    // console.log('user cart for rendering ', cartData);
-        res.render('cart',cartData)
+      const userId = req.session.user_id
+        const cartData = await User.findById(userId).populate('cart');
+         
+     console.log('user cart for rendering ', cartData.cart);
+        res.render('cart',{cart:cartData.cart})
     } catch (error) {
         console.log('error during getting the cartpage',error)
       
@@ -22,6 +23,7 @@ const getCart = async (req,res) => {
 
 
 const addToCart = async (req, res) => {
+    console.log('hello from  car')
     try {
       const productId = req.body.productId;
       const userId = req.session.user_id;

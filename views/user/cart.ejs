@@ -20,7 +20,7 @@
                       <th class="product-remove">Remove</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <!-- <tbody>
                     <tr>
                       <td class="product-thumbnail">
                         <img src="images/product-1.png" alt="Image" class="img-fluid">
@@ -45,7 +45,37 @@
                       <td><a href="#" class="btn btn-black btn-sm">X</a></td>
                     </tr>
   
+                  </tbody> -->
+               
+               
+                  <tbody>
+                    <% cart.forEach(item => { %>
+                      <tr>
+                        <td class="product-thumbnail">
+                          <img src="<%= item.image %>" alt="<%= item.name %>" class="img-fluid" />
+                        </td>
+                        <td class="product-name">
+                          <h2 class="h5 text-black"><%= item.name %></h2>
+                        </td>
+                        <td>$<%= item.price %></td>
+                        <td>
+                          <div class="input-group mb-3 d-flex align-items-center quantity-container" style="max-width: 120px;">
+                            <div class="input-group-prepend">
+                              <button class="btn btn-outline-black decrease" type="button">&minus;</button>
+                            </div>
+                            <input type="text" class="form-control text-center quantity-amount" value="1" />
+                            <div class="input-group-append">
+                              <button class="btn btn-outline-black increase" type="button">&plus;</button>
+                            </div>
+                          </div>
+                        </td>
+                        <td>$<%= item.price %></td>
+                        <td><a href="#" class="btn btn-black btn-sm">X</a></td>
+                      </tr>
+                    <% }) %>
                   </tbody>
+                  
+                  
                 </table>
               </div>
             </form>
@@ -74,6 +104,22 @@
                   <div class="row mb-3">
                     <div class="col-md-6">
                       <span class="text-black">Subtotal</span>
+                    </div>
+                    <div class="col-md-6 text-right">
+                      <strong class="text-black">$230.00</strong>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <span class="text-black">Total Tax</span>
+                    </div>
+                    <div class="col-md-6 text-right">
+                      <strong class="text-black">$230.00</strong>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <span class="text-black">Delivery charge</span>
                     </div>
                     <div class="col-md-6 text-right">
                       <strong class="text-black">$230.00</strong>
