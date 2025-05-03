@@ -4,16 +4,60 @@ const code = require('../../helpers/user/statusCode');
 const message = require('../../helpers/user/jsonRespose');
 const getUser = require('../../helpers/user/getUser');
 const Product = require('../../models/admin/productSchema');
+const cart = require('../../models/admin/cart');
 
 
 
 const getCart = async (req,res) => {
     try {
       const userId = req.session.user_id
-        const cartData = await User.findById(userId).populate('cart');
+        const cartData =  await Cart.findOne({userId}).populate('items.productId');
+        let subTotal = 0;
+        let totalAmount = null;
+        let gstAmount = null;
+        const deliveryCharge = 49;
+        const gstpercentage = 14;
+        const cutOfMoneyForDeleveryCharge = 1000;
          
-     console.log('user cart for rendering ', cartData.cart);
-        res.render('cart',{cart:cartData.cart})
+        if (!cartData || !cartData.items || cartData.items.length === 0) {
+          return res.render('cart', {
+            cartData: null,
+            subTotal: 0,
+            totalAmount: 0,
+            deliveryCharge: 0
+          });
+        }
+        
+
+        cartData.items.forEach(item=>{
+          const price = item.productId.regularPrice;
+          const quantity = item.quantity;
+          subTotal += price*quantity;
+        })
+       
+        gstAmount = subTotal * gstpercentage / 100;
+        totalAmount += gstAmount;
+
+        // totalAmount+=gstAmount;
+        if(subTotal<cutOfMoneyForDeleveryCharge){
+          totalAmount += deliveryCharge;
+        }
+         
+        totalAmount+=subTotal
+        console.log('subTotal price for rendering ',subTotal);
+        console.log('Total amount', totalAmount);
+        console.log('total gstAmount',gstAmount);
+        
+        
+        console.log(cartData);
+        res.render('cart', {
+          cartData,
+          subTotal,
+          totalAmount,
+          deliveryCharge,
+          gstAmount,
+        });
+        
     } catch (error) {
         console.log('error during getting the cartpage',error)
       
@@ -31,7 +75,8 @@ const addToCart = async (req, res) => {
     
       const user = await User.findById(userId).populate('cart');
       const product = await Product.findById(productId);
-  
+        
+
       if (!product) {
         return res.status(code.HttpStatus.NOT_FOUND).json({
           message: "Product Not Found",
