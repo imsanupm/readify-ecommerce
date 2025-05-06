@@ -12,6 +12,7 @@ const addresManageMent = require('../controller/user/address')
 const validateAddressForm = require('../validators/user/addressValidator')
 const forgotPassword = require('../controller/user/forgotPassword');
 const cartController = require('../controller/user/cart');
+const updateCart = require('../controller/user/update-cart');
 
 
 router.get('/', userController.loadHomepage);
@@ -48,6 +49,8 @@ router.delete('/addresses/delete/:addressId',addresManageMent.deleteAddress)
 //cart
 router.get('/cart',userAuth.isUserSignedIn,cartController.getCart);
 router.post('/addToCart',cartController.addToCart)
+router.patch('/cart/update-quantity', updateCart.updateQuantity);
+router.delete('/cart/remove/:productId',updateCart.removeFromCart)
 
 
 

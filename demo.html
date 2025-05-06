@@ -1,42 +1,159 @@
-
-
-
-<script>
-const getCart = async (req, res) => {
-    try {
-        const userId = req.session.user_id;
-
-        // Get the cart separately
-        const cart = await Cart.findOne({ userId }).populate('items.productId');
-
-        if (!cart) {
-            return res.render('cart', {
-                cartItems: [],
-                totalAmount: 0
-            });
-        }
-
-        // Calculate total amount (optional)
-        const cartItems = cart.items.map(item => ({
-            _id: item.productId._id,
-            name: item.productId.name,
-            price: item.productId.price,
-            quantity: item.quantity,
-            total: item.productId.price * item.quantity
-        }));
-
-        const totalAmount = cartItems.reduce((sum, item) => sum + item.total, 0);
-
-        res.render('cart', {
-            cartItems,
-            totalAmount
-        });
-
-    } catch (error) {
-        console.log('Error during getting the cart page:', error);
-        res.status(500).render('error', { message: 'Failed to load cart page' });
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Wishlist</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Custom CSS -->
+  <style>
+    :root {
+      --primary-color: #3b5d50;
+      --white: #ffffff;
+      --black: #000000;
+      --light-gray: #f8f9fa;
     }
-};
-
     
-</script>
+    body {
+      background-color: var(--primary-color);
+      color: var(--white);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .page-header {
+      padding: 3rem 0 2rem;
+      text-align: center;
+    }
+    
+    .wishlist-container {
+      padding: 2rem 0 4rem;
+    }
+    
+    .card {
+      transition: transform 0.3s ease;
+      margin-bottom: 1.5rem;
+      border: none;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .card-title {
+      font-weight: 600;
+      color: var(--black);
+    }
+    
+    .card-text {
+      color: var(--black);
+    }
+    
+    .price {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+    
+    .btn-view {
+      background-color: var(--white);
+      color: var(--primary-color);
+      border: 1px solid var(--primary-color);
+    }
+    
+    .btn-view:hover {
+      background-color: var(--light-gray);
+      color: var(--primary-color);
+    }
+    
+    .btn-cart {
+      background-color: var(--primary-color);
+      color: var(--white);
+      border: none;
+    }
+    
+    .btn-cart:hover {
+      background-color: #2d4a3e; /* Darker shade of primary color */
+      color: var(--white);
+    }
+    
+    .empty-wishlist {
+      background-color: var(--white);
+      border-radius: 0.5rem;
+      padding: 3rem;
+      text-align: center;
+      color: var(--black);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1 class="display-4">My Wishlist</h1>
+      <p class="lead">Items you've saved for later</p>
+    </div>
+    
+    <!-- Wishlist Items -->
+    <div class="wishlist-container">
+      <% if (wishlistItems && wishlistItems.length > 0) { %>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+          <% wishlistItems.forEach(item => { %>
+            <div class="col">
+              <div class="card h-100">
+                <img src="<%= item.image %>" class="card-img-top" alt="<%= item.name %>">
+                <div class="card-body">
+                  <h5 class="card-title"><%= item.name %></h5>
+                  <p class="price mb-3">$<%= item.price.toFixed(2) %></p>
+                  <div class="d-grid gap-2">
+                    <a href="/product/<%= item.id %>" class="btn btn-view">View Details</a>
+                    <button class="btn btn-cart" onclick="addToCart('<%= item.id %>')">Add to Cart</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% }); %>
+        </div>
+      <% } else { %>
+        <div class="empty-wishlist">
+          <h3>Your wishlist is empty</h3>
+          <p>Add items to your wishlist to save them for later.</p>
+          <a href="/products" class="btn btn-cart mt-3">Browse Products</a>
+        </div>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- Custom JavaScript -->
+  <script>
+    function addToCart(productId) {
+      // This function would handle adding the item to the cart
+      // You would implement AJAX call to your backend here
+      console.log(`Adding product ${productId} to cart`);
+      
+      // Example implementation:
+      // fetch('/api/cart/add', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify({ productId }),
+      // })
+      // .then(response => response.json())
+      // .then(data => {
+      //   console.log('Success:', data);
+      //   // Show success message or update cart count
+      // })
+      // .catch((error) => {
+      //   console.error('Error:', error);
+      // });
+      
+      alert('Item added to cart!');
+    }
+  </script>
+</body>
+</html>

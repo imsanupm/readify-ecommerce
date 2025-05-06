@@ -44,12 +44,6 @@ const getCart = async (req,res) => {
         }
          
         totalAmount+=subTotal
-        console.log('subTotal price for rendering ',subTotal);
-        console.log('Total amount', totalAmount);
-        console.log('total gstAmount',gstAmount);
-        
-        
-        console.log(cartData);
         res.render('cart', {
           cartData,
           subTotal,
