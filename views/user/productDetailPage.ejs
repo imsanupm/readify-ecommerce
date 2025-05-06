@@ -1,470 +1,493 @@
-
-
 <%-include('partials/user/header')%>
 
 
-<style>
-    .product-image {
-        max-height: 400px;
-        object-fit: cover;
-    }
-    .thumbnail {
+    <style>
+        .product-image {
+            max-height: 400px;
+            object-fit: cover;
+        }
 
-        width: 80px;
-        height: 80px;
-        object-fit: cover;
-        cursor: pointer;
-        opacity: 0.6;
-        transition: opacity 0.3s ease;
-    }
-    .thumbnail:hover, .thumbnail.active {
-        opacity: 1;
-    }
-    .related-product-img {
-        height: 180px;
-        object-fit: cover;
-    }
-    .review-avatar {
-        width: 50px;
-        height: 50px;
-    }
+        .thumbnail {
+
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.3s ease;
+        }
+
+        .thumbnail:hover,
+        .thumbnail.active {
+            opacity: 1;
+        }
+
+        .related-product-img {
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .review-avatar {
+            width: 50px;
+            height: 50px;
+        }
+    </style>
 
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-</style>
-
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<style>
-    /* Custom Zoom Styles */
-    .zoomContainer {
-        z-index: 999;
-        position: absolute;
-    }
-    
-    .zoomWrapper {
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .zoomLens {
-        border: 2px solid rgba(0,0,0,0.2);
-        cursor: zoom-in;
-    }
-    
-    @media (max-width: 768px) {
+    <style>
+        /* Custom Zoom Styles */
         .zoomContainer {
-            display: none !important;
+            z-index: 999;
+            position: absolute;
         }
-        
-        .mobile-zoom-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 1000;
-            display: none;
-            justify-content: center;
-            align-items: center;
+
+        .zoomWrapper {
+            position: relative;
+            overflow: hidden;
         }
-        
-        .mobile-zoom-overlay img {
-            max-width: 90%;
-            max-height: 90%;
-            object-fit: contain;
+
+        .zoomLens {
+            border: 2px solid rgba(0, 0, 0, 0.2);
+            cursor: zoom-in;
         }
-    }
-</style>
 
-<!-- Add this before your closing </body> tag -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.js"></script>
+        @media (max-width: 768px) {
+            .zoomContainer {
+                display: none !important;
+            }
+
+            .mobile-zoom-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                z-index: 1000;
+                display: none;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .mobile-zoom-overlay img {
+                max-width: 90%;
+                max-height: 90%;
+                object-fit: contain;
+            }
+        }
+    </style>
+
+    <!-- Add this before your closing </body> tag -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.js"></script>
 
 
 
 
 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
-  
-  <div class="container mt-5">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 
-    <nav aria-label="breadcrumb" class="my-2">
-        <ol class="breadcrumb mb-0 p-0" style="background: transparent;">
-          <li class="breadcrumb-item">
-            <a href="/">Home</a>
-          </li>
-          <li class="breadcrumb-item">
-            <a href="/books">Shop</a>
-          </li>
-          <li class="breadcrumb-item active" aria-current="page">
-            <a href="/productDetailPage/<%=product._id%>">currentPage</a>
-          </li>
-        </ol>
-      </nav>
-      
+    <div class="container mt-5">
 
-      <div class="row">
-          <!-- Product Images -->
-           
-          <div class="col-md-6 mb-4" >
-              <img src="<%=product.productImage[0]%>" alt="Product" class="img-fluid rounded mb-3 product-image" id="mainImage">
-              <div class="d-flex gap-3">
-                <% if (Array.isArray(product.productImage)) { %>
-                    <% product.productImage.forEach((image) => { %>
-                        <img src="<%= image %>" alt="Thumbnail" class="thumbnail rounded" onclick="changeImage(event, this.src)">
-                    <% }) %>
-                <% } else { %>
-                    <p>No images available</p>
-                <% } %>
-              </div>
-          </div>
-          <!-- Product Details -->
-          <div class="col-md-6">
-              <h2 class="mb-3"><%=product.productTitle%></h2>
-              <p class="text-muted mb-4">SKU:  <%=product.authorName%></p>
-              
-              <div class="mb-3">
-                  <span class="h4 me-2">&#8377;349.99</span>
-                  <span class="text-muted"><s>$399.99</s></span>
-              </div>
-              <div class="mb-3">
-                  <i class="bi bi-star-fill text-warning"></i>
-                  <i class="bi bi-star-fill text-warning"></i>
-                  <i class="bi bi-star-fill text-warning"></i>
-                  <i class="bi bi-star-fill text-warning"></i>
-                  <i class="bi bi-star-half text-warning"></i>
-                  <span class="ms-2">4.5 (120 reviews)</span>
-              </div>
-              <p class="mb-4">description : <%=product.description%></p>
-              <!-- <div class="mb-4">
+        <nav aria-label="breadcrumb" class="my-2">
+            <ol class="breadcrumb mb-0 p-0" style="background: transparent;">
+                <li class="breadcrumb-item">
+                    <a href="/">Home</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="/books">Shop</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    <a href="/productDetailPage/<%=product._id%>">currentPage</a>
+                </li>
+            </ol>
+        </nav>
+
+
+        <div class="row">
+            <!-- Product Images -->
+
+            <div class="col-md-6 mb-4">
+                <img src="<%=product.productImage[0]%>" alt="Product" class="img-fluid rounded mb-3 product-image"
+                    id="mainImage">
+                <div class="d-flex gap-3">
+                    <% if (Array.isArray(product.productImage)) { %>
+                        <% product.productImage.forEach((image)=> { %>
+                            <img src="<%= image %>" alt="Thumbnail" class="thumbnail rounded"
+                                onclick="changeImage(event, this.src)">
+                            <% }) %>
+                                <% } else { %>
+                                    <p>No images available</p>
+                                    <% } %>
+                </div>
+            </div>
+            <!-- Product Details -->
+            <div class="col-md-6">
+                <h2 class="mb-3">
+                    <%=product.productTitle%>
+                </h2>
+                <p class="text-muted mb-4">SKU: <%=product.authorName%>
+                </p>
+
+                <div class="mb-3">
+                    <span class="h4 me-2">&#8377;349.99</span>
+                    <span class="text-muted"><s>$399.99</s></span>
+                </div>
+                <div class="mb-3">
+                    <i class="bi bi-star-fill text-warning"></i>
+                    <i class="bi bi-star-fill text-warning"></i>
+                    <i class="bi bi-star-fill text-warning"></i>
+                    <i class="bi bi-star-fill text-warning"></i>
+                    <i class="bi bi-star-half text-warning"></i>
+                    <span class="ms-2">4.5 (120 reviews)</span>
+                </div>
+                <p class="mb-4">description : <%=product.description%>
+                </p>
+                <!-- <div class="mb-4">
                   <label for="quantity" class="form-label">Available Quantity</label>
                   <input type="number" class="form-control" id="quantity" value="<%=product.quantity%>" min="1" style="width: 80px;">
               </div> -->
-              <div class="mb-4">
-                <label for="quantity" class="form-label">Available Quantity</label>
-                <input type="number" class="form-control" id="quantity" value="<%=product.quantity%>" min="0" style="width: 80px;">
-                <small id="stockMessage" class="text-danger d-none">Product is out of stock</small>
-            </div>
-            <!-- <div class="mb-4">
+                <div class="mb-4">
+                    <label for="quantity" class="form-label">Available Quantity</label>
+                    <input type="number" class="form-control" id="quantity" value="<%=product.quantity%>" min="0"
+                        style="width: 80px;">
+                    <small id="stockMessage" class="text-danger d-none">Product is out of stock</small>
+                </div>
+                <!-- <div class="mb-4">
                 <label for="quantity" class="form-label">Available Quantity</label>
                 <p id="quantity" class="form-control" style="width: 80px; display: inline-block;"><%= product.quantity %></p>
                 <small id="stockMessage" class="text-danger <%= product.quantity <= 0 ? '' : 'd-none' %>">
                     Product is out of stock
                 </small>
             </div> -->
-            
-              <!-- <button class="btn btn-primary btn-lg mb-3 me-2">
+
+                <!-- <button class="btn btn-primary btn-lg mb-3 me-2">
                       <i class="bi bi-cart-plus"></i> Add to Cart
                   </button> -->
 
-                  <button 
-                  class="btn btn-primary btn-lg mb-3 me-2 addToCartBtn" 
-                  data-product-id="<%= product._id %>">
-                  <i class="bi bi-cart-plus"></i> Add to Cart
+                <button class="btn btn-primary btn-lg mb-3 me-2 addToCartBtn" data-product-id="<%= product._id %>">
+                    <i class="bi bi-cart-plus"></i> Add to Cart
                 </button>
 
-              <button class="btn btn-outline-secondary btn-lg mb-3">
+                <!-- <button class="btn btn-outline-secondary btn-lg mb-3">
                       <i class="bi bi-heart"></i> Add to Wishlist
-                  </button>
-              <div class="mt-4">
-                  <h5>Key insights from Books       :</h5>
-                  <ul>
-                      <li>Books expand our knowledge.</li>
-                      <li>Stories inspire and educate</li>
-                      <li>Knowledge grows through reading.</li>
-                      <li>Reading enhances critical thinking.</li>
-                  </ul>
-              </div>
-          </div>
-      </div>
-  
-      <!-- Reviews Section -->
-      <div class="row mt-5">
-          <div class="col-12">
-              <h3 class="mb-4">Customer Reviews</h3>
-              <div class="d-flex align-items-center mb-4">
-                  <div>
-                      <h4 class="mb-0">4.5 <small class="text-muted">out of 5</small></h4>
-                      <div>
-                          <i class="bi bi-star-fill text-warning"></i>
-                          <i class="bi bi-star-fill text-warning"></i>
-                          <i class="bi bi-star-fill text-warning"></i>
-                          <i class="bi bi-star-fill text-warning"></i>
-                          <i class="bi bi-star-half text-warning"></i>
-                      </div>
-                      <p class="mb-0">Based on 120 reviews</p>
-                  </div>
-                  <div class="ms-5">
-                      <div class="d-flex align-items-center mb-1">
-                          <span class="me-2">5</span>
-                          <div class="progress" style="width: 200px; height: 8px;">
-                              <div class="progress-bar bg-success" role="progressbar" style="width: 75%"></div>
-                          </div>
-                          <span class="ms-2">75%</span>
-                      </div>
-                      <div class="d-flex align-items-center mb-1">
-                          <span class="me-2">4</span>
-                          <div class="progress" style="width: 200px; height: 8px;">
-                              <div class="progress-bar bg-success" role="progressbar" style="width: 15%"></div>
-                          </div>
-                          <span class="ms-2">15%</span>
-                      </div>
-                      <div class="d-flex align-items-center mb-1">
-                          <span class="me-2">3</span>
-                          <div class="progress" style="width: 200px; height: 8px;">
-                              <div class="progress-bar bg-warning" role="progressbar" style="width: 5%"></div>
-                          </div>
-                          <span class="ms-2">5%</span>
-                      </div>
-                      <div class="d-flex align-items-center mb-1">
-                          <span class="me-2">2</span>
-                          <div class="progress" style="width: 200px; height: 8px;">
-                              <div class="progress-bar bg-danger" role="progressbar" style="width: 3%"></div>
-                          </div>
-                          <span class="ms-2">3%</span>
-                      </div>
-                      <div class="d-flex align-items-center">
-                          <span class="me-2">1</span>
-                          <div class="progress" style="width: 200px; height: 8px;">
-                              <div class="progress-bar bg-danger" role="progressbar" style="width: 2%"></div>
-                          </div>
-                          <span class="ms-2">2%</span>
-                      </div>
-                  </div>
-                  <div class="ms-auto">
-                      <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#reviewModal">
-                          Write a Review
-                      </button>
-                  </div>
-              </div>
-  
-              <!-- Individual Reviews -->
-              <div class="card mb-4">
-                  <div class="card-body">
-                      <div class="d-flex mb-3">
-                          <img src="/api/placeholder/50/50" alt="User" class="rounded-circle review-avatar me-3">
-                          <div>
-                              <h5 class="mb-0">Sarah Johnson</h5>
-                              <div class="text-muted">Verified Purchase</div>
-                              <div>
-                                  <i class="bi bi-star-fill text-warning"></i>
-                                  <i class="bi bi-star-fill text-warning"></i>
-                                  <i class="bi bi-star-fill text-warning"></i>
-                                  <i class="bi bi-star-fill text-warning"></i>
-                                  <i class="bi bi-star-fill text-warning"></i>
-                                  <span class="ms-2">5.0</span>
-                              </div>
-                          </div>
-                          <div class="ms-auto text-muted">March 12, 2025</div>
-                      </div>
-                      <h5>Amazing sound quality and comfortable fit!</h5>
-                      <p>I've been using these headphones for about a month now and I'm incredibly impressed. The noise cancellation is top-notch - I can barely hear anything from the outside world when I have them on. The sound quality is rich and balanced, and the battery lasts me through several days of use before needing a charge.</p>
-                      <div class="d-flex mt-3">
-                          <button class="btn btn-sm btn-outline-secondary me-2">
-                              <i class="bi bi-hand-thumbs-up"></i> Helpful (24)
-                          </button>
-                          <button class="btn btn-sm btn-outline-secondary">
-                              <i class="bi bi-flag"></i> Report
-                          </button>
-                      </div>
-                  </div>
-              </div>
-  
-              <div class="card mb-4">
-                  <div class="card-body">
-                      <div class="d-flex mb-3">
-                          <img src="/api/placeholder/50/50" alt="User" class="rounded-circle review-avatar me-3">
-                          <div>
-                              <h5 class="mb-0">Michael Rodriguez</h5>
-                              <div class="text-muted">Verified Purchase</div>
-                              <div>
-                                  <i class="bi bi-star-fill text-warning"></i>
-                                  <i class="bi bi-star-fill text-warning"></i>
-                                  <i class="bi bi-star-fill text-warning"></i>
-                                  <i class="bi bi-star-fill text-warning"></i>
-                                  <i class="bi bi-star text-warning"></i>
-                                  <span class="ms-2">4.0</span>
-                              </div>
-                          </div>
-                          <div class="ms-auto text-muted">March 1, 2025</div>
-                      </div>
-                      <h5>Great for travel, but app could be better</h5>
-                      <p>These headphones are perfect for travel - the noise cancellation makes flights much more bearable. Sound quality is excellent and they're comfortable even for long periods. The only downside is the companion app, which could use some improvements in the user interface. Overall, still a great purchase!</p>
-                      <div class="d-flex mt-3">
-                          <button class="btn btn-sm btn-outline-secondary me-2">
-                              <i class="bi bi-hand-thumbs-up"></i> Helpful (17)
-                          </button>
-                          <button class="btn btn-sm btn-outline-secondary">
-                              <i class="bi bi-flag"></i> Report
-                          </button>
-                      </div>
-                  </div>
-              </div>
-  
-              <div class="text-center">
-                  <button class="btn btn-outline-primary">Load More Reviews</button>
-              </div>
-          </div>
-      </div>
+                  </button> -->
+                <button class="btn btn-outline-secondary btn-lg mb-3 addToWishlistBtn"
+                    data-product-id="<%= product._id %>">
+                    <i class="bi bi-heart"></i> Add to Wishlist
+                </button>
 
-      <!-- Related Products Section -->
-      <div class="row mt-5">
-        <div class="col-12">
-            <h3 class="mb-4">You May Also Like</h3>
+                <div class="mt-4">
+                    <h5>Key insights from Books :</h5>
+                    <ul>
+                        <li>Books expand our knowledge.</li>
+                        <li>Stories inspire and educate</li>
+                        <li>Knowledge grows through reading.</li>
+                        <li>Reading enhances critical thinking.</li>
+                    </ul>
+                </div>
+            </div>
         </div>
-    
-        <% relatedProducts.forEach(product => { %>
-            <div class="col-md-3 mb-4">
-               
-                <div class="card h-100">
-                    <img src="<%= product.productImage[0] %>" class="card-img-top related-product-img" alt="<%= product.productTitle %>" style="object-fit: contain; height: 200px; width: 100%;">
 
-                    <div class="card-body">
-                        <h5 class="card-title"><%= product.productTitle %></h5>
-                        <div class="mb-2">
+        <!-- Reviews Section -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <h3 class="mb-4">Customer Reviews</h3>
+                <div class="d-flex align-items-center mb-4">
+                    <div>
+                        <h4 class="mb-0">4.5 <small class="text-muted">out of 5</small></h4>
+                        <div>
+                            <i class="bi bi-star-fill text-warning"></i>
                             <i class="bi bi-star-fill text-warning"></i>
                             <i class="bi bi-star-fill text-warning"></i>
                             <i class="bi bi-star-fill text-warning"></i>
                             <i class="bi bi-star-half text-warning"></i>
-                            <i class="bi bi-star text-warning"></i>
-                            <span class="ms-1 small">(76)</span>
                         </div>
-                        <p class="card-text fw-bold">&#8377;<%= product.regularPrice %></p>
-                        <a href="/productDetailPage/<%= product._id %>" class="btn btn-sm btn-outline-primary">View Details</a>
+                        <p class="mb-0">Based on 120 reviews</p>
+                    </div>
+                    <div class="ms-5">
+                        <div class="d-flex align-items-center mb-1">
+                            <span class="me-2">5</span>
+                            <div class="progress" style="width: 200px; height: 8px;">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: 75%"></div>
+                            </div>
+                            <span class="ms-2">75%</span>
+                        </div>
+                        <div class="d-flex align-items-center mb-1">
+                            <span class="me-2">4</span>
+                            <div class="progress" style="width: 200px; height: 8px;">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: 15%"></div>
+                            </div>
+                            <span class="ms-2">15%</span>
+                        </div>
+                        <div class="d-flex align-items-center mb-1">
+                            <span class="me-2">3</span>
+                            <div class="progress" style="width: 200px; height: 8px;">
+                                <div class="progress-bar bg-warning" role="progressbar" style="width: 5%"></div>
+                            </div>
+                            <span class="ms-2">5%</span>
+                        </div>
+                        <div class="d-flex align-items-center mb-1">
+                            <span class="me-2">2</span>
+                            <div class="progress" style="width: 200px; height: 8px;">
+                                <div class="progress-bar bg-danger" role="progressbar" style="width: 3%"></div>
+                            </div>
+                            <span class="ms-2">3%</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <span class="me-2">1</span>
+                            <div class="progress" style="width: 200px; height: 8px;">
+                                <div class="progress-bar bg-danger" role="progressbar" style="width: 2%"></div>
+                            </div>
+                            <span class="ms-2">2%</span>
+                        </div>
+                    </div>
+                    <div class="ms-auto">
+                        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#reviewModal">
+                            Write a Review
+                        </button>
                     </div>
                 </div>
-            
+
+                <!-- Individual Reviews -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="d-flex mb-3">
+                            <img src="/api/placeholder/50/50" alt="User" class="rounded-circle review-avatar me-3">
+                            <div>
+                                <h5 class="mb-0">Sarah Johnson</h5>
+                                <div class="text-muted">Verified Purchase</div>
+                                <div>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <span class="ms-2">5.0</span>
+                                </div>
+                            </div>
+                            <div class="ms-auto text-muted">March 12, 2025</div>
+                        </div>
+                        <h5>Amazing sound quality and comfortable fit!</h5>
+                        <p>I've been using these headphones for about a month now and I'm incredibly impressed. The
+                            noise cancellation is top-notch - I can barely hear anything from the outside world when I
+                            have them on. The sound quality is rich and balanced, and the battery lasts me through
+                            several days of use before needing a charge.</p>
+                        <div class="d-flex mt-3">
+                            <button class="btn btn-sm btn-outline-secondary me-2">
+                                <i class="bi bi-hand-thumbs-up"></i> Helpful (24)
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-flag"></i> Report
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="d-flex mb-3">
+                            <img src="/api/placeholder/50/50" alt="User" class="rounded-circle review-avatar me-3">
+                            <div>
+                                <h5 class="mb-0">Michael Rodriguez</h5>
+                                <div class="text-muted">Verified Purchase</div>
+                                <div>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star text-warning"></i>
+                                    <span class="ms-2">4.0</span>
+                                </div>
+                            </div>
+                            <div class="ms-auto text-muted">March 1, 2025</div>
+                        </div>
+                        <h5>Great for travel, but app could be better</h5>
+                        <p>These headphones are perfect for travel - the noise cancellation makes flights much more
+                            bearable. Sound quality is excellent and they're comfortable even for long periods. The only
+                            downside is the companion app, which could use some improvements in the user interface.
+                            Overall, still a great purchase!</p>
+                        <div class="d-flex mt-3">
+                            <button class="btn btn-sm btn-outline-secondary me-2">
+                                <i class="bi bi-hand-thumbs-up"></i> Helpful (17)
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-flag"></i> Report
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <button class="btn btn-outline-primary">Load More Reviews</button>
+                </div>
             </div>
-        <% }) %>
-    </div>
-     
-  
+        </div>
+
+        <!-- Related Products Section -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <h3 class="mb-4">You May Also Like</h3>
+            </div>
+
+            <% relatedProducts.forEach(product=> { %>
+                <div class="col-md-3 mb-4">
+
+                    <div class="card h-100">
+                        <img src="<%= product.productImage[0] %>" class="card-img-top related-product-img"
+                            alt="<%= product.productTitle %>" style="object-fit: contain; height: 200px; width: 100%;">
+
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <%= product.productTitle %>
+                            </h5>
+                            <div class="mb-2">
+                                <i class="bi bi-star-fill text-warning"></i>
+                                <i class="bi bi-star-fill text-warning"></i>
+                                <i class="bi bi-star-fill text-warning"></i>
+                                <i class="bi bi-star-half text-warning"></i>
+                                <i class="bi bi-star text-warning"></i>
+                                <span class="ms-1 small">(76)</span>
+                            </div>
+                            <p class="card-text fw-bold">&#8377;<%= product.regularPrice %>
+                            </p>
+                            <a href="/productDetailPage/<%= product._id %>" class="btn btn-sm btn-outline-primary">View
+                                Details</a>
+                        </div>
+                    </div>
+
+                </div>
+                <% }) %>
+        </div>
 
 
-  <!-- Review Modal -->
-  <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-              <div class="modal-header">
-                  <h5 class="modal-title" id="reviewModalLabel">Write a Review</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                  <form>
-                      <div class="mb-3">
-                          <label class="form-label">Rating</label>
-                          <div>
-                              <i class="bi bi-star fs-4 me-1" role="button" onclick="setRating(1)"></i>
-                              <i class="bi bi-star fs-4 me-1" role="button" onclick="setRating(2)"></i>
-                              <i class="bi bi-star fs-4 me-1" role="button" onclick="setRating(3)"></i>
-                              <i class="bi bi-star fs-4 me-1" role="button" onclick="setRating(4)"></i>
-                              <i class="bi bi-star fs-4" role="button" onclick="setRating(5)"></i>
-                          </div>
-                      </div>
-                      <div class="mb-3">
-                          <label for="reviewTitle" class="form-label">Review Title</label>
-                          <input type="text" class="form-control" id="reviewTitle" placeholder="Summarize your experience">
-                      </div>
-                      <div class="mb-3">
-                          <label for="reviewContent" class="form-label">Your Review</label>
-                          <textarea class="form-control" id="reviewContent" rows="4" placeholder="What did you like or dislike? How was your experience using this product?"></textarea>
-                      </div>
-                      <div class="mb-3">
-                          <label for="reviewImages" class="form-label">Add Photos (optional)</label>
-                          <input class="form-control" type="file" id="reviewImages" multiple>
-                      </div>
-                  </form>
-              </div>
-              <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                  <button type="button" class="btn btn-primary">Submit Review</button>
-              </div>
-          </div>
-      </div>
-  </div>
-  
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-      function changeImage(event, src) {
-          document.getElementById('mainImage').src = src;
-          document.querySelectorAll('.thumbnail').forEach(thumb => thumb.classList.remove('active'));
-          event.target.classList.add('active');
-      }
-      
-      function setRating(rating) {
-          const stars = document.querySelectorAll('#reviewModal .bi-star, #reviewModal .bi-star-fill');
-          stars.forEach((star, index) => {
-              if (index < rating) {
-                  star.classList.remove('bi-star');
-                  star.classList.add('bi-star-fill');
-                  star.classList.add('text-warning');
-              } else {
-                  star.classList.remove('bi-star-fill');
-                  star.classList.remove('text-warning');
-                  star.classList.add('bi-star');
-              }
-          });
-      }
 
 
-      
-    document.getElementById('quantity').addEventListener('input', function () {
-        let stockMessage = document.getElementById('stockMessage');
-        if (this.value <= 0) {
-            stockMessage.classList.remove('d-none');
-        } else {
-            stockMessage.classList.add('d-none');
-        }
-    });
+        <!-- Review Modal -->
+        <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="reviewModalLabel">Write a Review</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="mb-3">
+                                <label class="form-label">Rating</label>
+                                <div>
+                                    <i class="bi bi-star fs-4 me-1" role="button" onclick="setRating(1)"></i>
+                                    <i class="bi bi-star fs-4 me-1" role="button" onclick="setRating(2)"></i>
+                                    <i class="bi bi-star fs-4 me-1" role="button" onclick="setRating(3)"></i>
+                                    <i class="bi bi-star fs-4 me-1" role="button" onclick="setRating(4)"></i>
+                                    <i class="bi bi-star fs-4" role="button" onclick="setRating(5)"></i>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="reviewTitle" class="form-label">Review Title</label>
+                                <input type="text" class="form-control" id="reviewTitle"
+                                    placeholder="Summarize your experience">
+                            </div>
+                            <div class="mb-3">
+                                <label for="reviewContent" class="form-label">Your Review</label>
+                                <textarea class="form-control" id="reviewContent" rows="4"
+                                    placeholder="What did you like or dislike? How was your experience using this product?"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="reviewImages" class="form-label">Add Photos (optional)</label>
+                                <input class="form-control" type="file" id="reviewImages" multiple>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary">Submit Review</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-  </script>
-
-
-<script>
-    $(document).ready(function() {
-        // Function to initialize zoom
-        function initImageZoom() {
-            // Destroy existing zoom to prevent multiple instances
-            if ($('#mainImage').data('elevateZoom')) {
-                $('.zoomContainer').remove();
-                $('#mainImage').removeData('elevateZoom');
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            function changeImage(event, src) {
+                document.getElementById('mainImage').src = src;
+                document.querySelectorAll('.thumbnail').forEach(thumb => thumb.classList.remove('active'));
+                event.target.classList.add('active');
             }
-    
-            // Mobile-specific handling
-            if ($(window).width() <= 768) {
-                setupMobileZoom();
-            } else {
-                setupDesktopZoom();
+
+            function setRating(rating) {
+                const stars = document.querySelectorAll('#reviewModal .bi-star, #reviewModal .bi-star-fill');
+                stars.forEach((star, index) => {
+                    if (index < rating) {
+                        star.classList.remove('bi-star');
+                        star.classList.add('bi-star-fill');
+                        star.classList.add('text-warning');
+                    } else {
+                        star.classList.remove('bi-star-fill');
+                        star.classList.remove('text-warning');
+                        star.classList.add('bi-star');
+                    }
+                });
             }
-        }
-    
-        // Desktop zoom setup
-        function setupDesktopZoom() {
-            $('#mainImage').elevateZoom({
-                zoomType: "lens",
-                lensShape: "round",
-                lensSize: 200,
-                borderSize: 1,
-                containLensZoom: true,
-                zoomWindowPosition: 1, // Right of the image
-                zoomWindowWidth: 400,
-                zoomWindowHeight: 400,
-                zoomWindowFadeIn: 500,
-                zoomWindowFadeOut: 500,
-                lensFadeIn: 500,
-                lensFadeOut: 500
+
+
+
+            document.getElementById('quantity').addEventListener('input', function () {
+                let stockMessage = document.getElementById('stockMessage');
+                if (this.value <= 0) {
+                    stockMessage.classList.remove('d-none');
+                } else {
+                    stockMessage.classList.add('d-none');
+                }
             });
-        }
-    
-        // Mobile zoom setup
-        function setupMobileZoom() {
-            // Create mobile zoom overlay
-            if ($('#mobile-zoom-overlay').length === 0) {
-                $('body').append(`
+
+        </script>
+
+
+        <script>
+            $(document).ready(function () {
+                // Function to initialize zoom
+                function initImageZoom() {
+                    // Destroy existing zoom to prevent multiple instances
+                    if ($('#mainImage').data('elevateZoom')) {
+                        $('.zoomContainer').remove();
+                        $('#mainImage').removeData('elevateZoom');
+                    }
+
+                    // Mobile-specific handling
+                    if ($(window).width() <= 768) {
+                        setupMobileZoom();
+                    } else {
+                        setupDesktopZoom();
+                    }
+                }
+
+                // Desktop zoom setup
+                function setupDesktopZoom() {
+                    $('#mainImage').elevateZoom({
+                        zoomType: "lens",
+                        lensShape: "round",
+                        lensSize: 200,
+                        borderSize: 1,
+                        containLensZoom: true,
+                        zoomWindowPosition: 1, // Right of the image
+                        zoomWindowWidth: 400,
+                        zoomWindowHeight: 400,
+                        zoomWindowFadeIn: 500,
+                        zoomWindowFadeOut: 500,
+                        lensFadeIn: 500,
+                        lensFadeOut: 500
+                    });
+                }
+
+                // Mobile zoom setup
+                function setupMobileZoom() {
+                    // Create mobile zoom overlay
+                    if ($('#mobile-zoom-overlay').length === 0) {
+                        $('body').append(`
                     <div id="mobile-zoom-overlay" class="mobile-zoom-overlay">
                         <img id="mobile-zoomed-image" src="" alt="Zoomed Image">
                         <button class="close-zoom btn btn-light position-absolute top-0 end-0 m-3">
@@ -472,51 +495,51 @@
                         </button>
                     </div>
                 `);
-            }
-    
-            // Mobile click to zoom
-            $('#mainImage').on('click', function() {
-                $('#mobile-zoomed-image').attr('src', $(this).attr('src'));
-                $('#mobile-zoom-overlay').fadeIn('fast');
-            });
-    
-            // Close zoom
-            $(document).on('click', '#mobile-zoom-overlay .close-zoom', function() {
-                $('#mobile-zoom-overlay').fadeOut('fast');
-            });
-        }
-    
-        // Initialize zoom on page load
-        initImageZoom();
-    
-        // Reinitialize zoom when thumbnails are clicked
-        $('.thumbnail').on('click', function() {
-            // Update main image
-            $('#mainImage').attr('src', $(this).attr('src'));
-            
-            // Reinitialize zoom
-            initImageZoom();
-        });
-    
-        // Reinitialize on window resize
-        $(window).on('resize', initImageZoom);
-    });
-    
-    // Optional: Add manual trigger for zoom reset
-    function resetProductZoom() {
-        if ($(window).width() > 768) {
-            $('#mainImage').elevateZoom('destroy');
-            $('#mainImage').elevateZoom({
-                zoomType: "lens",
-                lensShape: "round",
-                lensSize: 200,
-                // ... other previous options
-            });
-        }
-    }
-    </script>
+                    }
 
-<!-- 
+                    // Mobile click to zoom
+                    $('#mainImage').on('click', function () {
+                        $('#mobile-zoomed-image').attr('src', $(this).attr('src'));
+                        $('#mobile-zoom-overlay').fadeIn('fast');
+                    });
+
+                    // Close zoom
+                    $(document).on('click', '#mobile-zoom-overlay .close-zoom', function () {
+                        $('#mobile-zoom-overlay').fadeOut('fast');
+                    });
+                }
+
+                // Initialize zoom on page load
+                initImageZoom();
+
+                // Reinitialize zoom when thumbnails are clicked
+                $('.thumbnail').on('click', function () {
+                    // Update main image
+                    $('#mainImage').attr('src', $(this).attr('src'));
+
+                    // Reinitialize zoom
+                    initImageZoom();
+                });
+
+                // Reinitialize on window resize
+                $(window).on('resize', initImageZoom);
+            });
+
+            // Optional: Add manual trigger for zoom reset
+            function resetProductZoom() {
+                if ($(window).width() > 768) {
+                    $('#mainImage').elevateZoom('destroy');
+                    $('#mainImage').elevateZoom({
+                        zoomType: "lens",
+                        lensShape: "round",
+                        lensSize: 200,
+                        // ... other previous options
+                    });
+                }
+            }
+        </script>
+
+        <!-- 
 <script>
     // document.getElementById('bi bi-cart-plus').addEventListener('click',async () => {
         const productId = this.getAttribute('data-product-id')
@@ -561,43 +584,89 @@
 
 
 
+        <script>
+            document.querySelector('.addToCartBtn').addEventListener('click', async function () {
+                const productId = this.getAttribute('data-product-id');
+
+                try {
+                    const response = await fetch('/addToCart', {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ productId })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: "Success",
+                            text: result.message || "Product added to your cart. Continue shopping!"
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: "Oops",
+                            text: result.message || "Please try again"
+                        });
+                    }
+                } catch (error) {
+                    console.log('Add to cart error (frontend):', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: "Please try again",
+                        text: "Internal server error. We're working on it."
+                    });
+                }
+            });
+        </script>
+
+
+
 <script>
-    document.querySelector('.addToCartBtn').addEventListener('click', async function () {
-        const productId = this.getAttribute('data-product-id');
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.addToWishlistBtn').forEach(button => {
+        button.addEventListener('click', async (e) => {
+          const productId = button.getAttribute('data-product-id');
     
-        try {
-            const response = await fetch('/addToCart', {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ productId })
+          try {
+            const response = await fetch('/wishlist', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ productId })
             });
     
             const result = await response.json();
-    
-            if (result.success) {
-                Swal.fire({
-                    icon: 'success',
-                    title: "Success",
-                    text: result.message || "Product added to your cart. Continue shopping!"
-                });
+            if (response.ok) {
+              Swal.fire({
+                icon: 'success',
+                title: 'Added!',
+                text: 'Product added to wishlist.',
+                timer: 1500,
+                showConfirmButton: false
+              });
             } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: "Oops",
-                    text: result.message || "Please try again"
-                });
-            }
-        } catch (error) {
-            console.log('Add to cart error (frontend):', error);
-            Swal.fire({
+              Swal.fire({
                 icon: 'error',
-                title: "Please try again",
-                text: "Internal server error. We're working on it."
+                title: 'Oops...',
+                text: result.message || 'Could not add to wishlist.'
+              });
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            Swal.fire({
+              icon: 'error',
+              title: 'Error!',
+              text: 'Something went wrong!'
             });
-        }
+          }
+        });
+      });
     });
     </script>
     
-<%-include('partials/user/footer')%>
+        <%-include('partials/user/footer')%>

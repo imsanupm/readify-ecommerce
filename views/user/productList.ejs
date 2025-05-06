@@ -574,7 +574,15 @@
                     <img src="<%= book.productImage[0] || 'https://via.placeholder.com/200x300?text=No+Image' %>"
                       alt="<%= book.bname %>">
                     <div class="product-actions">
-                      <button class="wishlist-btn">
+                      <!-- <button class="wishlist-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path
+                            d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                          </path>
+                        </svg>
+                      </button> -->
+                      <button class="wishlist-btn" data-product-id="<%= book._id %>">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                           <path
@@ -582,6 +590,7 @@
                           </path>
                         </svg>
                       </button>
+                      
                     </div>
                   </div>
                 </a>
@@ -740,4 +749,48 @@
 });
 
 
+</script>
+
+<script>
+  document.querySelectorAll('.wishlist-btn').forEach(button => {
+    button.addEventListener('click', async (event) => {
+      event.preventDefault();
+      const productId = button.getAttribute('data-product-id');
+
+      try {
+        const response = await fetch('/wishlist', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ productId })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Added to Wishlist!',
+            text: data.message,
+            timer: 2000,
+            showConfirmButton: false
+          });
+        } else {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Oops!',
+            text: data.message
+          });
+        }
+      } catch (err) {
+        console.error('erro fron wishlist',err);
+        Swal.fire({
+          icon: 'error',
+          title: 'Server Error',
+          text: 'Something went wrong. Please try again later.'
+        });
+      }
+    });
+  });
 </script>

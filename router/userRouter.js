@@ -13,7 +13,7 @@ const validateAddressForm = require('../validators/user/addressValidator')
 const forgotPassword = require('../controller/user/forgotPassword');
 const cartController = require('../controller/user/cart');
 const updateCart = require('../controller/user/update-cart');
-
+const wishListController = require('../controller/user/wishList')
 
 router.get('/', userController.loadHomepage);
 router.get('/signup', userController.loadSignup);
@@ -52,6 +52,8 @@ router.post('/addToCart',cartController.addToCart)
 router.patch('/cart/update-quantity', updateCart.updateQuantity);
 router.delete('/cart/remove/:productId',updateCart.removeFromCart)
 
+//whishlist
+router.post('/wishlist',wishListController.addToWishlist);
 
 
 
