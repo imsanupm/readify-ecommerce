@@ -14,6 +14,10 @@ const forgotPassword = require('../controller/user/forgotPassword');
 const cartController = require('../controller/user/cart');
 const updateCart = require('../controller/user/update-cart');
 const wishListController = require('../controller/user/wishList')
+const updatWishlist = require('../controller/user/update-whishlist');
+
+
+
 
 router.get('/', userController.loadHomepage);
 router.get('/signup', userController.loadSignup);
@@ -53,7 +57,9 @@ router.patch('/cart/update-quantity', updateCart.updateQuantity);
 router.delete('/cart/remove/:productId',updateCart.removeFromCart)
 
 //whishlist
+router.get('/wishlist',userAuth.isUserSignedIn,wishListController.getWishList)
 router.post('/wishlist',wishListController.addToWishlist);
+router.delete('/wishlist/delete/:productId',updatWishlist.deleteProduct)
 
 
 

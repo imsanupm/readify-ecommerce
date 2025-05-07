@@ -61,7 +61,7 @@ const getCart = async (req,res) => {
 
 
 const addToCart = async (req, res) => {
-    console.log('hello from  car')
+   
     try {
       const productId = req.body.productId;
       const userId = req.session.user_id;

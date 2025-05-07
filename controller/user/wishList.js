@@ -1,7 +1,69 @@
 const status = require('../../helpers/user/statusCode');
 const Cart = require('../../models/admin/cart');
-const Wishlist = require('../../models/admin/wishList');
+const Whishlist = require('../../models/admin/wishList');
 
+
+
+
+
+
+const getWishList = async (req, res) => {
+    try {
+      const userId = req.session.user_id;
+      
+     
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 8; // Items per page
+      const skip = (page - 1) * limit;
+  
+     
+      const wishList = await Whishlist.findOne({ userId });
+      
+      if (!wishList) {
+        return res.render('wishList', { 
+          wishlistItems: [], 
+          pagination: {
+            totalItems: 0,
+            totalPages: 0,
+            currentPage: 1,
+            limit: limit
+          }
+        });
+      }
+      
+      const totalItems = wishList.products.length;
+      const totalPages = Math.ceil(totalItems / limit);
+
+      const paginatedWishlist = await Whishlist.findOne({ userId })
+        .populate('products.productId')
+        .lean(); 
+      const util = require('util');
+      // console.log('wishList', util.inspect(paginatedWishlist, { depth: 3, colors: true }));
+  
+      let validItems = [];
+      
+      if (paginatedWishlist && paginatedWishlist.products) {
+       
+        validItems = paginatedWishlist.products
+          .filter(item => item && item.productId)
+        
+          .slice(skip, skip + limit);
+      }
+      
+      res.render('wishList', { 
+        wishlistItems: validItems,
+        pagination: {
+          totalItems,
+          totalPages,
+          currentPage: page,
+          limit
+        }
+      });
+    } catch (error) {
+      console.log('Error during getWishlist:', error);
+      res.status(500).send('Internal Server Error');
+    }
+  };
 
 const addToWishlist = async (req, res) => {
     try {
@@ -31,7 +93,7 @@ const addToWishlist = async (req, res) => {
       }
   
     
-      let wishlist = await Wishlist.findOne({ userId });
+      let wishlist = await Whishlist.findOne({ userId });
   
       if (!wishlist) {
         wishlist = new Wishlist({
@@ -64,5 +126,6 @@ const addToWishlist = async (req, res) => {
   
 
 module.exports = {
-    addToWishlist
+    addToWishlist,
+    getWishList
 }

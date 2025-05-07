@@ -1,125 +1,294 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <%- include("../../views/partials/user/header") %>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Wishlist</title>
+  <title>My Book Wishlist</title>
   <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Custom CSS -->
   <style>
-    :root {
-      --primary-color: #3b5d50;
-      --white: #ffffff;
-      --black: #000000;
-      --light-gray: #f8f9fa;
-    }
-    
     body {
-      background-color: var(--primary-color);
-      color: var(--white);
+      background-color: #ffffff;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #333333;
+      padding: 20px 0;
     }
     
-    .page-header {
-      padding: 3rem 0 2rem;
-      text-align: center;
+    .page-title {
+      margin-bottom: 2rem;
+      color: #3b5d50;
+      font-weight: 600;
     }
     
     .wishlist-container {
-      padding: 2rem 0 4rem;
+      padding: 1rem 0 3rem;
     }
     
     .card {
-      transition: transform 0.3s ease;
+      transition: all 0.3s ease;
       margin-bottom: 1.5rem;
       border: none;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
     }
     
     .card:hover {
       transform: translateY(-5px);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
     }
     
-    .card-title {
+    .card-img-container {
+      height: 250px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f8f9fa;
+    }
+    
+    .card-img-top {
+      object-fit: contain;
+      max-height: 100%;
+      max-width: 100%;
+      padding: 1rem;
+    }
+    
+    .card-body {
+      padding: 1.5rem;
+    }
+    
+    .book-title {
       font-weight: 600;
-      color: var(--black);
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      line-height: 1.4;
+      height: 3rem;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
     }
     
-    .card-text {
-      color: var(--black);
-    }
-    
-    .price {
+    .book-price {
       font-size: 1.25rem;
       font-weight: 700;
-      color: var(--primary-color);
+      color: #3b5d50;
+      margin-bottom: 1.25rem;
     }
     
     .btn-view {
-      background-color: var(--white);
-      color: var(--primary-color);
-      border: 1px solid var(--primary-color);
+      background-color: #ffffff;
+      color: #3b5d50;
+      border: 1px solid #3b5d50;
+      border-radius: 4px;
+      font-weight: 500;
     }
     
     .btn-view:hover {
-      background-color: var(--light-gray);
-      color: var(--primary-color);
+      background-color: #f0f7f5;
+      color: #3b5d50;
     }
     
     .btn-cart {
-      background-color: var(--primary-color);
-      color: var(--white);
+      background-color: #3b5d50;
+      color: #ffffff;
       border: none;
+      border-radius: 4px;
+      font-weight: 500;
     }
     
     .btn-cart:hover {
-      background-color: #2d4a3e; /* Darker shade of primary color */
-      color: var(--white);
+      background-color: #2e4a40;
+      color: #ffffff;
+    }
+    
+    .btn-remove {
+      background-color: #dc3545;
+      color: #ffffff;
+      border: none;
+      border-radius: 4px;
+      font-weight: 500;
+      margin-top: 0.5rem;
+    }
+    
+    .btn-remove:hover {
+      background-color: #c82333;
     }
     
     .empty-wishlist {
-      background-color: var(--white);
-      border-radius: 0.5rem;
+      background-color: #f8f9fa;
+      border-radius: 8px;
       padding: 3rem;
       text-align: center;
-      color: var(--black);
+      margin-top: 2rem;
+    }
+    
+    .empty-wishlist h3 {
+      color: #3b5d50;
+      margin-bottom: 1rem;
+    }
+    
+    .empty-wishlist p {
+      color: #6c757d;
+      margin-bottom: 1.5rem;
+    }
+    
+    .added-date {
+      font-size: 0.85rem;
+      color: #6c757d;
+      margin-bottom: 1rem;
+    }
+    
+    /* Pagination Styles */
+    .pagination-container {
+      margin-top: 2.5rem;
+      display: flex;
+      justify-content: center;
+    }
+    
+    .page-item.active .page-link {
+      background-color: #3b5d50;
+      border-color: #3b5d50;
+    }
+    
+    .page-link {
+      color: #3b5d50;
+    }
+    
+    .page-link:hover {
+      color: #2e4a40;
+    }
+    
+    .page-info {
+      text-align: center;
+      margin-bottom: 1rem;
+      color: #6c757d;
+      font-size: 0.9rem;
+    }
+    
+    @media (max-width: 767.98px) {
+      .card-img-container {
+        height: 200px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Page Header -->
-    <div class="page-header">
-      <h1 class="display-4">My Wishlist</h1>
-      <p class="lead">Items you've saved for later</p>
-    </div>
+    <!-- Page Title -->
+    <!-- <h1 class="page-title">My Book Wishlist</h1> -->
     
     <!-- Wishlist Items -->
     <div class="wishlist-container">
       <% if (wishlistItems && wishlistItems.length > 0) { %>
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
-          <% wishlistItems.forEach(item => { %>
-            <div class="col">
-              <div class="card h-100">
-                <img src="<%= item.image %>" class="card-img-top" alt="<%= item.name %>">
-                <div class="card-body">
-                  <h5 class="card-title"><%= item.name %></h5>
-                  <p class="price mb-3">$<%= item.price.toFixed(2) %></p>
-                  <div class="d-grid gap-2">
-                    <a href="/product/<%= item.id %>" class="btn btn-view">View Details</a>
-                    <button class="btn btn-cart" onclick="addToCart('<%= item.id %>')">Add to Cart</button>
+        <!-- Books Grid -->
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+          <% wishlistItems.forEach(item => { 
+            if (item.productId) { 
+              const product = item.productId; %>
+              <div class="col">
+                <div class="card h-100">
+                  <div class="card-img-container">
+                    <img src="<%= product.productImage && product.productImage.length > 0 ? product.productImage[0] : 'https://via.placeholder.com/200x300' %>" class="card-img-top" alt="<%= product.productTitle %>">
+                  </div>
+                  <div class="card-body">
+                    <h5 class="book-title"><%= product.productTitle %></h5>
+                     <p class="book-author">By <%= product.authorName %></p>
+                    <!-- <p class="added-date">Added on: <%= new Date(item.addedOn).toLocaleDateString() %></p> -->
+                    <p class="book-price">₹<%= product.regularPrice - (product.regularPrice * product.productOffer / 100) %></p>
+                    <div class="d-grid gap-2">
+                      <a href="/product/<%= product._id %>" class="btn btn-view">View Details</a>
+                      <button class="btn btn-cart" onclick="addToCart('<%= product._id %>')">Add to Cart</button>
+                      <button class="btn btn-remove" onclick="removeFromWishlist('<%= item._id %>')">Remove</button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            <% } %>
           <% }); %>
         </div>
+        
+        <!-- Pagination Section -->
+        <% if (pagination.totalPages > 1) { %>
+          <div class="page-info">
+            Showing <%= (pagination.currentPage - 1) * pagination.limit + 1 %> to 
+            <%= Math.min(pagination.currentPage * pagination.limit, pagination.totalItems) %> 
+            of <%= pagination.totalItems %> items
+          </div>
+          <div class="pagination-container">
+            <nav aria-label="Page navigation">
+              <ul class="pagination">
+                <!-- Previous Page Button -->
+                <li class="page-item <%= pagination.currentPage === 1 ? 'disabled' : '' %>">
+                  <a class="page-link" href="?page=<%= pagination.currentPage - 1 %>" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                  </a>
+                </li>
+                
+                <!-- Page Numbers -->
+                <% 
+                let startPage = Math.max(1, pagination.currentPage - 2);
+                let endPage = Math.min(pagination.totalPages, pagination.currentPage + 2);
+                
+                // Always show at least 5 pages if available
+                if (endPage - startPage < 4 && pagination.totalPages > 4) {
+                  if (startPage === 1) {
+                    endPage = Math.min(5, pagination.totalPages);
+                  } else if (endPage === pagination.totalPages) {
+                    startPage = Math.max(1, pagination.totalPages - 4);
+                  }
+                }
+                
+                // First page
+                if (startPage > 1) { %>
+                  <li class="page-item">
+                    <a class="page-link" href="?page=1">1</a>
+                  </li>
+                  <% if (startPage > 2) { %>
+                    <li class="page-item disabled">
+                      <span class="page-link">...</span>
+                    </li>
+                  <% } %>
+                <% } %>
+                
+                <!-- Page Numbers in Range -->
+                <% for (let i = startPage; i <= endPage; i++) { %>
+                  <li class="page-item <%= pagination.currentPage === i ? 'active' : '' %>">
+                    <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                  </li>
+                <% } %>
+                
+                <!-- Last page -->
+                <% if (endPage < pagination.totalPages) { %>
+                  <% if (endPage < pagination.totalPages - 1) { %>
+                    <li class="page-item disabled">
+                      <span class="page-link">...</span>
+                    </li>
+                  <% } %>
+                  <li class="page-item">
+                    <a class="page-link" href="?page=<%= pagination.totalPages %>"><%= pagination.totalPages %></a>
+                  </li>
+                <% } %>
+                
+                <!-- Next Page Button -->
+                <li class="page-item <%= pagination.currentPage === pagination.totalPages ? 'disabled' : '' %>">
+                  <a class="page-link" href="?page=<%= pagination.currentPage + 1 %>" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        <% } %>
       <% } else { %>
+        <!-- Empty Wishlist State -->
         <div class="empty-wishlist">
           <h3>Your wishlist is empty</h3>
-          <p>Add items to your wishlist to save them for later.</p>
-          <a href="/products" class="btn btn-cart mt-3">Browse Products</a>
+          <p>Save your favorite books to your wishlist for easy access later.</p>
+          <a href="/products" class="btn btn-cart mt-3">Browse Books</a>
         </div>
       <% } %>
     </div>
@@ -131,28 +300,47 @@
   <!-- Custom JavaScript -->
   <script>
     function addToCart(productId) {
-      // This function would handle adding the item to the cart
-      // You would implement AJAX call to your backend here
+      // This function would handle adding the book to the cart
       console.log(`Adding product ${productId} to cart`);
       
       // Example implementation:
-      // fetch('/api/cart/add', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({ productId }),
-      // })
-      // .then(response => response.json())
-      // .then(data => {
-      //   console.log('Success:', data);
-      //   // Show success message or update cart count
-      // })
-      // .catch((error) => {
-      //   console.error('Error:', error);
-      // });
+      fetch('/api/cart/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ productId }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Success:', data);
+        // Show success message or update cart count
+        alert('Product added to cart!');
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+    }
+    
+    function removeFromWishlist(itemId) {
+      console.log(`Removing item ${itemId} from wishlist`);
       
-      alert('Item added to cart!');
+      fetch('/api/wishlist/remove', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ itemId }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Success:', data);
+        // Refresh the page to show updated wishlist
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
     }
   </script>
 </body>
