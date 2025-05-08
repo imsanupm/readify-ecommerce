@@ -29,6 +29,15 @@ router.get('/verify-otp',userAuth.isUserLoggedOut, userController.loadVerifyOtp)
 router.post('/verify-otp', userController.verifyOtp);
 router.get('/resend-otp',userAuth.isUserLoggedOut, userController.resendOtp);
 router.get('/pagenotfound', userController.pageNotfound);
+
+
+
+router.get('/auth/google',passport.authenticate('google',{scope:['profile','email']}))
+
+router.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/signup' }), (req,res)=>{
+    console.log(req.session.passport,'sessio data')
+    res.redirect('/')} );
+
 //forgotPassword
 router.get('/forgot-password',userAuth.isUserLoggedOut,forgotPassword.getForgotPassword)
 router.post('/forgot-password',forgotPassword.forgotPassword)

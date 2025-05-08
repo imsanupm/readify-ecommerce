@@ -444,7 +444,7 @@ const editProduct = async (req, res) => {
         productImage: updatedImages
       };
   
-      console.log('Updated Data:', updateData);
+      // console.log('Updated Data:', updateData);
   
       const updateResult = await productModel.updateOne(
         { _id: productId },

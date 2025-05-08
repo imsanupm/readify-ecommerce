@@ -7,11 +7,15 @@ const { session } = require('passport');
 const { json } = require('body-parser');
 
 
+
+
+
 const loadHomepage = async (req,res)=>{
     try{
         const product = await Product.find({isBlocked:false}).sort({createdAt:-1}).limit(7);
-        const user = req.session.user_id;
+        const user = req.session.user_id || req.session.passport.user
 
+        console.log(user,'homepage')
         if(user){
             const userData = await User.findOne({_id:user})
            

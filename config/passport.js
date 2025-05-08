@@ -47,13 +47,18 @@
 //     passport
 // }
 
-
+const passport = require('passport');
+const session = require('express-session')
 
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const User = require('../models/user/userSchema');
-const passport = require('passport');
 require('dotenv').config(); // Load environment variables
-
+passport.session({
+  secret : process.env.SESSION_SECRET,
+  resave:true,
+  saveUniitialized:true,
+})
+console.log(process.env.GOOGLE_CLIENT_ID, process.env.GOOGLE_CLIENT_SECRET,'secret val')
 passport.use(
   new GoogleStrategy(
     {
@@ -63,7 +68,9 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
+        console.log('auth progile',profile)
         let user = await User.findOne({ googleId: profile.id });
+        console.log('found user',user)
         if (user) {
           console.log('Existing user:', user); // Debug
           return done(null, user); // Pass full user object
@@ -74,7 +81,7 @@ passport.use(
             googleId: profile.id,
           });
           await user.save();
-          console.log('New user saved:', user); // Debug
+         // console.log('New user saved:', user); // Debug
           return done(null, user); // Pass full user object, not user.id
         }
       } catch (error) {
@@ -87,15 +94,16 @@ passport.use(
 
 // Add serializeUser to store user._id in the session
 passport.serializeUser((user, done) => {
-  console.log('Serializing user:', user); // Debug
+ // console.log('Serializing user:', user); // Debug
   done(null, user._id); // Use MongoDB's _id
 });
 
 // Deserialize user from the session using the stored _id
-passport.deserializeUser((id, done) => {
+passport.deserializeUser(async (id, done) => {
+  
   User.findById(id)
     .then((user) => {
-      console.log('Deserialized user:', user); // Debug
+     // console.log('Deserialized user:', user); // Debug
       done(null, user);
     })
     .catch((err) => {
