@@ -7,6 +7,9 @@ const adminCategory = require('../controller/admin/category');
 const productController = require('../controller/admin/product');
 const authMiddleware = require('../middlewares/admin/adminAuth')
 const uploads = require('../helpers/multer')
+const updateValidation = require('../validators/admin/update-product');
+
+
 
 
 
@@ -31,7 +34,7 @@ adminRouter.patch('/blockUnblockProduct/toggle-block/:id',productController.bloc
 adminRouter.get('/editProduct/:id',productController.getProductEdit);
 adminRouter.delete('/remove-image/:id',productController.removeProductImage)
 // adminRouter.put('/updateImg',uploads.array("productImages",10),productController.updateImg)
-adminRouter.post('/edit-product/:id', uploads.array('productImages', 10), productController.editProduct);
+adminRouter.post('/edit-product/:id', uploads.array('productImages', 10) ,updateValidation.validateProductEdit, productController.editProduct);
 adminRouter.get('/searchProduct',productController.searchUser)
 module.exports= adminRouter;
 
