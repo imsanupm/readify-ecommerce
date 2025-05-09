@@ -896,3 +896,142 @@ textarea {
 
 //new updations for changes
 
+
+// Add these styles to your existing SCSS file
+
+// Dropdown menu styling
+.dropdown-menu {
+	background-color: $white;
+	border-radius: 10px;
+	border: 1px solid $light;
+	box-shadow: 0 5px 15px rgba($black, 0.1);
+	padding: 10px 0;
+	
+	.dropdown-item {
+	  font-size: 14px;
+	  font-weight: 500;
+	  padding: 8px 20px;
+	  transition: .3s all ease;
+	  
+	  &:hover {
+		background-color: rgba($primary, 0.1);
+		color: $primary !important;
+	  }
+	  
+	  &:active, &:focus {
+		background-color: rgba($primary, 0.2);
+		color: $primary !important;
+	  }
+	}
+  }
+  
+  // Navbar dropdown toggle styling
+  .nav-link.dropdown-toggle {
+	position: relative;
+	padding-right: 20px;
+	
+	&:after {
+	  content: "";
+	  border-top: 0.3em solid;
+	  border-right: 0.3em solid transparent;
+	  border-bottom: 0;
+	  border-left: 0.3em solid transparent;
+	  position: absolute;
+	  right: 5px;
+	  top: 50%;
+	  transform: translateY(-50%);
+	}
+  }
+  
+  // Cart and wishlist button styling
+  .nav-link[href="/cart"], 
+  .nav-link[href="/wishlist"] {
+	position: relative;
+	transition: .3s all ease;
+	
+	&:hover {
+	  color: $secondary !important;
+	}
+  }
+  
+  // User profile dropdown styling
+  #userDropdown {
+	display: inline-flex;
+	align-items: center;
+	
+	&:after {
+	  margin-left: 8px;
+	}
+  }
+  
+  // Sign up and Sign in button styling
+  .nav-link[href="/signup"],
+  .nav-link[href="/signin"] {
+	&:hover {
+	  color: $secondary !important;
+	}
+  }
+  
+  // Mobile navbar toggler styling
+  .navbar-toggler {
+	border: none;
+	padding: 10px;
+	
+	&:focus {
+	  box-shadow: none;
+	}
+	
+	.navbar-toggler-icon {
+	  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+	}
+  }
+  
+  // Alert styling for SweetAlert2
+  .swal2-popup {
+	border-radius: 20px;
+	padding: 30px;
+	
+	.swal2-title {
+	  font-family: $font-family;
+	  font-weight: 600;
+	  color: $dark;
+	}
+	
+	.swal2-content {
+	  font-family: $font-family;
+	  color: $body_color;
+	}
+	
+	.swal2-confirm {
+	  background-color: $primary !important;
+	  border-radius: 30px !important;
+	  padding: 12px 30px !important;
+	  font-weight: 600 !important;
+	  
+	  &:hover {
+		background-color: darken($primary, 5%) !important;
+	  }
+	}
+	
+	.swal2-cancel {
+	  background-color: $dark !important;
+	  border-radius: 30px !important;
+	  padding: 12px 30px !important;
+	  font-weight: 600 !important;
+	  
+	  &:hover {
+		background-color: darken($dark, 5%) !important;
+	  }
+	}
+  }
+  
+  // Zoom image styling
+  .zoomContainer {
+	z-index: 100;
+  }
+  
+  .zoomWindow {
+	border: 3px solid $light !important;
+	border-radius: 10px;
+  }
+

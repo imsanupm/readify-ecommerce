@@ -60,10 +60,10 @@ router.delete('/addresses/delete/:addressId',addresManageMent.deleteAddress)
 
 
 //cart
-router.get('/cart',userAuth.isUserSignedIn,cartController.getCart);
+router.get('/cart',userAuth.main,userAuth.isUserSignedIn,cartController.getCart);
 router.post('/addToCart',cartController.addToCart)
 router.patch('/cart/update-quantity', updateCart.updateQuantity);
-router.delete('/cart/remove/:productId',updateCart.removeFromCart)
+router.delete('/cart/remove/:productId',updateCart.removeFromCart);
 
 //whishlist
 router.get('/wishlist',userAuth.isUserSignedIn,wishListController.getWishList)

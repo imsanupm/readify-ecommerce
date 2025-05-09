@@ -13,7 +13,10 @@ const { json } = require('body-parser');
 const loadHomepage = async (req,res)=>{
     try{
         const product = await Product.find({isBlocked:false}).sort({createdAt:-1}).limit(7);
-        const user = req.session.user_id || req.session.passport.user
+        // const user = req.session.user_id || req.session.passport.user
+        const user = req.session.user_id || (req.session.passport && req.session.passport.user);
+
+        if(user)   req.session.user_id = user
 
         console.log(user,'homepage')
         if(user){

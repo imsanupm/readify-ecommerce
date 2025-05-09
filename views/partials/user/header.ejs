@@ -15,6 +15,8 @@
 		<link href="/css/tiny-slider.css" rel="stylesheet">
 		<link href="/css/style.css" rel="stylesheet">
 		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+		  <!-- Font Awesome for star icons -->
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.js"></script>
@@ -25,48 +27,84 @@
 	<body>
 
 		<!-- Start Header/Navigation -->
-		<nav class="custom-navbar navbar navbar navbar-expand-md navbar-dark bg-dark" arial-label="Furni navigation bar">
-
+		<nav class="navbar navbar-expand-md" style="background-color: #3b5d50; padding: 15px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
 			<div class="container">
-				<a class="navbar-brand" >readify<span>.</span></a>
-
-				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsFurni" aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation">
+				<a class="navbar-brand" style="color: #ffffff; font-weight: 700; font-size: 24px; letter-spacing: 0.5px;">
+					readify<span style="color: #ff5733;">.</span>
+				</a>
+		
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsFurni" 
+						aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation" 
+						style="border-color: rgba(255,255,255,0.5);">
 					<span class="navbar-toggler-icon"></span>
 				</button>
-
-				<ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
-					<% if (user) { %>
-
-						<li class="nav-item active">
-							<a class="nav-link" href="/">Home</a>
-						</li>
-						<li><a class="nav-link" href="/books">Shop</a></li>
-						<li class="nav-item active">
-							<a class="nav-link" href="/wishlist">Wishlist</a>
-						</li>
-						<li class="nav-item active">
-							<a class="nav-link" href="/cart">Cart</a>
-						</li>
-
-						<li class="nav-item dropdown">
-							<a href="#" class="nav-link dropdown-toggle" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-								<%= user.name %>
-							</a>
-							<ul class="dropdown-menu" aria-labelledby="userDropdown">
-								<li><a class="dropdown-item" href="/userProfile" style="color:blue;">Profile</a></li>
-								<li><a class="dropdown-item" href="/logout" >Logout</a></li>
-							</ul>
-						</li>
-					<% } else { %>
-						<li class="nav-item active">
-							<a class="nav-link" href="/">Home</a>
-						</li>
-						<li><a class="nav-link" href="/books">Shop</a></li>
-						<li><a class="nav-link" href="/signup">Signup</a></li>
-						<li><a class="nav-link" href="/signin">Signin</a></li>
-					<% } %>
-				</ul>
-				
+		
+				<div class="collapse navbar-collapse" id="navbarsFurni">
+					<ul class="navbar-nav ms-auto mb-2 mb-md-0" style="align-items: center;">
+						<% if (user) { %>
+							<li class="nav-item active" style="margin: 0 10px;">
+								<a class="nav-link" href="/" style="color: #ffffff; font-weight: 500; transition: color 0.3s ease;">
+									<i class="fas fa-home" style="margin-right: 5px;"></i> Home
+								</a>
+							</li>
+							<li class="nav-item" style="margin: 0 10px;">
+								<a class="nav-link" href="/books" style="color: #ffffff; font-weight: 500; transition: color 0.3s ease;">
+									<i class="fas fa-book" style="margin-right: 5px;"></i> Shop
+								</a>
+							</li>
+							<li class="nav-item" style="margin: 0 10px;">
+								<a class="nav-link" href="/wishlist" style="color: #ffffff; font-weight: 500; transition: color 0.3s ease;">
+									<i class="fas fa-heart" style="margin-right: 5px;"></i> Wishlist
+								</a>
+							</li>
+							<li class="nav-item" style="margin: 0 10px;">
+								<a class="nav-link" href="/cart" style="color: #ffffff; font-weight: 500; transition: color 0.3s ease;">
+									<i class="fas fa-shopping-cart" style="margin-right: 5px;"></i> Cart
+								</a>
+							</li>
+		
+							<li class="nav-item dropdown" style="margin: 0 10px;">
+								<a href="#" class="nav-link dropdown-toggle" id="userDropdown" role="button" 
+								   data-bs-toggle="dropdown" aria-expanded="false" 
+								   style="color: #ffffff; font-weight: 500; transition: color 0.3s ease;">
+									<i class="fas fa-user-circle" style="margin-right: 5px;"><%=user.name%></i>
+								</a>
+								<ul class="dropdown-menu" aria-labelledby="userDropdown" style="background-color: #2c3136; border: none; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); padding: 10px 0; margin-top: 10px;">
+									<li>
+										<a class="dropdown-item" href="/userProfile" style="color: #ffffff; padding: 8px 20px; transition: background-color 0.3s ease;">
+											<i class="fas fa-id-card" style="margin-right: 8px; color: #4285f4;"></i> Profile
+										</a>
+									</li>
+									<li>
+										<a class="dropdown-item" href="/logout" style="color: #ffffff; padding: 8px 20px; transition: background-color 0.3s ease;">
+											<i class="fas fa-sign-out-alt" style="margin-right: 8px; color: #ea4335;"></i> Logout
+										</a>
+									</li>
+								</ul>
+							</li>
+						<% } else { %>
+							<li class="nav-item active" style="margin: 0 10px;">
+								<a class="nav-link" href="/" style="color: #ffffff; font-weight: 500; transition: color 0.3s ease;">
+									<i class="fas fa-home" style="margin-right: 5px;"></i> Home
+								</a>
+							</li>
+							<li class="nav-item" style="margin: 0 10px;">
+								<a class="nav-link" href="/books" style="color: #ffffff; font-weight: 500; transition: color 0.3s ease;">
+									<i class="fas fa-book" style="margin-right: 5px;"></i> Shop
+								</a>
+							</li>
+							<li class="nav-item" style="margin: 0 10px;">
+								<a class="nav-link" href="/signup" style="color: #ffffff; font-weight: 500; transition: color 0.3s ease;">
+									<i class="fas fa-user-plus" style="margin-right: 5px;"></i> Signup
+								</a>
+							</li>
+							<li class="nav-item" style="margin: 0 10px;">
+								<a class="nav-link" href="/signin" style="color: #ffffff; font-weight: 500; transition: color 0.3s ease;">
+									<i class="fas fa-sign-in-alt" style="margin-right: 5px;"></i> Signin
+								</a>
+							</li>
+						<% } %>
+					</ul>
+				</div>
 			</div>
-				
 		</nav>

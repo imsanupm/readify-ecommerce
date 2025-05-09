@@ -1,6 +1,6 @@
 
 const User = require('../models/user/userSchema');
-
+const getUser = require('../helpers/user/getUser');
 const main = async (req,res,next) => {
     res.locals.user = req.session.user_id||null
     next();
@@ -8,8 +8,15 @@ const main = async (req,res,next) => {
 
 const isUserSignedIn = async (req,res,next) => {
 
+    const user = await User.findOne({ _id: req.session.user_id });
+
+    if (!user.isActive) {
+        req.session.destroy()
+        return res.redirect('/signin')
+    }
+
         if(req.session.user_id){
-                    // console.log('middleware data',req.session.user_id)
+                 
                     next()
         }else{ 
            return res.redirect('/signin')

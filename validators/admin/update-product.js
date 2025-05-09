@@ -4,6 +4,7 @@ const productModel = require('../../models/admin/productSchema');
 
 const validateProductEdit = async (req, res, next) => {
   try {
+    
     const productId = req.params.id;
     const {
       name,
@@ -16,8 +17,9 @@ const validateProductEdit = async (req, res, next) => {
       imagesToDelete,
       imagesToKeep
     } = req.body;
-
+   
     const product = await productModel.findById(productId);
+    // console.log(typeof product.category)
     if(!product){
       return res.status(404).json({ success: false, message: 'No Changes Decteted' });
     }
@@ -26,10 +28,11 @@ const validateProductEdit = async (req, res, next) => {
     if(name==product.productTitle&&
       writer==product.authorName&&
       language==product.language&&
+      category_id==product.category&&
+      description==product.description&&
       regularPrice==product.regularPrice&&
-      availableQuantity==product.quantity&&
-      arraysEqual(imagesToKeep, product.productImage)){
-        return res.status(400).json({message:"All fields are required",
+      availableQuantity==product.quantity){
+        return res.status(400).json({message:"No Changes Decteted",
           success:false
         })
       }
