@@ -131,7 +131,7 @@ const loadVerifyOtp = async (req, res) => {
         if (!req.session.userOtp || !req.session.userData) {
             return res.redirect('/signup');
         }
-        res.render('verify-Otp');
+        res.render('verify-otp');
     } catch (error) {
         console.log(`error during loadVerifyOtp ${error}`);
         res.redirect('/pagenotfound');

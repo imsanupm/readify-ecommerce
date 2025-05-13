@@ -4,7 +4,7 @@ const code = require('../../helpers/user/statusCode');
 const message = require('../../helpers/user/jsonRespose');
 const getUser = require('../../helpers/user/getUser');
 const Product = require('../../models/admin/productSchema');
-const cart = require('../../models/admin/cart');
+const Wishlist = require('../../models/admin/wishList')
 
 
 
@@ -68,6 +68,7 @@ const addToCart = async (req, res) => {
   
     
       const user = await User.findById(userId).populate('cart');
+      
       const product = await Product.findById(productId);
         
 
@@ -77,14 +78,20 @@ const addToCart = async (req, res) => {
           success: false
         });
       }
-  
+    
       if (product.quantity === 0) {
         return res.status(code.HttpStatus.NOT_FOUND).json({
           message: "Empty Stock. Stock Will Arrive Soon",
           success: false
         });
       }
+
+      await Wishlist.updateOne(
+        { userId: userId },
+        { $pull: { products: { productId: productId } } }
+      );
   
+    
       if (!user.cart) {
  
         const newCart = await Cart.create({

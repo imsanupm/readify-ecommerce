@@ -1,7 +1,7 @@
 const status = require('../../helpers/user/statusCode');
 const Cart = require('../../models/admin/cart');
 const Whishlist = require('../../models/admin/wishList');
-
+const User =require('../../models/admin/wishList')
 
 
 
@@ -69,12 +69,20 @@ const addToWishlist = async (req, res) => {
     try {
       const userId = req.session.user_id;
       const { productId } = req.body;
-  
+        
+
       if (!productId) {
         return res.status(400).json({ message: "Product ID is required" });
       }
-  
-     
+      const userCart = await Cart.findOne({
+        userId: userId,
+        "items.productId": productId,
+      });
+      
+      if (userCart) {
+        return res.status(400).json({ message: "Product Already Exists In Cart" });
+      }
+      
       const cart = await Cart.findOne({ userId });
   
       if (cart && cart.products) {
@@ -96,7 +104,7 @@ const addToWishlist = async (req, res) => {
       let wishlist = await Whishlist.findOne({ userId });
   
       if (!wishlist) {
-        wishlist = new Wishlist({
+        wishlist = new Whishlist({
           userId,
           products: [{ productId }]
         });
