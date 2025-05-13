@@ -53,7 +53,7 @@ router.post('/changeEmail',userProfile.changeEmail);
 router.patch('/changeEmail',userProfile.verifyOtp)
 router.get('/myAdress',userAuth.isUserSignedIn,addresManageMent.getAdressPage);
 router.get('/addNewAddress',userAuth.isUserSignedIn,addresManageMent.getAddAdressForm)
-router.post('/addNewAddress',validateAddressForm.addressFormValidate, addresManageMent.saveAddress)
+router.post('/addNewAddress', addresManageMent.saveAddress)
 router.get('/addresses/edit/:AddressId',userAuth.isUserSignedIn,addresManageMent.getUpdateAddress);
 router.put('/addresses/edit/:addressId',validateAddressForm.updateAddress,addresManageMent.updateAddress)
 router.delete('/addresses/delete/:addressId',addresManageMent.deleteAddress)

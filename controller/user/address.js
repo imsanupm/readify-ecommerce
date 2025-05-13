@@ -25,10 +25,13 @@ const getAddAdressForm = async (req,res) => {
 const saveAddress = async (req,res) => {
     try {
         userId = req.session.user_id;
+        console.log('user id----------',userId);
         if(!userId){
             return res.json({message:"Unauthorized: User not logged in.",success:false})
         }
-    //    const user = await User.findById(userId);
+        console.log('-----------------altleas you getting the call')
+        console.log(req.body);
+
       const {
       fullName,
       pincode,
@@ -38,8 +41,12 @@ const saveAddress = async (req,res) => {
       mobile,
       district,
       landMark,
-      saveAddressType
+      saveAddressType,
+      makeDefault
       } = req.body
+       if(makeDefault==true){
+        await removeDefaultValue(userId);
+       }
       
       const newAddress = new Address({
         fullname:fullName,
@@ -52,6 +59,7 @@ const saveAddress = async (req,res) => {
         landmark:landMark,
         saveAddressType:saveAddressType,
         userId:userId,
+        isDefault:makeDefault==true?true:false,
       })
     
        const saveAddress = await newAddress.save();
@@ -62,6 +70,18 @@ const saveAddress = async (req,res) => {
         res.json({message:"Address saved sucessFully! ",success:true});
     } catch (error) {
         console.log('error during saveAddress Function',error)
+    }
+}
+
+const removeDefaultValue = async (userId) => {
+    try {
+        await Address.updateOne(
+            {userId:userId,isDefault:true},
+            {$set:{isDefault:false}}
+        )
+        return
+    } catch (error) {
+        console.log('---from---',error)
     }
 }
 
@@ -128,6 +148,9 @@ const deleteAddress = async (req,res) => {
         res.status(500).json({message:"Internal server error",success:false});
     }
 }
+
+
+
 
 module.exports = {
     getAdressPage,

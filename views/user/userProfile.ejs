@@ -15,54 +15,7 @@
       --border-color: #e0e0e0;
     }
 
-    /* Sidebar styles */
-    .sidebar {
-      background-color: var(--white-color);
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-      height: 100%;
-    }
 
-    .sidebar-title {
-      font-weight: bold;
-      margin-bottom: 20px;
-      color: var(--primary-color);
-    }
-
-    .sidebar-link {
-      display: flex;
-      align-items: center;
-      padding: 12px 15px;
-      color: var(--text-color);
-      text-decoration: none;
-      border-radius: 8px;
-      margin-bottom: 8px;
-      transition: all 0.3s;
-    }
-
-    .sidebar-link:hover {
-      background-color: var(--primary-color);
-      color: var(--white-color);
-    }
-
-    .sidebar-link.active {
-      background-color: var(--primary-color);
-      color: var(--white-color);
-    }
-
-    .sidebar-link.logout {
-      color: #e74c3c;
-    }
-
-    .sidebar-link.logout:hover {
-      background-color: #e74c3c;
-      color: var(--white-color);
-    }
-
-    .sidebar-link i {
-      margin-right: 10px;
-    }
 
     /* Profile card styles */
     .profile-card {
@@ -336,7 +289,7 @@
           <!-- Profile Card -->
           <div class="profile-card">
             <h5 class="mb-4">
-              <i class="bi bi-person-circle"></i> User Profile
+              <i class="bi bi-person-circle" href="/books"></i> User Profile
             </h5>
 
             <div class="profile-image-container">
@@ -372,9 +325,9 @@
           </div>
 
           <!-- Stats Row -->
-          <div class="row g-4">
+          <!-- <div class="row g-4"> -->
             <!-- Orders Stat -->
-            <div class="col-md-4">
+            <!-- <div class="col-md-4">
               <div class="stat-card">
                 <div class="stat-icon orders">
                   <i class="bi bi-bag"></i>
@@ -382,10 +335,10 @@
                 <div class="stat-value">3</div>
                 <div class="stat-label">Total Orders</div>
               </div>
-            </div>
+            </div> -->
 
             <!-- Wallet Stat -->
-            <div class="col-md-4">
+            <!-- <div class="col-md-4">
               <div class="stat-card">
                 <div class="stat-icon wallet">
                   <i class="bi bi-wallet2"></i>
@@ -393,10 +346,10 @@
                 <div class="stat-value">₹2,500</div>
                 <div class="stat-label">Available Balance</div>
               </div>
-            </div>
+            </div> -->
 
             <!-- Referrals Stat -->
-            <div class="col-md-4">
+            <!-- <div class="col-md-4">
               <div class="stat-card">
                 <div class="stat-icon referrals">
                   <i class="bi bi-people"></i>
@@ -404,7 +357,7 @@
                 <div class="stat-value">₹500</div>
                 <div class="stat-label">Earned So Far</div>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -523,6 +476,7 @@
       </div>
     </div>
   </div>
+  
 
   <!-- Bootstrap JS Bundle with Popper -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -749,4 +703,3 @@
       }
     })
   </script>
-  <%- include("../../views/partials/user/footer") %>

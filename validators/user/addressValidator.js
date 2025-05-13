@@ -4,7 +4,7 @@ const User = require('../../models/user/userSchema');
 const addressFormValidate = async (req,res,next) => {
     try {
         const pincodeRegex = /^\d{6}$/;
-        const phonenumberRegex = /^[6-9]\d{9}$/;
+        // const phonenumberRegex = /^[6-9]\d{9}$/;
         const nameRegext = /^[A-Za-z]{3,}$/
         const {
             fullName,
@@ -23,15 +23,15 @@ const addressFormValidate = async (req,res,next) => {
                 if(!pincodeRegex.test(pincode)){
                     return res.json({message:"Pincode should contain 6 numbers and Do not contain any characters ",success:false})
                 }
-                if(!phonenumberRegex.test(mobile)){
-                    return res.json({message:"Phone Number atleast contain 10 digits and should not contain any numbers ",success:false})
-                }
+                // if(!phonenumberRegex.test(mobile)){
+                //     return res.json({message:"Phone Number atleast contain 10 digits and should not contain any numbers ",success:false})
+                // }
                 if(nameRegext.test(fullName)){
                     return res.json({message:"Name should not contain any numbers and needed more than two words",success:false});
                 }
                 next()
 
-    } catch (erro) {
+    } catch (error) {
         console.log('error during validate the addressFormValidate',error)
     }
 }

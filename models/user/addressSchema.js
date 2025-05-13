@@ -21,6 +21,9 @@ const AddressSchema = new mongoose.Schema({
         //suppose if you got any error you just comment the enum 
        enum: ["Home", "Work", "Other"], 
         default: "Home",    
+    },  isDefault: {
+        type: Boolean,
+        default: false
     }
     });
     AddressSchema.plugin(mongoosePaginate);
