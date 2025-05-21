@@ -40,8 +40,9 @@ app.set('views', [
   ]);
 
   app.use(authMiddleware.main);
-  app.use('/',userRouter);
   app.use('/admin',adminRouter);
+  app.use('/',userRouter);
+
 
 connectDb()
 const PORT = process.env.PORT

@@ -1,13 +1,8 @@
 
 const Category = require('../../models/admin/category');
 const productModel = require('../../models/admin/productSchema');
-const fs = require('fs');
-const path = require('path');
-const User = require('../../models/user/userSchema');
-const sharp = require('sharp');
-const product = require('../../models/admin/productSchema');
-const multer = require('multer');
-const uploads = require('../../helpers/multer'); // Update with actual path
+const code = require('../../helpers/user/statusCode');
+
 
 const getProductaddPage = async(req, res) => {
     try {
@@ -51,14 +46,23 @@ const addProduct = async (req,res) => {
           
           console.log('Problem with finding credentials in req.body in addProduct in productController')
 
-        return res.status(400).json({messge:"All fields are required ",success:false})
+        return res.status(code.HttpStatus.BAD_REQUEST).json({messge:"All fields are required ",success:false})
       }
+      // if(regularPrice<1||availableQuantity<1){
+      //   console.log('problem is here ================================')
+      //   return res.status(400).json({
+      //     message:"You cannot add  negative Price or quantity",
+      //     success:false,
+      //   })
+
+      // }
       if(regularPrice<100){
         res.json({message:"price should Morethan 100 Rpees",success:false})
       }
 
-      const imagePaths = req.files.map(file => `/uploadedImages/${file.filename}`);
-
+      
+      const imagePaths = req.files.map(file => file.path);
+      console.log('path of the image',imagePaths);
       if(!imagePaths){
 
           console.log('Problem with imagePaths newProduct in addProduct in productController')
@@ -225,247 +229,138 @@ const searchUser = async (req,res) => {
 
 
 
-// const editProduct = async (req, res) => {
-//     try {
-       
-//         const productId = req.params.id;
-       
-
-//         const {
-//             name,
-//             writer,
-//             category_id,
-//             language,
-//             regularPrice,
-//             availableQuantity,
-//             description,
-//         } = req.body;
-//         //  console.log(req.body);
-
-//         const existingProduct = await productModel.findById(productId);
-//         if (!existingProduct) {
-//             console.log('Product not found');
-//             return res.status(404).json({ message: 'Product not found' });
-//         }
-
-//         const categories = await Category.find({});
-//         if (!categories || categories.length === 0) {
-//             console.log('Error when finding categories');
-//             return res.status(500).json({ message: 'Error fetching categories' });
-//         }
-
-      
-
-//         if (!name || !writer  || !regularPrice || !availableQuantity || !description) {
-//             console.log('Missing required fields in editProduct');
-//             return res.redirect('/editProduct', { 
-//                 categories, 
-//                 product: existingProduct, 
-//                 message: 'Need Credentials' ,
-//                 success:false,
-//             });
-           
-//             return res.status(404).redirect('/editProduct/:id');
-//         }
-
-//         const updateData = {
-//             productTitle:name,
-//             authorName: writer,
-//             category:category_id,
-//             language,
-//             regularPrice:regularPrice,
-//             // salePrice,
-//             quantity:availableQuantity,
-//             description,
-//             // publishedDate
-//         };
-
-        
-//         console.log("Uploaded Files:", req.files);
-
-        
-//             if (req.files && req.files.length > 0) {
-//                 // Remove old images from the file system
-//                 if (existingProduct.productImage && existingProduct.productImage.length > 0) {
-//                     existingProduct.productImage.forEach(imagePath => {
-//                         const fullPath = path.join(__dirname, '../public/uploadedImages', path.basename(imagePath));
-//                         if (fs.existsSync(fullPath)) {
-//                             fs.unlinkSync(fullPath);
-//                         }
-//                     });
-//                 }
-    
-                
-//                 updateData.productImage = req.files.map(file => 
-//                     `/uploadedImages/${file.filename}`
-//                 );
-//             } else {
-//             updateData.productImage = existingProduct.productImage;
-//         }
-
-        
-//         if (!updateData.productImage || updateData.productImage.length < 3) {
-//             console.log('Problem with imagePaths - Minimum 3 images required');
-//             return res.render('Admin/updateProduct', { 
-//                 categories, 
-//                 product: existingProduct, 
-//                 message: 'Minimum 3 images required' 
-//             });
-//         }
-
-//         console.log('Updated Data:', updateData);
-
-       
-//         const updateResult = await productModel.updateOne(
-//             { _id: productId },
-//             { $set: updateData }
-//         );
-
-//         if (updateResult.modifiedCount === 0) {
-//             console.log("Failed to update product.");
-//             return res.status(500).json({ success: false, message: "Failed to update product" });
-//         }
-
-//         console.log(`Book Updated: ${name}`);
-
-//         return res.status(200).json({ success: true, message: 'Product updated successfully!' });
-
-//     } catch (error) {
-//         console.log(`Error in editProduct: ${error}`);
-//         return res.status(500).json({ success: false, message: 'Server error' });
-//     }
-// };
 
 
 
-
+const getCloudinaryPublicId = (url) => {
+  const parts = url.split('/');
+  const filename = parts[parts.length - 1];
+  const publicId = filename.split('.')[0];
+  return `readify/${publicId}`;
+};
 
 const editProduct = async (req, res) => {
+  try {
+    const productId = req.params.id;
+
+    const {
+      name,
+      writer,
+      category_id,
+      language,
+      regularPrice,
+      availableQuantity,
+      description,
+      imagesToDelete,
+      imagesToKeep
+    } = req.body;
+
+    const existingProduct = await productModel.findById(productId);
+    if (!existingProduct) {
+      console.log('Product not found');
+      return res.status(404).json({ success: false, message: 'Product not found' });
+    }
+
+    const categories = await Category.find({});
+    if (!categories || categories.length === 0) {
+      console.log('Error when finding categories');
+      return res.status(500).json({ success: false, message: 'Error fetching categories' });
+    }
+
+    if (!name || !writer || !regularPrice || !availableQuantity || !description) {
+      console.log('Missing required fields in editProduct');
+      return res.render('Admin/updateProduct', {
+        categories,
+        product: existingProduct,
+        message: 'All required fields must be provided',
+        success: false
+      });
+    }
+
+    let imagesToDeleteArray = [];
     try {
-      const productId = req.params.id;
-  
-      const {
-        name,
-        writer,
-        category_id,
-        language,
-        regularPrice,
-        availableQuantity,
-        description,
-        imagesToDelete,
-        imagesToKeep
-      } = req.body;
-  
-      const existingProduct = await productModel.findById(productId);
-      if (!existingProduct) {
-        console.log('Product not found');
-        return res.status(404).json({ success: false, message: 'Product not found' });
-      }
-  
-      const categories = await Category.find({});
-      if (!categories || categories.length === 0) {
-        console.log('Error when finding categories');
-        return res.status(500).json({ success: false, message: 'Error fetching categories' });
-      }
-  
-      if (!name || !writer || !regularPrice || !availableQuantity || !description) {
-        console.log('Missing required fields in editProduct');
-        return res.render('Admin/updateProduct', {
-          categories,
-          product: existingProduct,
-          message: 'All required fields must be provided',
-          success: false
-        });
-      }
-  
-      let imagesToDeleteArray = [];
-      try {
-        imagesToDeleteArray = JSON.parse(imagesToDelete || '[]');
-      } catch (e) {
-        console.log('Error parsing imagesToDelete:', e);
-      }
-  
-      let imagesToKeepArray = [];
-      try {
-        imagesToKeepArray = JSON.parse(imagesToKeep || '[]');
-      } catch (e) {
-        console.log('Error parsing imagesToKeep:', e);
-      }
-  
-      // Validate that imagesToKeep are valid existing images
-      imagesToKeepArray = imagesToKeepArray.filter(img =>
-        existingProduct.productImage.includes(img)
-      );
-  
-      // Delete specified images from the file system
-      for (const imagePath of imagesToDeleteArray) {
-        if (existingProduct.productImage.includes(imagePath)) {
-          const fullPath = path.join(__dirname, '../public/uploadedImages', path.basename(imagePath));
-          try {
-            await fs.unlink(fullPath);
-            console.log(`Deleted image: ${fullPath}`);
-          } catch (err) {
-            console.log(`Error deleting image ${fullPath}: ${err}`);
-          }
+      imagesToDeleteArray = JSON.parse(imagesToDelete || '[]');
+    } catch (e) {
+      console.log('Error parsing imagesToDelete:', e);
+    }
+
+    let imagesToKeepArray = [];
+    try {
+      imagesToKeepArray = JSON.parse(imagesToKeep || '[]');
+    } catch (e) {
+      console.log('Error parsing imagesToKeep:', e);
+    }
+
+    
+    imagesToKeepArray = imagesToKeepArray.filter(img =>
+      existingProduct.productImage.includes(img)
+    );
+
+    
+    for (const imageUrl of imagesToDeleteArray) {
+      if (existingProduct.productImage.includes(imageUrl)) {
+        const publicId = getCloudinaryPublicId(imageUrl);
+        try {
+          await cloudinary.uploader.destroy(publicId);
+          console.log(`Deleted image from Cloudinary: ${publicId}`);
+        } catch (err) {
+          console.log(`Error deleting image from Cloudinary: ${publicId}`, err);
         }
       }
-  
-      // Prepare new images
-      let newImages = [];
-      if (req.files && Array.isArray(req.files) && req.files.length > 0) {
-        newImages = req.files.map(file => `/uploadedImages/${file.filename}`);
-        console.log('New images uploaded:', newImages);
-      } else {
-        console.log('No new images uploaded');
-      }
-  
-      // Combine kept images with new images
-      const updatedImages = [...imagesToKeepArray, ...newImages];
-  
-      // Validate minimum image requirement
-      if (updatedImages.length < 3) {
-        console.log('Problem with images - Minimum 3 images required');
-        return res.render('Admin/updateProduct', {
-          categories,
-          product: existingProduct,
-          message: `Minimum 3 images required. You have ${updatedImages.length} image${updatedImages.length !== 1 ? 's' : ''}.`,
-          success: false
-        });
-      }
-  
-      const updateData = {
-        productTitle: name,
-        authorName: writer,
-        category: category_id,
-        language,
-        regularPrice,
-        quantity: availableQuantity,
-        description,
-        productImage: updatedImages
-      };
-  
-      // console.log('Updated Data:', updateData);
-  
-      const updateResult = await productModel.updateOne(
-        { _id: productId },
-        { $set: updateData }
-      );
-  
-      if (updateResult.modifiedCount === 0) {
-        console.log('No changes detected in product update');
-        return res.status(200).json({ success: false, message: 'No changes detected' });
-      }
-  
-      console.log(`Book Updated: ${name}`);
-      return res.status(200).json({ success: true, message: 'Product updated successfully!' });
-  
-    } catch (error) {
-      console.error(`Error in editProduct: ${error}`);
-      return res.status(500).json({ success: false, message: `Server error: ${error.message}` });
     }
-  };
 
-module.exports = { editProduct };
+
+    let newImages = [];
+    if (req.files && Array.isArray(req.files) && req.files.length > 0) {
+      newImages = req.files.map(file => file.path); // Cloudinary URL
+      console.log('New images uploaded:', newImages);
+    } else {
+      console.log('No new images uploaded');
+    }
+
+ 
+    const updatedImages = [...imagesToKeepArray, ...newImages];
+
+
+    if (updatedImages.length < 3) {
+      console.log('Problem with images - Minimum 3 images required');
+      return res.render('Admin/updateProduct', {
+        categories,
+        product: existingProduct,
+        message: `Minimum 3 images required. You have ${updatedImages.length} image${updatedImages.length !== 1 ? 's' : ''}.`,
+        success: false
+      });
+    }
+
+    const updateData = {
+      productTitle: name,
+      authorName: writer,
+      category: category_id,
+      language,
+      regularPrice,
+      quantity: availableQuantity,
+      description,
+      productImage: updatedImages
+    };
+
+    const updateResult = await productModel.updateOne(
+      { _id: productId },
+      { $set: updateData }
+    );
+
+    if (updateResult.modifiedCount === 0) {
+      console.log('No changes detected in product update');
+      return res.status(200).json({ success: false, message: 'No changes detected' });
+    }
+
+    console.log(`Book Updated: ${name}`);
+    return res.status(200).json({ success: true, message: 'Product updated successfully!' });
+
+  } catch (error) {
+    console.error(`Error in editProduct: ${error}`);
+    return res.status(500).json({ success: false, message: `Server error: ${error.message}` });
+  }
+};
 
 
 module.exports = {
@@ -473,11 +368,10 @@ module.exports = {
     addProduct,
     listProduct,
     blockUnblockProduct,
-    getProductEdit,
-    removeProductImage,
-    updateImg,
+   getProductEdit,
     editProduct,
     searchUser,
+    removeProductImage
 };
 
 

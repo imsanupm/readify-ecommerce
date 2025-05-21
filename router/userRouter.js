@@ -3,7 +3,6 @@ const router = express.Router();
 const userController = require('../controller/user/userController');
 const passportConfig = require('../config/passport');
 const passport = passportConfig.passport;
-const listProduct = require('../controller/user/productList')
 const productDetailPage = require('../controller/user/poductDeatils')
 const userAuth = require('../middlewares/authMiddleware')
 const userProfile = require('../controller/user/userProfile');
@@ -15,8 +14,9 @@ const cartController = require('../controller/user/cart');
 const updateCart = require('../controller/user/update-cart');
 const wishListController = require('../controller/user/wishList')
 const updatWishlist = require('../controller/user/update-whishlist');
-
-
+const checkout = require('../controller/user/checkout'); 
+const placeOrder = require('../controller/user/place-order');
+const orderDetails = require('../controller/user/orderList');
 
 
 router.get('/', userController.loadHomepage);
@@ -44,7 +44,7 @@ router.post('/forgot-password',forgotPassword.forgotPassword)
 router.get('/confirmPassword',userAuth.isUserLoggedOut,forgotPassword.confirmPasswordGet)
 router.patch('/confirmPassword',forgotPassword.updatePassword)
 //product
-router.get('/productDetailPage/:id',userAuth.isUserSignedIn,productDetailPage.getProductDetailPage)
+router.get('/productDetailPage/:id',userAuth.isUserSignedIn ,productDetailPage.getProductDetailPage)
 router.get('/books',userAuth.isUserSignedIn,productDetailPage.getProductListPage)
 //profile
 router.get('/userProfile',userAuth.isUserSignedIn,userProfile.loadUserProfile)
@@ -71,13 +71,15 @@ router.post('/wishlist',wishListController.addToWishlist);
 router.delete('/wishlist/delete/:productId',updatWishlist.deleteProduct)
 
 
+//order related
+router.get('/checkout', userAuth.isUserSignedIn,checkout.getCheckout);
+router.post('/placeOrder',placeOrder.placeNewOrder);
+router.get('/orderConfirmation',userAuth.isUserSignedIn,checkout.getOrderConfirmation)
 
 
-
-
-
-
-
+//order Details
+router.get('/orderListPage',orderDetails.getOrderListPage)
+router.get('/orderDetailPage/:id',orderDetails.getOrderDetailPage)
 
 
 
@@ -104,4 +106,8 @@ router.get('/auth/google/callback', passport.authenticate('google', { failureRed
     res.redirect('/');
 });
 
+
+router.use(((req,res,next)=>{
+    res.render('pagenotFound')
+}))
 module.exports = router;

@@ -38,7 +38,7 @@ const getWishList = async (req, res) => {
         .populate('products.productId')
         .lean(); 
       const util = require('util');
-      // console.log('wishList', util.inspect(paginatedWishlist, { depth: 3, colors: true }));
+     
   
       let validItems = [];
       

@@ -81,7 +81,7 @@ const removeDefaultValue = async (userId) => {
         )
         return
     } catch (error) {
-        console.log('---from---',error)
+        console.log('---from--removeDefault-',error)
     }
 }
 

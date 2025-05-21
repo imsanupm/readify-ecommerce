@@ -1,0 +1,238 @@
+<%-include('partials/user/header')%>
+
+<head>
+    <title>Book Order Summary</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Main layout structure */
+        .main-container {
+            display: flex;
+            width: 100%;
+        }
+        
+        /* Sidebar container - adjust width as needed to match your sidebar */
+        .sidebar-container {
+            /* Width will be determined by the profileSidebar content */
+            flex-shrink: 0;
+        }
+        
+        /* Content area that holds the orders */
+        .content-area {
+            flex-grow: 1;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .order-card {
+            background-color: white;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .status {
+            background-color: #f9bf29;
+            color: #3b5d50;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-weight: bold;
+        }
+        
+        .order-info {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .items-section {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .item:last-child {
+            border-bottom: none;
+        }
+        
+        .order-footer {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .order-footer div {
+            font-weight: bold;
+        }
+        
+        .button-section {
+            padding: 15px;
+            text-align: right;
+        }
+        
+        .view-button {
+            background-color: #3b5d50;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .view-button:hover {
+            background-color: #2e4a3f;
+        }
+        
+        .order-label {
+            color: #888;
+            font-size: 14px;
+        }
+        
+        .order-value {
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        
+        .items-title {
+            color: #3b5d50;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .empty-message {
+            background-color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+            color: #666;
+        }
+        
+        /* Eye icon for view details button */
+        .eye-icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            position: relative;
+        }
+        
+        .eye-icon:before {
+            content: "";
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: white;
+            border-radius: 50%;
+            top: 4px;
+            left: 4px;
+        }
+        
+        .eye-icon:after {
+            content: "";
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border: 2px solid white;
+            border-radius: 50%;
+            box-sizing: border-box;
+            top: 0;
+            left: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main-container">
+        <div class="sidebar-container">
+            <%-include('partials/user/profileSidebar')%>
+        </div>
+        
+        <div class="content-area">
+            <div class="container">
+                <% if (orders && orders.length > 0) { %>
+                    <% orders.forEach(order => { %>
+                        <div class="order-card">
+                            <div class="order-header">
+                                <div>Order ID: <%= order.orderId %></div>
+                                <div class="status"><%= order.status %></div>
+                            </div>
+          
+                            <div class="items-section">
+                                <div class="items-title">Items</div>
+                                <% if (order.orderedItems && order.orderedItems.length > 0) { %>
+                                    <% order.orderedItems.forEach(item => { %>
+                                        <div class="item">
+                                            <div><%= item.productDetails.name %> x <%= item.quantity %></div>
+                                            <div>₹<%= item.price.toFixed(2) %></div>
+                                        </div>
+                                    <% }) %>
+                                <% } else { %>
+                                    <div>No items found in this order.</div>
+                                <% } %>
+                            </div>
+          
+                            <div class="order-footer">
+                                <div>Total Quantity: <%= order.totalQuantity %></div>
+                                <div>Total Price: ₹<%= order.finalAmount.toFixed(2) %></div>
+                                <div>Payment Method: <%= order.paymentMethod %></div>
+                            </div>
+                            
+                            <!-- <div class="button-section">
+                                <button class="view-button" onclick="viewOrderDetails('<%= order.orderId %>')">
+                                    <span class="eye-icon"></span> View Details
+                                </button>
+                            </div> -->
+                            <a href="/orderDetailPage/<%= order.orderId %>" class="view-button">
+                                <span class="eye-icon"></span> View Details
+                            </a>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <div class="empty-message">No orders found.</div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+    
+    <!-- <script>
+        function viewOrderDetails(orderId) {
+            // You can implement your order details viewing logic here
+            console.log("Viewing details for order:", orderId);
+            window.location.href = await `/orderDetailPage/${orderId}`;
+            // window.location.href = "/orderDetailPage"
+            // For example: window.location.href = '/orders/' + orderId;
+        }
+    </script> -->
+</body>
+
+<%-include('partials/user/footer')%>

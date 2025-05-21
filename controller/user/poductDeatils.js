@@ -7,6 +7,7 @@ const Product = require('../../models/admin/productSchema')
 const getProductDetailPage = async (req, res) => {
     try {
         const id = req.params.id;
+        console.log('prdouctId for rendering----------',id)
         const products = await Product.findOne({_id:id}).populate('category').lean();
         
         
@@ -17,10 +18,10 @@ const getProductDetailPage = async (req, res) => {
 
         const allProducts = await Product.find({ _id: { $ne: id } }).populate('category').lean();
         
-        // Filter related products by category
+        
         let relProducts = allProducts.filter(item => item.category._id.toString() === products.category._id.toString());
 
-        // Limit the related products to a maximum of 4 items
+       
         relProducts = relProducts.slice(0, 4);
 
         res.render('productDetailPage', {
@@ -38,9 +39,11 @@ const getProductDetailPage = async (req, res) => {
 const getProductListPage = async (req, res) => {
     try {
 
-      const { search, category, sort, page = 1, limit = 12 } = req.query;
+      const { search, category, sort, page = 1, limit = 9 } = req.query;
   
-      const query = {};
+      const query = {
+        isBlocked:{$ne:true}
+      };
   
       await Product.updateMany({quantity:{$lt:5}},
         {isBlocked:true}
@@ -57,7 +60,7 @@ const getProductListPage = async (req, res) => {
   
    
       if (category) {
-        const categories = category.split(',').filter(id => id.trim()); // Split and sanitize
+        const categories = category.split(',').filter(id => id.trim()); 
         if (categories.length > 0) {
           query.category = { $in: categories };
         }
@@ -130,3 +133,7 @@ module.exports = {
     getProductDetailPage,
     getProductListPage,
 }
+
+
+
+

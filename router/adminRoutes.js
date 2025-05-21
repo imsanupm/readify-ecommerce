@@ -31,10 +31,17 @@ adminRouter.get('/addProducts',productController.getProductaddPage);
 adminRouter.post('/addProducts',uploads.array('productImages',10),productController.addProduct);
 adminRouter.get('/listProducts',productController.listProduct)
 adminRouter.patch('/blockUnblockProduct/toggle-block/:id',productController.blockUnblockProduct)
+adminRouter.get('/searchProduct',productController.searchUser)
 adminRouter.get('/editProduct/:id',productController.getProductEdit);
+adminRouter.post('/edit-product/:id', uploads.array('productImages', 10) ,updateValidation.validateProductEdit, productController.editProduct);
 adminRouter.delete('/remove-image/:id',productController.removeProductImage)
 // adminRouter.put('/updateImg',uploads.array("productImages",10),productController.updateImg)
-adminRouter.post('/edit-product/:id', uploads.array('productImages', 10) ,updateValidation.validateProductEdit, productController.editProduct);
-adminRouter.get('/searchProduct',productController.searchUser)
+
 module.exports= adminRouter;
+
+
+
+
+
+
 

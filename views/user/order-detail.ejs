@@ -1,0 +1,566 @@
+<%-include('partials/user/header')%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Details</title>
+<style>
+    /* Base styles and reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
+    "Helvetica Neue", sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background-color: #f5f5f7;
+  /* Space for sidebar */
+  padding-left: 250px;
+}
+
+/* Container for the order details */
+.order-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Order header */
+.order-header {
+  margin-bottom: 2rem;
+}
+
+.order-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.order-title h1 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.order-status {
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.order-status.delivered {
+  background-color: #e6f7e6;
+  color: #2e7d32;
+}
+
+.order-id-date {
+  display: flex;
+  gap: 2rem;
+}
+
+.order-info {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.label {
+  font-weight: 500;
+  color: #666;
+}
+
+/* Grid layout for order sections */
+.order-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* Order sections */
+.order-section {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.order-section h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #1a1a1a;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.info-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.address p {
+  margin-bottom: 0.25rem;
+}
+
+/* Status timeline */
+.status-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.status-timeline::before {
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: #e0e0e0;
+}
+
+.status-item {
+  display: flex;
+  gap: 1rem;
+  position: relative;
+}
+
+.status-marker {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  position: absolute;
+  left: -1.5rem;
+  top: 4px;
+}
+
+.status-item.completed .status-marker {
+  background-color: #4caf50;
+}
+
+.status-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.status-title {
+  font-weight: 500;
+}
+
+.status-date {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+/* Order items */
+.items-table {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.table-header {
+  display: grid;
+  grid-template-columns: 3fr 1fr 1fr 1fr;
+  background-color: #f9f9f9;
+  padding: 1rem;
+  font-weight: 600;
+  border-bottom: 1px solid #eee;
+}
+
+.table-row {
+  display: grid;
+  grid-template-columns: 3fr 1fr 1fr 1fr;
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
+  align-items: center;
+}
+
+.table-row:last-child {
+  border-bottom: none;
+}
+
+.product-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.product-image {
+  width: 60px;
+  height: 60px;
+  background-color: #f5f5f7;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-placeholder {
+  font-weight: bold;
+  color: #999;
+}
+
+.product-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.product-name {
+  font-weight: 500;
+}
+
+.product-description {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+/* Order summary */
+.order-summary-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 2rem;
+}
+
+.order-summary {
+  width: 100%;
+  max-width: 400px;
+}
+
+.summary-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+}
+
+.summary-divider {
+  height: 1px;
+  background-color: #eee;
+  margin: 0.5rem 0;
+}
+
+.summary-item.total {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-top: 0.5rem;
+}
+
+.summary-item.discount .value {
+  color: #4caf50;
+}
+
+/* Order actions */
+.order-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background-color: #1a73e8;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #1557b0;
+}
+
+.btn-secondary {
+  background-color: #f5f5f7;
+  color: #333;
+}
+
+.btn-secondary:hover {
+  background-color: #e5e5e7;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  body {
+    padding-left: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    padding-left: 0;
+  }
+
+  .order-container {
+    margin: 0;
+    padding: 1rem;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .order-id-date {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .table-header,
+  .table-row {
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+  }
+
+  .product-image {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media (max-width: 640px) {
+  .order-title {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .table-header {
+    display: none;
+  }
+
+  .table-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
+  }
+
+  .col {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .col::before {
+    content: attr(data-label);
+    font-weight: 500;
+  }
+
+  .product-col {
+    flex-direction: column;
+  }
+
+  .product-col::before {
+    margin-bottom: 0.5rem;
+  }
+
+  .order-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}
+
+</style>
+</head>
+<body>
+  
+  <div class="order-container">
+    <div class="order-header">
+      <div class="order-title">
+        <h1>Order Details</h1>
+        <span class="order-status delivered">Delivered</span>
+      </div>
+      <div class="order-id-date">
+        <div class="order-info">
+          <span class="label">Order Number:</span>
+          <span class="value">#ORD-12345</span>
+        </div>
+        <div class="order-info">
+          <span class="label">Order Date:</span>
+          <span class="value">May 21, 2025</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="order-grid">
+      <div class="order-section customer-info">
+        <h2>Customer Information</h2>
+        <div class="info-group">
+          <div class="info-item">
+            <span class="label">Name:  </span>
+            <span class="label"> <%=orderData.userData.name%></span>
+          </div>
+          <div class="info-item">
+            <span class="label">Email:</span>
+            <span class="value"><%=orderData.userData.email%></span>
+          </div>
+          <div class="info-item">
+            <span class="label">Phone:</span>
+            <span class="value"><%=orderData.userData.phone%></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="order-section shipping-info">
+        <h2>Shipping Address</h2>
+        <div class="info-group">
+          <div class="address">
+            <p><%= orderData.address.house_flat %>, <%= orderData.address.street %></p>
+            <p><%= orderData.address.village_city %>, <%= orderData.address.district %> - <%= orderData.address.pincode %></p>
+            <p><%= orderData.address.state %></p>
+          </div>
+          <div class="info-item">
+            <span class="label">Shipping Method:</span>
+            <span class="value">Express Delivery</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="order-section payment-info">
+        <h2>Payment Information</h2>
+        <div class="info-group">
+          <div class="info-item">
+            <span class="label">Payment Method:</span>
+            <span class="value">Visa ending in 4242</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Billing Address:</span>
+            <span class="value">Same as shipping</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="order-section order-status-info">
+        <h2>Order Status</h2>
+        <div class="status-timeline">
+          <div class="status-item completed">
+            <div class="status-marker"></div>
+            <div class="status-content">
+              <span class="status-title">Order Placed</span>
+              <span class="status-date">May 21, 2025 - 10:30 AM</span>
+            </div>
+          </div>
+          <div class="status-item completed">
+            <div class="status-marker"></div>
+            <div class="status-content">
+              <span class="status-title">Processing</span>
+              <span class="status-date">May 21, 2025 - 11:45 AM</span>
+            </div>
+          </div>
+          <div class="status-item completed">
+            <div class="status-marker"></div>
+            <div class="status-content">
+              <span class="status-title">Shipped</span>
+              <span class="status-date">May 22, 2025 - 09:15 AM</span>
+            </div>
+          </div>
+          <div class="status-item completed">
+            <div class="status-marker"></div>
+            <div class="status-content">
+              <span class="status-title">Delivered</span>
+              <span class="status-date">May 24, 2025 - 02:30 PM</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="order-section order-items">
+      <h2>Order Items</h2>
+      <div class="items-table">
+        <div class="table-header">
+          <div class="col product-col">Product</div>
+          <div class="col price-col">Price</div>
+          <div class="col quantity-col">Quantity</div>
+          <div class="col total-col">Total</div>
+        </div>
+        
+        <div class="table-row">
+          <div class="col product-col">
+            <div class="product-info">
+              <div class="product-image">
+                <div class="image-placeholder">PH</div>
+              </div>
+              <div class="product-details">
+                <div class="product-name">Premium Headphones</div>
+                <div class="product-description">Wireless Noise Cancelling</div>
+              </div>
+            </div>
+          </div>
+          <div class="col price-col">$59.99</div>
+          <div class="col quantity-col">1</div>
+          <div class="col total-col">$59.99</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="order-summary-container">
+      <div class="order-section order-summary">
+        <h2>Order Summary</h2>
+        <div class="summary-items">
+          <div class="summary-item">
+            <span class="label">Subtotal:</span>
+            <span class="value">$129.96</span>
+          </div>
+          <div class="summary-item">
+            <span class="label">Shipping:</span>
+            <span class="value">$8.99</span>
+          </div>
+          <div class="summary-item">
+            <span class="label">Tax:</span>
+            <span class="value">$10.40</span>
+          </div>
+          <div class="summary-item discount">
+            <span class="label">Discount:</span>
+            <span class="value">-$5.00</span>
+          </div>
+          <div class="summary-divider"></div>
+          <div class="summary-item total">
+            <span class="label">Total:</span>
+            <span class="value">$144.35</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="order-actions">
+      <button class="btn btn-secondary">Print Receipt</button>
+      <button class="btn btn-primary">Track Order</button>
+    </div>
+  </div>
+</body>
+</html>
+
+
+<%-include('partials/user/footer')%>

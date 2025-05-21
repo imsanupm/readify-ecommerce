@@ -32,7 +32,7 @@ const verifyAdmin = async (req, res) => {
         }
 
         if (userData.is_admin !== 1) {
-            return res.json('adminLogin', { message: 'Invalid admin' });
+            return res.status(400).json('adminLogin', { message: 'Invalid admin' ,sucess:false});
         }
 
         req.session.admin_id = userData._id;
@@ -67,3 +67,9 @@ module.exports={
     loadLogin,
     logout,
 }
+
+
+
+
+
+
