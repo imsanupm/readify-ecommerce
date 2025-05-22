@@ -390,6 +390,15 @@ body {
   }
 }
 
+
+.product-thumb {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+
 </style>
 </head>
 <body>
@@ -451,7 +460,7 @@ body {
         <div class="info-group">
           <div class="info-item">
             <span class="label">Payment Method:</span>
-            <span class="value">Visa ending in 4242</span>
+            <span class="value">COD</span>
           </div>
           <div class="info-item">
             <span class="label">Billing Address:</span>
@@ -504,26 +513,36 @@ body {
           <div class="col quantity-col">Quantity</div>
           <div class="col total-col">Total</div>
         </div>
-        
-        <div class="table-row">
-          <div class="col product-col">
-            <div class="product-info">
-              <div class="product-image">
-                <div class="image-placeholder">PH</div>
-              </div>
-              <div class="product-details">
-                <div class="product-name">Premium Headphones</div>
-                <div class="product-description">Wireless Noise Cancelling</div>
+    
+        <% orderData.orderedItems.forEach(item => { %>
+          <div class="table-row">
+            <div class="col product-col">
+              <div class="product-info">
+                <div class="product-image">
+                  <% if (item.productDetails.images && item.productDetails.images.length > 0) { %>
+                    <img src="<%= item.productDetails.images[0] %>" alt="<%= item.productDetails.name %>" class="product-thumb">
+
+                  <% } else { %>
+                    <div class="image-placeholder">PH</div>
+                  <% } %>
+                </div>
+                <div class="product-details">
+                  <div class="product-name"><%= item.productDetails.name %></div>
+                  <% if (item.productDetails.category) { %>
+                    <div class="product-description"><%= item.productDetails.category %></div>
+                  <% } %>
+                </div>
               </div>
             </div>
+            <div class="col price-col">₹<%= item.price.toFixed(2) %></div>
+            <div class="col quantity-col"><%= item.quantity %></div>
+            <div class="col total-col">₹<%= (item.price * item.quantity).toFixed(2) %></div>
           </div>
-          <div class="col price-col">$59.99</div>
-          <div class="col quantity-col">1</div>
-          <div class="col total-col">$59.99</div>
-        </div>
-
+        <% }); %>
       </div>
     </div>
+
+    
 
     <div class="order-summary-container">
       <div class="order-section order-summary">

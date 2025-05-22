@@ -16,7 +16,9 @@ const placeNewOrder = async (req,res) => {
      const address  = await User.findById(userId).populate('addresses');
     const cartData =  await Cart.findOne({userId}).populate('items.productId');
       const user = await User.findById(userId);
-      console.log("====================================================add",address);
+  
+     const addressData = address.addresses.filter((val)=>val._id.toString()==addressId);
+     console.log('============================================single address========',addressData[0].fullname);
         if(paymentMethod !=="cod"){
             return res.status(code.HttpStatus.BAD_REQUEST)
         }
@@ -77,17 +79,17 @@ const placeNewOrder = async (req,res) => {
             shippingCharge:totalAmount>1000?deliveryCharge:0,
             totalQuantity: orderedItems.reduce((sum, item) => sum + item.quantity, 0),
             address: {
-                fullname: address.fullname,
-                state: address.state,
-                district: address.district,
-                house_flat: address.house_flat,
-                pincode: address.pincode,
-                landmark: address.landmark,
-                mobile: address.mobile,
-                alt_phone: address.alt_phone,
-                village_city: address.village_city,
-                street: address.street,
-                addressType: address.addressType
+                fullname: addressData[0].fullname,
+                state: addressData[0].state,
+                district: addressData[0].district,
+                house_flat: addressData[0].house_flat,
+                pincode: addressData[0].pincode,
+                landmark: addressData[0].landmark,
+                mobile: addressData[0].mobile,
+                alt_phone: addressData[0].alt_phone,
+                village_city: addressData[0].village_city,
+                street: addressData[0].street,
+                addressType: addressData[0].addressType
               },
               invoiceDate: new Date(),
               status: 'Pending',
