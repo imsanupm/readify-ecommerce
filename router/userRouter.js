@@ -17,6 +17,7 @@ const updatWishlist = require('../controller/user/update-whishlist');
 const checkout = require('../controller/user/checkout'); 
 const placeOrder = require('../controller/user/place-order');
 const orderDetails = require('../controller/user/orderList');
+const invoicePdf = require('../helpers/user/invoice-download');
 
 
 router.get('/', userController.loadHomepage);
@@ -78,10 +79,9 @@ router.get('/orderConfirmation',userAuth.isUserSignedIn,checkout.getOrderConfirm
 
 
 //order Details
-router.get('/orderListPage',orderDetails.getOrderListPage)
-router.get('/orderDetailPage/:id',orderDetails.getOrderDetailPage)
-
-
+router.get('/orderListPage',userAuth.isUserSignedIn,orderDetails.getOrderListPage)
+router.get('/orderDetailPage/:id',userAuth.isUserSignedIn,orderDetails.getOrderDetailPage)
+router.get('/downloadInvoice/:orderId',invoicePdf.downloadInvoice)
 
 
 

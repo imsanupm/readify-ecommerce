@@ -407,7 +407,7 @@ body {
     <div class="order-header">
       <div class="order-title">
         <h1>Order Details</h1>
-        <span class="order-status delivered">Delivered</span>
+        <span class="order-status delivered"><%=orderData.status%></span>
       </div>
       <div class="order-id-date">
         <div class="order-info">
@@ -544,7 +544,7 @@ body {
 
     
 
-    <div class="order-summary-container">
+    <!-- <div class="order-summary-container">
       <div class="order-section order-summary">
         <h2>Order Summary</h2>
         <div class="summary-items">
@@ -571,10 +571,44 @@ body {
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
 
+
+
+    <div class="order-summary-container">
+      <div class="order-section order-summary">
+        <h2>Order Summary</h2>
+        <div class="summary-items">
+          <div class="summary-item">
+            <span class="label">Subtotal:</span>
+            <span class="value">₹<%= subTotal %></span>
+          </div>
+          <div class="summary-item">
+            <span class="label">Shipping:</span>
+            <span class="value">₹<%= deliveryCharge %></span>
+          </div>
+          <div class="summary-item">
+            <span class="label">Tax:</span>
+            <span class="value">₹<%= gstAmount %></span>
+          </div>
+          <% if (orderData.discount && orderData.discount > 0) { %>
+          <div class="summary-item discount">
+            <span class="label">Discount:</span>
+            <span class="value">-₹<%= orderData.discount.toFixed(2) %></span>
+          </div>
+          <% } %>
+          <div class="summary-divider"></div>
+          <div class="summary-item total">
+            <span class="label">Total:</span>
+            <span class="value">₹<%= totalPrice %></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
     <div class="order-actions">
-      <button class="btn btn-secondary">Print Receipt</button>
+      <a href="/downloadInvoice/<%= orderData.orderId %>" class="btn btn-secondary">Download Invoice</a>
+
       <button class="btn btn-primary">Track Order</button>
     </div>
   </div>
