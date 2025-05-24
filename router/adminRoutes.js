@@ -8,7 +8,7 @@ const productController = require('../controller/admin/product');
 const authMiddleware = require('../middlewares/admin/adminAuth')
 const uploads = require('../helpers/multer')
 const updateValidation = require('../validators/admin/update-product');
-const listPage = require('../controller/admin/listOrder');
+const listPage = require('../controller/admin/listOrder-orderDetail');
 
 
 
@@ -40,7 +40,7 @@ adminRouter.delete('/remove-image/:id',productController.removeProductImage)
 
 //order management
 adminRouter.get('/listOrder',listPage.getOrderListPage)
-adminRouter.get('/orderDetail/:IdOrder',listPage.getOrderList);
+adminRouter.get('/orderDetail/:IdOrder',listPage.orderDetailPage);
 module.exports= adminRouter;
 
 

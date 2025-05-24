@@ -53,7 +53,7 @@
                                 <div class="text">
                                     <h6 class="mb-1">Customer</h6>
                                     <p class="mb-1">
-                                        John Alexander <br> alex@example.com <br> +998 99 22123456
+                                        <%=order.userData.name%> <br>  <%=order.userData.email%><br>+91 <%=order.userData.phone%>
                                     </p>
                                     <a href="#">View profile</a>
                                 </div>
@@ -81,7 +81,7 @@
                                 <div class="text">
                                     <h6 class="mb-1">Deliver to</h6>
                                     <p class="mb-1">
-                                        City: Tashkent, Uzbekistan <br>Block A, House 123, Floor 2 <br> Po Box 10000
+                                        City: <%=order.address.village_city%>,  <%=order.address.district%> ,<%=order.address.state%><br> <%=order.address.landmark%> <%=order.address.pincode%>
                                     </p>
                                     <a href="#">View profile</a>
                                 </div>
@@ -100,8 +100,11 @@
                                             <th width="20%" class="text-end">Total</th>
                                         </tr>
                                     </thead>
+                                   
                                     <tbody>
-                                        <tr>
+                                      
+                                            
+                                        <!-- <tr>
                                             <td>
                                                 <a class="itemside" href="#">
                                                     <div class="left">
@@ -114,7 +117,27 @@
                                             <td> 2 </td>
                                             <td class="text-end"> $99.50 </td>
                                         </tr>
-                              
+                                  -->
+
+                                  <tbody>
+                                    <% order.orderedItems.forEach(item => { %>
+                                        <tr>
+                                            <td>
+                                                <a class="itemside" href="#">
+                                                    <div class="left">
+                                                        <img src="<%= item.productDetails.images[0] %>" width="40" height="40" class="img-xs" alt="Item">
+                                                    </div>
+                                                    <div class="info">
+                                                        <%= item.productDetails.title %>
+                                                    </div>
+                                                </a>
+                                            </td>
+                                            <td> $<%= item.price.toFixed(2) %> </td>
+                                            <td> <%= item.quantity %> </td>
+                                            <td class="text-end"> $<%= (item.price * item.quantity).toFixed(2) %> </td>
+                                        </tr>
+                                    <% }) %>
+                                </tbody>
                             
                               
                                         <tr>
@@ -122,20 +145,24 @@
                                                 <article class="float-end">
                                                     <dl class="dlist">
                                                         <dt>Subtotal:</dt>
-                                                        <dd>$973.35</dd>
+                                                        <dd>&#8377; <%=subTotal%></dd>
                                                     </dl>
                                                     <dl class="dlist">
                                                         <dt>Shipping cost:</dt>
-                                                        <dd>$10.00</dd>
+                                                        <dd>&#8377; <%=deliveryCharge%></dd>
+                                                    </dl>
+                                                    <dl class="dlist">
+                                                        <dt>GST:</dt>
+                                                        <dd>&#8377; <%=gstAmount%></dd>
                                                     </dl>
                                                     <dl class="dlist">
                                                         <dt>Grand total:</dt>
-                                                        <dd> <b class="h5">$983.00</b> </dd>
+                                                        <dd> <b class="h5">&#8377; <%=totalPrice%></b> </dd>
                                                     </dl>
                                                     <dl class="dlist">
                                                         <dt class="text-muted">Status:</dt>
                                                         <dd>
-                                                            <span class="badge rounded-pill alert-success text-success">Payment done</span>
+                                                            <span class="badge rounded-pill alert-success text-success"><%=order.status%></span>
                                                         </dd>
                                                     </dl>
                                                 </article>
