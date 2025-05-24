@@ -10,7 +10,7 @@ const Product = require('../../models/admin/productSchema');
 
 const placeNewOrder = async (req,res) => {
     try {
-      console.log("=========================================================<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<=")
+   
      const userId = req.session.user_id;
      const {addressId,paymentMethod} = req.body;
      const address  = await User.findById(userId).populate('addresses');
@@ -18,7 +18,7 @@ const placeNewOrder = async (req,res) => {
       const user = await User.findById(userId);
   
      const addressData = address.addresses.filter((val)=>val._id.toString()==addressId);
-     console.log('============================================single address========',addressData[0].fullname);
+    
         if(paymentMethod !=="cod"){
             return res.status(code.HttpStatus.BAD_REQUEST)
         }
@@ -41,7 +41,7 @@ const placeNewOrder = async (req,res) => {
             orderedItems.push({
               product: product._id,
               productDetails: {
-                name: product.name,
+                name: product.productTitle,
                 images: product.productImage,
       
                 category: product.category
@@ -60,7 +60,7 @@ const placeNewOrder = async (req,res) => {
           gstAmount = subTotal * gstpercentage / 100;
           totalAmount += gstAmount;
   
-          // totalAmount+=gstAmount;
+         
           if(subTotal<cutOfMoneyForDeleveryCharge){
             totalAmount += deliveryCharge;
           }
