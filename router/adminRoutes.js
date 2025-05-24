@@ -40,7 +40,7 @@ adminRouter.delete('/remove-image/:id',productController.removeProductImage)
 
 //order management
 adminRouter.get('/listOrder',listPage.getOrderListPage)
-
+adminRouter.get('/orderDetail/:IdOrder',listPage.getOrderList);
 module.exports= adminRouter;
 
 
