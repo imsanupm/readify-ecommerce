@@ -30,17 +30,23 @@
                             </span> <br>
                             <small class="text-muted">Order ID: 3453012</small>
                         </div>
+                   
+
                         <div class="col-lg-6 col-md-6 ms-auto text-md-end">
-                            <select class="form-select d-inline-block mb-lg-0 mb-15 mw-200">
-                                <option>Change status</option>
-                                <option>Awaiting payment</option>
-                                <option>Confirmed</option>
-                                <option>Shipped</option>
-                                <option>Delivered</option>
+                            <select id="status-select-<%= order._id %>" class="form-select d-inline-block mb-lg-0 mb-15 mw-200">
+                              <option disabled selected>Select Status</option>
+                              <option value="Processing">Processing</option>
+                              <option value="Shipped">Shipped</option>
+                              <option value="Delivered">Delivered</option>
+                              <option value="Canceled">Canceled</option>
                             </select>
-                            <a class="btn btn-primary" href="#">Save</a>
+                          
+                            <button class="btn btn-primary" onclick="saveStatus('<%= order._id %>')">Save</button>
                             <a class="btn btn-secondary print ms-2" href="#"><i class="icon material-icons md-print"></i></a>
-                        </div>
+                          </div>
+                          
+
+
                     </div>
                 </header> <!-- card-header end// -->
                 <div class="card-body">
@@ -98,47 +104,52 @@
                                             <th width="20%">Unit Price</th>
                                             <th width="20%">Quantity</th>
                                             <th width="20%" class="text-end">Total</th>
+                                            
                                         </tr>
                                     </thead>
                                    
                                     <tbody>
-                                      
-                                            
-                                        <!-- <tr>
-                                            <td>
-                                                <a class="itemside" href="#">
-                                                    <div class="left">
-                                                        <img src="assets/imgs/items/1.jpg" width="40" height="40" class="img-xs" alt="Item">
-                                                    </div>
-                                                    <div class="info"> T-shirt blue, XXL size </div>
-                                                </a>
-                                            </td>
-                                            <td> $44.25 </td>
-                                            <td> 2 </td>
-                                            <td class="text-end"> $99.50 </td>
-                                        </tr>
-                                  -->
 
-                                  <tbody>
-                                    <% order.orderedItems.forEach(item => { %>
-                                        <tr>
-                                            <td>
-                                                <a class="itemside" href="#">
-                                                    <div class="left">
-                                                        <img src="<%= item.productDetails.images[0] %>" width="40" height="40" class="img-xs" alt="Item">
-                                                    </div>
-                                                    <div class="info">
-                                                        <%= item.productDetails.name %>
-                                                    </div>
-                                                </a>
-                                            </td>
-                                            <td> $<%= item.price.toFixed(2) %> </td>
-                                            <td> <%= item.quantity %> </td>
-                                            <td class="text-end"> $<%= (item.price * item.quantity).toFixed(2) %> </td>
-                                        </tr>
-                                    <% }) %>
-                                </tbody>
-                            
+
+
+
+
+                             <tbody>
+                                <% order.orderedItems.forEach(item => { %>
+                                  <tr>
+                                    <td>
+                                      <a class="itemside" href="#">
+                                        <div class="left">
+                                          <img src="<%= item.productDetails.images[0] %>" width="40" height="40" class="img-xs" alt="Item">
+                                        </div>
+                                        <div class="info">
+                                          <%= item.productDetails.name %>
+                                        </div>
+                                      </a>
+                                    </td>
+                                    <td> $<%= item.price.toFixed(2) %> </td>
+                                    <td> <%= item.quantity %> </td>
+                                    <td class="text-end"> $<%= (item.price * item.quantity).toFixed(2) %> </td>
+                                    <td class="text-end">
+                                      <!-- <% if (order.status === 'Delivered') { %>
+                                        <button class="btn btn-sm btn-outline-warning">Return</button>
+                                      <% } else { %>
+                                        <button class="btn btn-sm btn-outline-danger">Cancel</button>
+                                      <% } %>
+                                    </td>
+                                  </tr>
+                                <% }) %> -->
+                                <% if (order.status === 'Delivered') { %>
+                                    <button 
+                                      class="btn btn-sm btn-outline-warning" 
+                                      onclick="openReturnModal('<%= order._id %>')">
+                                      Return
+                                    </button>
+                                  <% } else { %>
+                                    <button class="btn btn-sm btn-outline-danger">Cancel</button>
+                                  <% } %>
+                              </tbody>
+                              
                               
                                         <tr>
                                             <td colspan="4">
@@ -174,7 +185,7 @@
                             <a class="btn btn-primary" href="page-orders-tracking.html">View Order Tracking</a>
                         </div> <!-- col// -->
                         <div class="col-lg-1"></div>
-                        <div class="col-lg-4">
+                        <!-- <div class="col-lg-4">
                             <div class="box shadow-sm bg-light">
                                 <h6 class="mb-15">Payment info</h6>
                                 <p>
@@ -190,7 +201,7 @@
                                 </div>
                                 <button class="btn btn-primary">Save note</button>
                             </div>
-                        </div> <!-- col// -->
+                        </div> -->
                     </div>
                 </div> <!-- card-body end// -->
             </div> <!-- card end// -->
@@ -210,6 +221,29 @@
             </div>
         </footer>
     </main>
+
+
+//modal for reason
+
+    <div class="modal fade" id="returnReasonModal" tabindex="-1" aria-labelledby="returnReasonModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <form id="returnForm">
+              <div class="modal-header">
+                <h5 class="modal-title" id="returnReasonModalLabel">Return Reason</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <textarea id="returnReasonText" class="form-control" placeholder="Write the reason for return..." required></textarea>
+                <input type="hidden" id="returnOrderId">
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-warning">Submit Reason</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
   
 </body>
         
@@ -219,6 +253,121 @@
 </body>
 
 </html>
+
+
+<script>
+    function saveStatus(orderId) {
+      const select = document.getElementById(`status-select-${orderId}`);
+      const status = select.value;
+      console.log("order Status",status);
+      
+  
+      if (!status || status === 'Select Status') {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Please select a status',
+          showConfirmButton: true
+        });
+        return;
+      }
+  
+      fetch(`/admin/update-status/${orderId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ status })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.updatedStatus) {
+          Swal.fire({
+            position: 'top-end',
+            icon: 'success',
+            title: `Status updated to ${data.updatedStatus}`,
+            showConfirmButton: false,
+            timer: 1500
+          }).then(()=>{
+            location.reload()
+          })
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Update failed',
+            text: data.message || 'Something went wrong'
+          });
+        }
+      })
+      .catch(error => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Network or server error'
+        });
+        console.log(error);
+      });
+    }
+  </script>
+
+
+
+
+<script>
+    function openReturnModal(orderId) {
+      document.getElementById('returnOrderId').value = orderId;
+      document.getElementById('returnReasonText').value = '';
+      const modal = new bootstrap.Modal(document.getElementById('returnReasonModal'));
+      modal.show();
+    }
+  
+    document.getElementById('returnForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const orderId = document.getElementById('returnOrderId').value;
+      const reason = document.getElementById('returnReasonText').value;
+  
+      if (!reason.trim()) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Reason required',
+          text: 'Please provide a reason for the return.'
+        });
+        return;
+      }
+  
+      try {
+        const res = await fetch(`/admin/return-order/${orderId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ reason })
+        });
+  
+        const data = await res.json();
+  
+        if (data.success) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Return Requested',
+            text: 'Your return reason has been submitted.',
+            timer: 1500,
+            showConfirmButton: false
+          });
+          bootstrap.Modal.getInstance(document.getElementById('returnReasonModal')).hide();
+        } else {
+          throw new Error(data.message || 'Unknown error');
+        }
+      } catch (err) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Failed to submit return',
+          text: err.message
+        });
+        console.log("error return modal",err);
+      }
+    });
+  </script>
+  
+  
 
 
 

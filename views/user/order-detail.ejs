@@ -611,9 +611,152 @@ body {
 
       <button class="btn btn-primary">Track Order</button>
     </div>
+
+    <% if(orderData.status == "Delivered") { %>
+      <div class="order-actions">
+        <button 
+          class="btn btn-danger" 
+          style="background-color: #3b5d50; border-color: #3b5d50; color: white;"
+          onclick="openReturnModal('<%= orderData.orderId %>')">
+          Return Order
+        </button>
+      </div>
+    <% } else { %>
+      <div class="order-actions">
+        <a href="/cancelOrder/<%= orderData.orderId %>" 
+           class="btn btn-danger" 
+           style="background-color: #dc3545; border-color: #dc3545; color: white;">
+           Cancel Order
+        </a>
+      </div>
+    <% } %>
+    
+
+
+    <!-- Modal -->
+<div id="returnModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color: rgba(0,0,0,0.5); z-index:1000;">
+  <div style="background-color:white; margin:10% auto; padding:20px; border-radius:8px; width:90%; max-width:400px; position:relative;">
+    <h5 style="color:#3b5d50;">Return Reason</h5>
+    <textarea id="returnReason" class="form-control" placeholder="Enter reason..." style="margin-bottom: 15px;"></textarea>
+    <div style="display: flex; justify-content: flex-end;">
+      <button onclick="closeReturnModal()" style="margin-right: 10px; background:#ccc; border:none; padding: 8px 12px; border-radius: 5px;">Cancel</button>
+      <button onclick="submitReturn()" style="background-color:#3b5d50; color:white; border:none; padding: 8px 12px; border-radius: 5px;">Submit</button>
+    </div>
+  </div>
+</div>
+    
+    
   </div>
 </body>
 </html>
 
 
 <%-include('partials/user/footer')%>
+
+
+
+<!-- <script>
+  let currentOrderId = null;
+
+  function openReturnModal(orderId) {
+    currentOrderId = orderId;
+    document.getElementById('returnModal').style.display = 'block';
+  }
+
+  function closeReturnModal() {
+    document.getElementById('returnModal').style.display = 'none';
+    document.getElementById('returnReason').value = '';
+  }
+
+  async function submitReturn() {
+    const reason = document.getElementById('returnReason').value.trim();
+
+    if (!reason) {
+      alert("Please enter a reason.");
+      return;
+    }
+     console.log("order id ==========",currentOrderId)
+    try {
+      const response = await fetch(`/returnOrder/${currentOrderId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ reason })
+      });
+
+      if (response.ok) {
+        alert("Return request submitted.");
+        closeReturnModal();
+        location.reload();
+      } else {
+        alert("Failed to submit return.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error submitting return.");
+    }
+  }
+</script> -->
+
+
+
+<script>
+  let currentOrderId = null;
+
+  function openReturnModal(orderId) {
+    currentOrderId = orderId;
+    document.getElementById('returnModal').style.display = 'block';
+  }
+
+  function closeReturnModal() {
+    document.getElementById('returnModal').style.display = 'none';
+    document.getElementById('returnReason').value = '';
+  }
+
+  async function submitReturn() {
+    const reason = document.getElementById('returnReason').value.trim();
+
+    if (!reason) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Missing Reason',
+        text: 'Please enter a reason for return.',
+      });
+      return;
+    }
+
+    try {
+      const response = await fetch(`/returnOrder/${currentOrderId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ reason })
+      });
+
+      if (response.ok) {
+        await Swal.fire({
+          icon: 'success',
+          title: 'Return Submitted',
+          text: 'Your return request has been submitted successfully.',
+        });
+        closeReturnModal();
+        location.reload();
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Failed',
+          text:'Failed to submit return. Please try again later.',
+        });
+      }
+    } catch (err) {
+      console.error(err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Something went wrong while submitting the return.',
+      });
+    }
+  }
+</script>

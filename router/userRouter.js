@@ -18,7 +18,7 @@ const checkout = require('../controller/user/checkout');
 const placeOrder = require('../controller/user/place-order');
 const orderDetails = require('../controller/user/orderList');
 const invoicePdf = require('../helpers/user/invoice-download');
-
+const returnCancel = require('../controller/user/return-cancel-request');
 
 router.get('/', userController.loadHomepage);
 router.get('/signup', userController.loadSignup);
@@ -83,7 +83,10 @@ router.get('/orderListPage',userAuth.isUserSignedIn,orderDetails.getOrderListPag
 router.get('/orderDetailPage/:id',userAuth.isUserSignedIn,orderDetails.getOrderDetailPage)
 router.get('/downloadInvoice/:orderId',invoicePdf.downloadInvoice)
 
+//return cancel
 
+router.get('/cancelOrder/:orderId', returnCancel.cancelRequest);
+router.patch('/returnOrder/:orderId', returnCancel.returnRequest);
 
 
 

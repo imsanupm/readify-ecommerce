@@ -9,8 +9,8 @@ const authMiddleware = require('../middlewares/admin/adminAuth')
 const uploads = require('../helpers/multer')
 const updateValidation = require('../validators/admin/update-product');
 const listPage = require('../controller/admin/listOrder-orderDetail');
-
-
+const updateStatus = require('../controller/admin/order-status');
+const specificReturn = require('../controller/admin/sepecifc-return');
 
 
 
@@ -41,6 +41,9 @@ adminRouter.delete('/remove-image/:id',productController.removeProductImage)
 //order management
 adminRouter.get('/listOrder',listPage.getOrderListPage)
 adminRouter.get('/orderDetail/:IdOrder',listPage.orderDetailPage);
+//update order
+adminRouter.patch('/update-status/:orderId', updateStatus.updateStatus);
+adminRouter.patch('/return-order/:orderId',specificReturn.returnOrder);
 module.exports= adminRouter;
 
 

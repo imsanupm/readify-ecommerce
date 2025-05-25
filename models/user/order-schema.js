@@ -19,7 +19,7 @@ const orderSchema = new Schema({
         email:String,
         phone:String
     },
-
+     
     orderedItems: [{
           
         product: {
@@ -47,6 +47,11 @@ const orderSchema = new Schema({
             enum: ['Processing', 'Shipped', 'Delivered', 'Cancelled', 'Return Requested', 'Returned','Return Cancelled'],
             default: 'Processing'
         },
+        isReturnRequested: {
+            type: Boolean,
+            default: false
+        },
+        
         cancellationReason: String,
         cancelledAt: Date,
         returnReason: String,
