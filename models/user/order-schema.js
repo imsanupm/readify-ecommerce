@@ -1,13 +1,13 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-const { v4: uuidv4 } = require('uuid');
+const { nanoid } = require('nanoid');
 
 
 const orderSchema = new Schema({
     orderId: {
-        type: String,
-        default: () => uuidv4(8),
-        unique: true
+      type: String,
+      default: () => nanoid(8), // 8-character unique ID
+      unique: true
     },
     userId:{
         type:Schema.Types.ObjectId,

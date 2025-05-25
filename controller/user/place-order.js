@@ -23,7 +23,7 @@ const placeNewOrder = async (req,res) => {
             return res.status(code.HttpStatus.BAD_REQUEST)
         }
         let subTotal = 0;
-        let totalAmount = null;
+        let totalAmount = 0;
         let gstAmount = null;
         const deliveryCharge = 49;
         const gstpercentage = 14;
@@ -56,8 +56,8 @@ const placeNewOrder = async (req,res) => {
               { $inc: { quantity: -quantity } }
             );
           }
-         
-          gstAmount = subTotal * gstpercentage / 100;
+         totalAmount+=subTotal;
+          gstAmount = (subTotal * gstpercentage )/ 100;
           totalAmount += gstAmount;
   
          

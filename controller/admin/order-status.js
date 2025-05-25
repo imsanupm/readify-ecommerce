@@ -21,6 +21,9 @@ const updateStatus = async (req,res) => {
           }
         
           orderData.status = status;
+        orderData.orderedItems.forEach((item)=>{
+            item.status = status;
+        })
           const updatedOrder = await orderData.save();
       
           res.status(code.HttpStatus.OK).json({ updatedStatus: updatedOrder.status });

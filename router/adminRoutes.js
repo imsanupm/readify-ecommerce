@@ -11,7 +11,7 @@ const updateValidation = require('../validators/admin/update-product');
 const listPage = require('../controller/admin/listOrder-orderDetail');
 const updateStatus = require('../controller/admin/order-status');
 const specificReturn = require('../controller/admin/sepecifc-return');
-
+const orderReturn = require('../controller/admin/return-order');
 
 
 adminRouter.get('/adminlogin',authMiddleware.isUserLoggedOut, adminController.loadLogin);
@@ -44,6 +44,9 @@ adminRouter.get('/orderDetail/:IdOrder',listPage.orderDetailPage);
 //update order
 adminRouter.patch('/update-status/:orderId', updateStatus.updateStatus);
 adminRouter.patch('/return-order/:orderId',specificReturn.returnOrder);
+
+//return approvel
+adminRouter.patch('/returns/approve/:id', orderReturn.approveReturn);
 module.exports= adminRouter;
 
 
