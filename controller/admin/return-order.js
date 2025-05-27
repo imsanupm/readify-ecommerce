@@ -2,6 +2,10 @@ const Order = require('../../models/user/order-schema');
 const  code = require('../../helpers/user/statusCode');
 const Wallet = require('../../models/user/wallet');
 const {nanoid} = require('nanoid');
+const Product = require('../../models/admin/productSchema');
+
+
+
 const approveReturn = async (req,res) => {
     try {
         const orderId = req.params.id;
@@ -11,33 +15,22 @@ const approveReturn = async (req,res) => {
             return res.status(code.HttpStatus.BAD_REQUEST).json({message:"Canonot Find The Data",success:false})
         }
 
-        // let totalAmount = 0;
-       
-        // orderData.orderedItems.forEach(item => {
-        //     if ( item.status === 'Return Requested') {
-        //       item.status = 'Returned';
-        //       item.returnedOn = new Date();
-        //       item.isReturnRequested = false;
       
-        //       totalAmount += item.price * item.quantity;
-        //     }
-        //   });
-        //   console.log("before delivery charge==========",totalAmount)
              orderData.status = "Returned"
-      
-        // if(totalAmount<1000){
-        //     totalAmount =totalAmount+49;
-        // }
-    //     console.log('before gst================',totalAmount)
-        
-    //     const gst = 14;
-    //     const gstAmount = (totalAmount * gst) / 100;
-    //    totalAmount = totalAmount+ gstAmount;
 
-    //     console.log("total Amount= after gst=================",totalAmount);
-       
+             
+             for (const item of orderData.orderedItems) {
+                const productId = item.product;
+                const qtyToAdd = item.quantity;
+    
+                await Product.findByIdAndUpdate(
+                    productId,
+                    { $inc: { quantity: qtyToAdd } }, // increment the quantity
+                    { new: true }
+                );
+            }
       
-
+ 
         const userId = orderData.userId
        
         let wallet = await Wallet.findOne({ user: userId });

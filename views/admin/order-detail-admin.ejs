@@ -222,63 +222,50 @@
                         
                         <% if (requestedCount === items.length && items.length > 0 && order.status === "Delivered") { %>
                             <a class="btn btn-primary" href="#">Approve</a>
-                            <a class="btn btn-danger" href="#">Deny</a>
+                            <a class="  btn btn-danger" href="#">Deny</a>
                         <% } %>
                          -->
+                             <%if(order.status!=="Returned"){%>
+                         <% 
+                         let returnRequestedCount = 0;
+                         const returnItems = order.orderedItems || [];
+                     
+                         // Count only items with status 'Return Requested'
+                         returnItems.forEach(item => {
+                             if (item.status === 'Return Requested') {
+                                 returnRequestedCount++;
+                             }
+                         });
+                     %>
+                     
+                     <!-- Display Return Reason Cards Only for Items with Status 'Return Requested' -->
+                     <% returnItems.forEach((item, index) => { %>
+                         <% if (item.status === 'Return Requested') { %>
+                             <div class="card mb-3 bg-light">
+                                 <div class="card-body">
+                                     <h6 class="card-title text-danger">Return Requested - Item <%= index + 1 %></h6>
+                                     <p class="card-text"><strong>Product:</strong> <%= item.productDetails?.name %></p>
+                                     <p class="card-text"><strong>Reason:</strong> <%= item.returnReason || "No reason provided" %></p>
+                                     <p class="card-text"><strong>Requested On:</strong> 
+                                         <%= item.returnRequestedOn ? new Date(item.returnRequestedOn).toLocaleString() : "N/A" %>
+                                     </p>
+                                 </div>
+                             </div>
+                         <% } %>
+                     <% }); %>
+                     
+                     <!-- Show Approve/Deny Buttons Only If ALL Return Items Have Status 'Return Requested' -->
+                     <% if (returnItems.length > 0 && returnRequestedCount === returnItems.length) { %>
+                         <div class="d-flex gap-2 mt-3">
+                             <button class="btn btn-primary" onclick="handleAction('<%= order._id %>', 'approve')">Approve</button>
+                             <button class="btn btn-danger" onclick="handleAction('<%= order._id %>', 'deny')">Deny</button>
+                         </div>
+                     <% } %>
+                     
+                  <%}%>
+                                
 
-
-
-                                                <% // Prevent redeclaration if this block runs more than once var
-                                                    returnRequestedCount=0; var returnItems=order.orderedItems || [];
-                                                    returnItems.forEach(item=> {
-                                                    if (item.isReturnRequested) {
-                                                    returnRequestedCount++;
-                                                    }
-                                                    });
-                                                    %>
-
-                                                    <!-- Display Return Reasons -->
-                                                    <% returnItems.forEach((item, index)=> { %>
-                                                        <% if (item.isReturnRequested) { %>
-                                                            <div class="card mb-3 bg-light">
-                                                                <div class="card-body">
-                                                                    <h6 class="card-title text-danger">Return Requested
-                                                                        - Item <%= index + 1 %>
-                                                                    </h6>
-                                                                    <p class="card-text"><strong>Product:</strong>
-                                                                        <%= item.productDetails?.name %>
-                                                                    </p>
-                                                                    <p class="card-text"><strong>Reason:</strong>
-                                                                        <%= item.returnReason || "No reason provided" %>
-                                                                    </p>
-                                                                    <p class="card-text"><strong>Requested On:</strong>
-                                                                        <%= item.returnRequestedOn ? new
-                                                                            Date(item.returnRequestedOn).toLocaleString()
-                                                                            : "N/A" %>
-                                                                    </p>
-                                                                </div>
-                                                            </div>
-                                                            <% } %>
-                                                                <% }); %>
-
-                                                                    <!-- Show Approve/Deny Buttons If All Items Requested Return -->
-                                                                    <% if (returnItems.length> 0 && returnRequestedCount
-                                                                        === returnItems.length) { %>
-                                                                        <!-- <div class="d-flex gap-2 mt-3">
-                                                                            <a class="btn btn-primary"
-                                                                                href="/admin/returns/approve/<%= order._id %>">Approve</a>
-                                                                            <a class="btn btn-danger"
-                                                                                href="/admin/returns/deny/<%= order._id %>">Deny</a>
-                                                                        </div> -->
-                                                                        <div class="d-flex gap-2 mt-3">
-                                                                            <button class="btn btn-primary" onclick="handleAction('<%= order._id %>', 'approve')">Approve</button>
-                                                                            <button class="btn btn-danger" onclick="handleAction('<%= order._id %>', 'deny')">Deny</button>
-                                                                            
-                                                                        </div>
-                                                                        
-                                                                        <% } %>
-
-                                            </div> <!-- col// -->
+                                            </div> col// -->
                                             <div class="col-lg-1"></div>
                          
                                         </div>
