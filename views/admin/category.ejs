@@ -26,6 +26,11 @@
                         <label for="categoryName" class="form-label">Category Name</label>
                         <input type="text" class="form-control" id="categoryName" name="categoryName" required>
                     </div>
+                    
+                    <div class="mb-3">
+                        <label for="categoryName" class="form-label">Offer</label>
+                        <input type="text" class="form-control" id="offer" name="offer" required>
+                    </div>
 
                     <div class="mb-3">
                         <label for="categoryDescription" class="form-label">Category Description</label>
@@ -80,8 +85,10 @@
                                         </th>
                                         <th>Name</th>
                                         <th>Description</th>
+                                        <th>offer</th>
                                         <th>edit</th>
                                         <th>Status</th>
+                                        
                                         <th class="text-end">Action</th>
                                     </tr>
                                 </thead>
@@ -94,6 +101,7 @@
                                             </td>
                                             <td><b><%= category.name %></b></td>
                                             <td><%= category.description %></td>
+                                            <td><%= category.categoryOffer ? category.categoryOffer + '%' : 'N/A' %></td>
                                             <!-- Replaced slug with Edit button -->
                                             <td>
                                                 <button 
@@ -102,7 +110,8 @@
                                                 data-id="<%= category._id %>"
                                                 data-name="<%= category.name %>"
                                                 data-description="<%= category.description %>"
-
+                                                
+                                                
                                                 style="background-color: #007bff; color: white; padding: 5px 15px; border: none; border-radius: 4px; cursor: pointer;"
                                                 data-bs-toggle="modal" data-bs-target="#editCategoryModal">
                                                 Edit

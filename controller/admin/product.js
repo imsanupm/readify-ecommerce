@@ -19,7 +19,7 @@ const getProductaddPage = async(req, res) => {
 
 
 const addProduct = async (req,res) => {
-  console.log('your add product functioin is working ')
+
     
   try {
       
@@ -38,7 +38,8 @@ const addProduct = async (req,res) => {
           salePrice,
           availableQuantity,
           description,
-          publishedDate
+          publishedDate,
+          
       } = req.body;
      console.log(req.body)
 
@@ -48,14 +49,7 @@ const addProduct = async (req,res) => {
 
         return res.status(code.HttpStatus.BAD_REQUEST).json({messge:"All fields are required ",success:false})
       }
-      // if(regularPrice<1||availableQuantity<1){
-      //   console.log('problem is here ================================')
-      //   return res.status(400).json({
-      //     message:"You cannot add  negative Price or quantity",
-      //     success:false,
-      //   })
-
-      // }
+    
       if(regularPrice<100){
         res.json({message:"price should Morethan 100 Rpees",success:false})
       }
@@ -252,9 +246,10 @@ const editProduct = async (req, res) => {
       availableQuantity,
       description,
       imagesToDelete,
-      imagesToKeep
+      imagesToKeep,
+      offerPrice,
     } = req.body;
-
+   console.log('offer is ==========================================',offerPrice);
     const existingProduct = await productModel.findById(productId);
     if (!existingProduct) {
       console.log('Product not found');
@@ -331,6 +326,10 @@ const editProduct = async (req, res) => {
         success: false
       });
     }
+      if(!offerPrice){
+        productOffer = 0
+      }
+      
 
     const updateData = {
       productTitle: name,
@@ -340,7 +339,8 @@ const editProduct = async (req, res) => {
       regularPrice,
       quantity: availableQuantity,
       description,
-      productImage: updatedImages
+      productImage: updatedImages,
+      productOffer:offerPrice
     };
 
     const updateResult = await productModel.updateOne(

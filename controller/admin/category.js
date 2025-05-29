@@ -80,7 +80,7 @@ const updateCategory = async (req,res) => {
       
 
      
-     const {categoryName,categoryDescription} = req.body
+     const {categoryName,categoryDescription,offer} = req.body
      const {categoryId} = req.params
      if(!categoryName?.trim() || !categoryDescription?.trim()){
         return res.status(401).json({
@@ -96,6 +96,13 @@ const updateCategory = async (req,res) => {
         });
     }
 
+    if (isNaN(offer) || offer < 1 || offer > 99) {
+        return res.status(400).json({
+          success: false,
+          message: "Offer must be a number between 1 and 99."
+        });
+      }
+    
 
      const existingCategory = await categoryModel.findOne({
         _id:categoryId,
@@ -112,7 +119,7 @@ const updateCategory = async (req,res) => {
 
     const updatedCategory = await categoryModel.findByIdAndUpdate(
         categoryId, 
-        { name: categoryName, description:categoryDescription }, 
+        { name: categoryName, description:categoryDescription ,categoryOffer:offer}, 
         { new: true, } 
     );
     
@@ -130,7 +137,7 @@ const updateCategory = async (req,res) => {
 }
 
 const catagoryStatus = async (req, res) => {
-    console.log('hello from block and unblock function');
+   
     try {
         const categoryId = req.params.id;
 
@@ -158,7 +165,7 @@ const catagoryStatus = async (req, res) => {
 
 const searchCategory = async (req,res)=>{
     try {
-        console.log('search category function is worki')
+      
         const query = req.query.query
         console.log(`data you got from the front end for searching is ${query}`)
         const categories  = await categoryModel.find({name:{$regex:query,$options:"i"}})

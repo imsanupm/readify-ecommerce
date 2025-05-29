@@ -476,6 +476,27 @@
       width: 100%;
     }
   }
+
+
+
+  .product-img {
+  position: relative;
+}
+
+.offer-label {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: #2e7d32; /* green */
+  color: white;
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 4px;
+  font-weight: bold;
+  z-index: 1;
+}
+
+
 </style>
 
 <body>
@@ -554,6 +575,9 @@
                     <div class="product-img">
                       <img src="<%= book.productImage[0] || 'https://via.placeholder.com/200x300?text=No+Image' %>"
                         alt="<%= book.bname %>">
+                        <% if (book.productOffer) { %>
+                          <div class="offer-label">Offer</div>
+                        <% } %>
                       <div class="product-actions">
                         <!-- <button class="wishlist-btn">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -563,6 +587,7 @@
                           </path>
                         </svg>
                       </button> -->
+                  
                         <button class="wishlist-btn" data-product-id="<%= book._id %>">
                           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -586,6 +611,7 @@
                     <div class="product-price-cart">
                       <p class="price">&#8377;<%= book.regularPrice.toFixed(2) %>
                       </p>
+                   
                       <button class="add-to-cart-btn" data-product-id="<%=book._id%>">Add to Cart</button>
                     </div>
                   </div>

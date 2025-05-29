@@ -66,6 +66,7 @@
                           <th class="py-3 px-4">Price</th>
                           <th class="py-3 px-4">Status</th>
                           <th class="py-3 px-4">Author</th>
+                          <th class="py-3 px-4">offerAmount</th>
                           <th class="py-3 px-4 text-end">Actions</th>
                         </tr>
                       </thead>
@@ -107,6 +108,12 @@
                             <td class="py-3 px-4">
                               <span>
                                 <%= product.authorName || 'N/A' %>
+                              </span>
+                            </td>
+                            <td class="py-3 px-4">
+                              <span>
+                                <%= product.productOffer ? product.productOffer + '%' : 'N/A' %>
+
                               </span>
                             </td>
                             <td class="py-3 px-4 text-end">
