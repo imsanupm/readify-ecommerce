@@ -363,7 +363,7 @@
 <%- include("../../views/partials/user/footer") %>
 
 
-<script>
+<!-- <script>
     document.querySelector('.place-order-btn').addEventListener('click', async () => {
       // Get selected address ID
       const selectedAddress = document.querySelector('input[name="address"]:checked');
@@ -403,4 +403,124 @@
         alert('An error occurred. Please try again later.',error);
       }
     });
-  </script>
+  </script> -->
+
+
+
+
+
+
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  document.querySelector('.place-order-btn').addEventListener('click', async () => {
+    // Get selected address ID
+    const selectedAddress = document.querySelector('input[name="address"]:checked');
+    const addressId = selectedAddress ? selectedAddress.value : null;
+
+    // Get selected payment method
+    const selectedPayment = document.querySelector('input[name="payment"]:checked');
+    const paymentMethod = selectedPayment ? selectedPayment.id : null;
+
+    // Validate
+    if (!addressId || !paymentMethod) {
+      alert("Please select both address and payment method.");
+      return;
+    }
+
+    // Case 1: COD
+    if (paymentMethod === "cod") {
+      try {
+        const response = await fetch('/placeOrder', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            addressId,
+            paymentMethod
+          })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          window.location.href = '/orderConfirmation';
+        } else {
+          alert(result.message || 'Order failed. Try again.');
+        }
+      } catch (error) {
+        console.error('Error placing COD order:', error);
+        alert('An error occurred. Please try again later.');
+      }
+    }
+
+    // Case 2: Razorpay
+    if (paymentMethod === "razorpay") {
+      try {
+        // Step 1: Create Razorpay order from backend
+        const res = await fetch('/placeOrder', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ 
+            addressId,
+            paymentMethod
+           }) // Payment method is implicitly "razorpay"
+        });
+
+        const data = await res.json();
+        if (!data.success) {
+          alert(data.message || 'Something went wrong while creating Razorpay order');
+          return;
+        }
+
+        const options = {
+          key: data.key,
+          amount: data.amount,
+          currency: data.currency,
+          name: "Readify",
+          description: "Readify Order Payment",
+          order_id: data.orderId,
+          handler: async function (response) {
+            // Step 2: Verify payment and place order
+            const verifyRes = await fetch('/verifyRazorpayPayment', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                addressId: addressId,
+                paymentMethod: "razorpay"
+              })
+            });
+
+            const verifyResult = await verifyRes.json();
+            if (verifyResult.success) {
+              window.location.href = '/orderConfirmation';
+            } else {
+              alert(verifyResult.message || 'Payment verification failed.');
+            }
+          },
+          prefill: {
+            name: data.user.name,
+            email: data.user.email,
+            contact: data.user.phone
+          },
+          theme: {
+            color: "#3b5d50"
+          }
+        };
+
+        const razorpay = new Razorpay(options);
+        razorpay.open();
+      } catch (error) {
+        console.error('Error during Razorpay order creation:', error);
+        alert('Something went wrong. Please try again.');
+      }
+    }
+  });
+</script>
