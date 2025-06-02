@@ -28,7 +28,6 @@
                       <th class="product-remove">Remove</th>
                     </tr>
                   </thead>
-  
                   <tbody>
                     <% cartData.items.forEach(item => { %>
                       <tr>
@@ -36,30 +35,36 @@
                           <img src="<%= item.productId.productImage[0] %>" alt="Image" class="img-fluid"
                             style="width: 80px; height: 80px; object-fit: cover;">
                         </td>
-  
                         <td class="product-name">
                           <h2 class="h6 text-black">
                             <%= item.productId.productTitle %>
                           </h2>
                         </td>
-                        <td>₹<%= item.productId.regularPrice %>
+                        <td>
+                          <% if (item.productId.offerType && item.productId.offerType !== 'null' && item.productId.finalAmount > 0) { %>
+                            ₹<%= item.productId.finalAmount.toFixed(2) %>
+                            <span class="badge bg-success ms-1"><%= item.productId.offerType %> Offer</span>
+                          <% } else { %>
+                            ₹<%= item.productId.regularPrice.toFixed(2) %>
+                          <% } %>
                         </td>
                         <td>
                           <div class="input-group mb-3 d-flex align-items-center quantity-container"
                             style="max-width: 120px;">
                             <button class="btn btn-outline-black decrease" data-product-id="<%= item.productId._id %>"
                               data-action="decrease" type="button">
-                              &minus;
+                              −
                             </button>
                             <input type="text" class="form-control text-center quantity-amount"
                               value="<%= item.quantity %>">
                             <button class="btn btn-outline-black increase" data-product-id="<%= item.productId._id %>"
                               data-action="increase" type="button">
-                              &plus;
+                              +
                             </button>
                           </div>
                         </td>
-                        <td>₹<%= item.productId.regularPrice * item.quantity %>
+                        <td>
+                          ₹<%= ((item.productId.offerType && item.productId.offerType !== 'null' && item.productId.finalAmount > 0 ? item.productId.finalAmount : item.productId.regularPrice) * item.quantity).toFixed(2) %>
                         </td>
                         <td>
                           <button class="btn btn-black btn-sm remove-from-cart" data-product-id="<%= item.productId._id %>">X</button>
@@ -79,14 +84,12 @@
             </div>
           </form>
         </div>
-  
         <% if (cartData && cartData.items && cartData.items.length > 0) { %>
         <div class="row">
           <div class="col-md-6">
             <div class="row mb-5">
               <div class="col-md-6">
                 <button class="btn btn-outline-black btn-sm btn-block" onclick="window.location.href='/books'">Continue Shopping</button>
-
               </div>
             </div>
           </div>
@@ -98,13 +101,26 @@
                     <h3 class="text-black h4 text-uppercase">Cart Totals</h3>
                   </div>
                 </div>
-  
                 <div class="row mb-3">
                   <div class="col-md-6">
                     <span class="text-black">Subtotal</span>
                   </div>
                   <div class="col-md-6 text-right">
                     <strong class="text-black">₹<%= subTotal.toFixed(2) %></strong>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <span class="text-black">Offers Applied</span>
+                  </div>
+                  <div class="col-md-6 text-right">
+                    <strong class="text-black">
+                      <% if (offerTypes.length > 0 && offerTypes.some(type => type && type !== 'null')) { %>
+                        <%= offerTypes.length > 1 ? 'Both Product and Category Offers' : offerTypes[0]  %>
+                      <% } else { %>
+                        No Offers Applied
+                      <% } %>
+                    </strong>
                   </div>
                 </div>
                 <div class="row mb-3">
@@ -131,11 +147,9 @@
                     <strong class="text-black">₹<%= totalAmount.toFixed(2) %></strong>
                   </div>
                 </div>
-  
                 <div class="row">
                   <div class="col-md-12">
-                    <button class="btn btn-black btn-lg py-3 btn-block" onclick="window.location='/checkout'">Proceed
-                      To Checkout</button>
+                    <button class="btn btn-black btn-lg py-3 btn-block" onclick="window.location='/checkout'">Proceed To Checkout</button>
                   </div>
                 </div>
               </div>
@@ -145,117 +159,105 @@
         <% } %>
       </div>
     </div>
-  </body>
-
-<footer>
-  <%-include('partials/user/footer')%>
-</footer>
-
-
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.increase, .decrease').forEach(button => {
-      button.addEventListener('click', () => {
-        const productId = button.dataset.productId;
-        const action = button.dataset.action;
-
-        fetch('/cart/update-quantity', {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ productId, action })
-        })
-          .then(res => res.json()) // ✅ Parse JSON response
-          .then(response => {
-            if (response.success) {
-              Swal.fire({
-                icon: 'success',
-                title: 'Cart updated',
-                text: response.message || "Thank You For Your Action",
-                showConfirmButton: false,
-                timer: 1000
-              }).then(() => {
-                location.reload();
+    <footer>
+      <%-include('partials/user/footer')%>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.increase, .decrease').forEach(button => {
+          button.addEventListener('click', () => {
+            const productId = button.dataset.productId;
+            const action = button.dataset.action;
+            fetch('/cart/update-quantity', {
+              method: 'PATCH',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ productId, action })
+            })
+              .then(res => res.json())
+              .then(response => {
+                if (response.success) {
+                  Swal.fire({
+                    icon: 'success',
+                    title: 'Cart updated',
+                    text: response.message || "Thank You For Your Action",
+                    showConfirmButton: false,
+                    timer: 1000
+                  }).then(() => {
+                    location.reload();
+                  });
+                } else {
+                  Swal.fire({
+                    icon: 'error',
+                    title: 'Update failed',
+                    text: response.message || 'Unable to change quantity',
+                  });
+                }
+              })
+              .catch(err => {
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Server Error',
+                  text: err.message || "Something went wrong",
+                });
               });
-            } else {
-              Swal.fire({
-                icon: 'error',
-                title: 'Update failed',
-                text: response.message || 'Unable to change quantity',
-              });
-            }
-          })
-          .catch(err => {
-            Swal.fire({
-              icon: 'error',
-              title: 'Server Error',
-              text: err.message || "Something went wrong",
-            });
           });
-      });
-    });
-  });
-</script>
-
-
-
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.remove-from-cart').forEach(button => {
-      button.addEventListener('click', (event) => {
-        event.preventDefault(); // Prevent any default action
-
-        const productId = button.dataset.productId;
-
-        Swal.fire({
-          title: "Are you sure?",
-          text: "You won't be able to undo this action!",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#d33",
-          cancelButtonColor: "#3085d6",
-          confirmButtonText: "Yes, remove it!"
-        }).then((result) => {
-          if (result.isConfirmed) {
-            fetch(`/cart/remove/${productId}`, {
-              method: 'DELETE'
-            })
-            .then(response => response.json())
-            .then(data => {
-              if (data.success) {
-                Swal.fire({
-                  icon: "success",
-                  title: "Removed!",
-                  text: data.message || "Item removed from cart.",
-                  timer: 1500,
-                  showConfirmButton: false
-                }).then(() => {
-                  location.reload(); // Refresh the cart after deletion
-                });
-              } else {
-                Swal.fire({
-                  icon: "error",
-                  title: "Oops...",
-                  text: data.message || "Failed to remove item.",
-                });
-              }
-            })
-            .catch(err => {
-              Swal.fire({
-                icon: "error",
-                title: "Error",
-                text: err.message || "Something went wrong.",
-              });
-            });
-          }
         });
       });
-    });
-  });
-</script>
+    </script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.remove-from-cart').forEach(button => {
+          button.addEventListener('click', (event) => {
+            event.preventDefault();
+            const productId = button.dataset.productId;
+            Swal.fire({
+              title: "Are you sure?",
+              text: "You won't be able to undo this action!",
+              icon: "warning",
+              showCancelButton: true,
+              confirmButtonColor: "#d33",
+              cancelButtonColor: "#3085d6",
+              confirmButtonText: "Yes, remove it!"
+            }).then((result) => {
+              if (result.isConfirmed) {
+                fetch(`/cart/remove/${productId}`, {
+                  method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                  if (data.success) {
+                    Swal.fire({
+                      icon: "success",
+                      title: "Removed!",
+                      text: data.message || "Item removed from cart.",
+                      timer: 1500,
+                      showConfirmButton: false
+                    }).then(() => {
+                      location.reload();
+                    });
+                  } else {
+                    Swal.fire({
+                      icon: "error",
+                      title: "Oops...",
+                      text: data.message || "Failed to remove item.",
+                    });
+                  }
+                })
+                .catch(err => {
+                  Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: err.message || "Something went wrong.",
+                  });
+                });
+              }
+            });
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

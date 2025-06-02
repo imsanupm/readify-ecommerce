@@ -249,7 +249,7 @@ const editProduct = async (req, res) => {
       imagesToKeep,
       offerPrice,
     } = req.body;
-   console.log('offer is ==========================================',offerPrice);
+
     const existingProduct = await productModel.findById(productId);
     if (!existingProduct) {
       console.log('Product not found');
@@ -366,7 +366,7 @@ const updateData = {
   productImage: updatedImages,
   productOffer: productOffer, 
   finalAmount: finalAmount  ,
-  offerType:offerType
+  offerType:productOffer<1?'':offerType
 };
 
 

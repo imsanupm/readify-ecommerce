@@ -110,8 +110,8 @@
                                                 data-id="<%= category._id %>"
                                                 data-name="<%= category.name %>"
                                                 data-description="<%= category.description %>"
-                                                
-                                                
+                                                data-offer="<%= category.categoryOffer ? category.categoryOffer : 'Add Offer' %>"
+
                                                 style="background-color: #007bff; color: white; padding: 5px 15px; border: none; border-radius: 4px; cursor: pointer;"
                                                 data-bs-toggle="modal" data-bs-target="#editCategoryModal">
                                                 Edit
@@ -242,6 +242,8 @@ document.querySelectorAll(".edit-category-btn").forEach(button => {
             text: result.message,
             icon: "success",
             confirmButtonText: "OK",
+        }).then(()=>{
+            location.reload();
         })
     }
     else{
@@ -381,3 +383,41 @@ document.querySelectorAll(".edit-category-btn").forEach(button => {
 </body>
 
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const editButtons = document.querySelectorAll(".edit-category-btn");
+
+        editButtons.forEach(button => {
+            button.addEventListener("click", () => {
+                const categoryId = button.getAttribute("data-id");
+                const categoryName = button.getAttribute("data-name");
+                const categoryDescription = button.getAttribute("data-description");
+                let offer = button.getAttribute("data-offer");
+
+                // If offer is null, undefined, or empty string, show "Add Offer"
+                if (!offer || offer.trim() === "") {
+                    offer = "Add Offer";
+                }
+
+                // Fill modal form fields
+                document.getElementById("categoryId").value = categoryId;
+                document.getElementById("categoryName").value = categoryName;
+                document.getElementById("categoryDescription").value = categoryDescription;
+                document.getElementById("offer").value = offer;
+            });
+        });
+    });
+</script>

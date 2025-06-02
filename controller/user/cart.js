@@ -8,56 +8,185 @@ const Wishlist = require('../../models/admin/wishList')
 
 
 
-const getCart = async (req,res) => {
-    try {
-      const userId = req.session.user_id
-        const cartData =  await Cart.findOne({userId}).populate('items.productId');
-        let subTotal = 0;
-        let totalAmount = null;
-        let gstAmount = null;
-        const deliveryCharge = 49;
-        const gstpercentage = 14;
-        const cutOfMoneyForDeleveryCharge = 1000;
+// const getCart = async (req,res) => {
+//     try {
+//       const userId = req.session.user_id
+//         const cartData =  await Cart.findOne({userId}).populate('items.productId');
+//         let subTotal = 0;
+//         let totalAmount = null;
+//         let gstAmount = null;
+//         const deliveryCharge = 49;
+//         const gstpercentage = 14;
+//         const cutOfMoneyForDeleveryCharge = 1000;
          
-        if (!cartData || !cartData.items || cartData.items.length === 0) {
-          return res.render('cart', {
-            cartData: null,
-            subTotal: 0,
-            totalAmount: 0,
-            deliveryCharge: 0
-          });
-        }
+//         if (!cartData || !cartData.items || cartData.items.length === 0) {
+//           return res.render('cart', {
+//             cartData: null,
+//             subTotal: 0,
+//             totalAmount: 0,
+//             deliveryCharge: 0
+//           });
+//         }
         
 
-        cartData.items.forEach(item=>{
-          const price = item.productId.regularPrice;
-          const quantity = item.quantity;
-          subTotal += price*quantity;
-        })
+//         cartData.items.forEach(item=>{
+//           const price = item.productId.regularPrice;
+//           const quantity = item.quantity;
+//           subTotal += price*quantity;
+//         })
        
-        gstAmount = subTotal * gstpercentage / 100;
-        totalAmount += gstAmount;
+//         gstAmount = subTotal * gstpercentage / 100;
+//         totalAmount += gstAmount;
 
-        // totalAmount+=gstAmount;
-        if(subTotal<cutOfMoneyForDeleveryCharge){
-          totalAmount += deliveryCharge;
-        }
+//         // totalAmount+=gstAmount;
+//         if(subTotal<cutOfMoneyForDeleveryCharge){
+//           totalAmount += deliveryCharge;
+//         }
          
-        totalAmount+=subTotal
-        res.render('cart', {
-          cartData,
-          subTotal,
-          totalAmount,
-          deliveryCharge,
-          gstAmount,
-        });
+//         totalAmount+=subTotal
+//         res.render('cart', {
+//           cartData,
+//           subTotal,
+//           totalAmount,
+//           deliveryCharge,
+//           gstAmount,
+//         });
         
-    } catch (error) {
-        console.log('error during getting the cartpage',error)
+//     } catch (error) {
+//         console.log('error during getting the cartpage',error)
       
-    }
-}
+//     }
+// }
 
+
+
+
+// const getCart = async (req, res) => {
+//   try {
+//       const userId = req.session.user_id;
+//       const cartData = await Cart.findOne({ userId }).populate('items.productId');
+//       let subTotal = 0;
+//       let totalAmount = 0;
+//       let gstAmount = null;
+//       const deliveryCharge = 49;
+//       const gstPercentage = 14;
+//       const cutOffMoneyForDeliveryCharge = 1000;
+//       const offerTypes = new Set();
+
+//       if (!cartData || !cartData.items || cartData.items.length === 0) {
+//           return res.render('cart', {
+//               cartData: null,
+//               subTotal: 0,
+//               totalAmount: 0,
+//               deliveryCharge: 0,
+//               gstAmount: 0,
+//               offerTypes: []
+//           });
+//       }
+
+//       cartData.items.forEach(item => {
+//           const price = item.productId.offerType && item.productId.finalAmount > 0 ? item.productId.finalAmount : item.productId.regularPrice;
+//           const quantity = item.quantity;
+//           subTotal += price * quantity;
+//           if (item.productId.offerType) {
+//               offerTypes.add(item.productId.offerType);
+//           }
+//       });
+
+//       gstAmount = subTotal * gstPercentage / 100;
+//       totalAmount = subTotal + gstAmount;
+//       if (subTotal < cutOffMoneyForDeliveryCharge) {
+//           totalAmount += deliveryCharge;
+//       }
+
+//       res.render('cart', {
+//           cartData,
+//           subTotal,
+//           totalAmount,
+//           deliveryCharge,
+//           gstAmount,
+//           offerTypes: Array.from(offerTypes)
+//       });
+
+//   } catch (error) {
+//       console.log('error during getting the cartpage', error);
+//       res.render('cart', {
+//           cartData: null,
+//           subTotal: 0,
+//           totalAmount: 0,
+//           deliveryCharge: 0,
+//           gstAmount: 0,
+//           offerTypes: []
+//       });
+//   }
+// };
+
+
+
+
+
+
+
+const getCart = async (req, res) => {
+  try {
+    const userId = req.session.user_id;
+    const cartData = await Cart.findOne({ userId }).populate('items.productId');
+    let subTotal = 0;
+    let totalAmount = 0;
+    let gstAmount = null;
+    const deliveryCharge = 49;
+    const gstPercentage = 14;
+    const cutOffMoneyForDeliveryCharge = 1000;
+    const offerTypes = new Set();
+
+    if (!cartData || !cartData.items || cartData.items.length === 0) {
+      return res.render('cart', {
+        cartData: null,
+        subTotal: 0,
+        totalAmount: 0,
+        deliveryCharge: 0,
+        gstAmount: 0,
+        offerTypes: []
+      });
+    }
+
+    cartData.items.forEach(item => {
+      const price = item.productId.offerType && item.productId.offerType !== 'null' && item.productId.finalAmount > 0 
+        ? item.productId.finalAmount 
+        : item.productId.regularPrice;
+      const quantity = item.quantity;
+      subTotal += price * quantity;
+      if (item.productId.offerType && item.productId.offerType !== 'null' && item.productId.finalAmount > 0) {
+        offerTypes.add(item.productId.offerType);
+      }
+    });
+
+    gstAmount = subTotal * gstPercentage / 100;
+    totalAmount = subTotal + gstAmount;
+    if (subTotal < cutOffMoneyForDeliveryCharge) {
+      totalAmount += deliveryCharge;
+    }
+
+    res.render('cart', {
+      cartData,
+      subTotal,
+      totalAmount,
+      deliveryCharge,
+      gstAmount,
+      offerTypes: Array.from(offerTypes)
+    });
+  } catch (error) {
+    console.log('error during getting the cart page', error);
+    res.render('cart', {
+      cartData: null,
+      subTotal: 0,
+      totalAmount: 0,
+      deliveryCharge: 0,
+      gstAmount: 0,
+      offerTypes: []
+    });
+  }
+};
 
 
 const addToCart = async (req, res) => {

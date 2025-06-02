@@ -119,7 +119,7 @@ const updateCategory = async (req,res) => {
 
     }
 
-    console.log('initial      =========================================');
+   
     
     
  
@@ -144,7 +144,7 @@ const updateCategory = async (req,res) => {
       await Products.findByIdAndUpdate(product._id, {
         // productOffer: numericOffer,
         finalAmount: discountedPrice,
-        offerType: "Category Offer"
+        offerType: numericOffer==0?'':"Category Offer"
       });
     }
     
