@@ -326,22 +326,49 @@ const editProduct = async (req, res) => {
         success: false
       });
     }
-      if(!offerPrice){
-        productOffer = 0
-      }
-      
+ 
 
-    const updateData = {
-      productTitle: name,
-      authorName: writer,
-      category: category_id,
-      language,
-      regularPrice,
-      quantity: availableQuantity,
-      description,
-      productImage: updatedImages,
-      productOffer:offerPrice
-    };
+    let productOffer = offerPrice;
+if (!offerPrice || offerPrice < 1) {
+  productOffer = 0;
+}
+
+
+const category = await Category.findById(category_id);
+const categoryOffer = category?.categoryOffer || 0;
+
+
+const greaterOffer = Math.max(productOffer, categoryOffer);
+
+
+let finalAmount = 0;
+if (greaterOffer > 0) {
+  finalAmount = regularPrice - (regularPrice * greaterOffer / 100);
+} else {
+  finalAmount = regularPrice; 
+}
+let offerType = ''
+if(productOffer>categoryOffer){
+  offerType = "Product Offer";
+}else{
+  offerType = "Category Offer";
+}
+
+
+const updateData = {
+  productTitle: name,
+  authorName: writer,
+  category: category_id,
+  language,
+  regularPrice,
+  quantity: availableQuantity,
+  description,
+  productImage: updatedImages,
+  productOffer: productOffer, 
+  finalAmount: finalAmount  ,
+  offerType:offerType
+};
+
 
     const updateResult = await productModel.updateOne(
       { _id: productId },

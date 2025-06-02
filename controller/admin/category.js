@@ -1,6 +1,7 @@
 
+const category = require('../../models/admin/category');
 const categoryModel = require('../../models/admin/category');
-
+const Products = require('../../models/admin/productSchema')
 
 const categoryInfo = async(req,res)=>{
     try {
@@ -96,12 +97,13 @@ const updateCategory = async (req,res) => {
         });
     }
 
-    if (isNaN(offer) || offer < 1 || offer > 99) {
+    if (isNaN(offer) || offer < 0 || offer > 99) {
         return res.status(400).json({
           success: false,
           message: "Offer must be a number between 1 and 99."
         });
       }
+
     
 
      const existingCategory = await categoryModel.findOne({
@@ -117,13 +119,45 @@ const updateCategory = async (req,res) => {
 
     }
 
+    console.log('initial      =========================================');
+    
+    
+ 
+    const mongoose = require("mongoose");
+    const categoryObjectId = new mongoose.Types.ObjectId(categoryId);
+    const numericOffer = Number(offer);
+    
+    const relProducts = await Products.find({
+      category: categoryObjectId,
+      $or: [
+        { productOffer: { $lt: numericOffer } },
+        { productOffer: { $in: [null, 0] } }
+      ]
+    });
+    
+    console.log("Filtered products found:", relProducts.length);
+    
+    for (let product of relProducts) {
+      const discount = (product.regularPrice * numericOffer) / 100;
+      const discountedPrice = Math.round(product.regularPrice - discount);
+    
+      await Products.findByIdAndUpdate(product._id, {
+        // productOffer: numericOffer,
+        finalAmount: discountedPrice,
+        offerType: "Category Offer"
+      });
+    }
+    
+      
+         
+
     const updatedCategory = await categoryModel.findByIdAndUpdate(
         categoryId, 
         { name: categoryName, description:categoryDescription ,categoryOffer:offer}, 
         { new: true, } 
     );
     
-    console.log("hai");
+
     
     if(updatedCategory){
 
