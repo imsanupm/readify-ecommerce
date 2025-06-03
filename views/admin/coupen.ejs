@@ -469,7 +469,7 @@
                 <thead>
                     <tr>
                         <th>Code</th>
-                        <th>Type</th>
+                        <!-- <th>Type</th> -->
                         <th>Discount</th>
                         <th>Min Purchase</th>
                         <th>Start Date</th>
@@ -480,75 +480,41 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td><strong>SAVE20</strong></td>
-                        <td>Percentage</td>
-                        <td>20%</td>
-                        <td>$50.00</td>
-                        <td>2024-01-01</td>
-                        <td>2024-12-31</td>
-                        <td><span class="status-badge status-active">Active</span></td>
-                        <td>45/100</td>
+                    <% datas.forEach(coupon => { %>
+                      <tr>
+                        <td><strong><%= coupon.code %></strong></td>
+                        <!-- <td>Percentage</td> -->
+                        <td><%= coupon.discount %> &#8377;
+                          </td>
+                        <td>$<%= coupon.minPurchase.toFixed(2) %></td>
+                        <td><%= coupon.startDate.toISOString().split('T')[0] %></td>
+                        <td><%= coupon.expiryDate.toISOString().split('T')[0] %></td>
                         <td>
-                            <div class="action-buttons">
-                                <button class="btn btn-secondary btn-sm" onclick="editCoupon('SAVE20')">Edit</button>
-                                <button class="btn btn-warning btn-sm" onclick="toggleCoupon('SAVE20', false)">Block</button>
-                                <button class="btn btn-danger btn-sm" onclick="deleteCoupon('SAVE20')">Delete</button>
-                            </div>
+                          <% if (coupon.isActive) { %>
+                            <span class="status-badge status-active">Active</span>
+                          <% } else { %>
+                            <span class="status-badge status-blocked">Blocked</span>
+                          <% } %>
                         </td>
-                    </tr>
-                    <tr>
-                        <td><strong>FIXED10</strong></td>
-                        <td>Fixed</td>
-                        <td>$10.00</td>
-                        <td>$25.00</td>
-                        <td>2024-02-01</td>
-                        <td>2024-06-30</td>
-                        <td><span class="status-badge status-expired">Expired</span></td>
-                        <td>23/50</td>
                         <td>
-                            <div class="action-buttons">
-                                <button class="btn btn-secondary btn-sm" onclick="editCoupon('FIXED10')">Edit</button>
-                                <button class="btn btn-success btn-sm" onclick="toggleCoupon('FIXED10', true)">Activate</button>
-                                <button class="btn btn-danger btn-sm" onclick="deleteCoupon('FIXED10')">Delete</button>
-                            </div>
+                          <% 
+                            const totalUsage = coupon.usage.reduce((sum, entry) => sum + entry.usageCount, 0);
+                          %>
+                          <%= totalUsage %>/<%= coupon.maxUsagePerUser * coupon.usage.length || coupon.maxUsagePerUser %>
                         </td>
-                    </tr>
-                    <tr>
-                        <td><strong>WELCOME15</strong></td>
-                        <td>Percentage</td>
-                        <td>15%</td>
-                        <td>$30.00</td>
-                        <td>2024-03-01</td>
-                        <td>2024-12-31</td>
-                        <td><span class="status-badge status-inactive">Blocked</span></td>
-                        <td>12/75</td>
                         <td>
-                            <div class="action-buttons">
-                                <button class="btn btn-secondary btn-sm" onclick="editCoupon('WELCOME15')">Edit</button>
-                                <button class="btn btn-success btn-sm" onclick="toggleCoupon('WELCOME15', true)">Unblock</button>
-                                <button class="btn btn-danger btn-sm" onclick="deleteCoupon('WELCOME15')">Delete</button>
-                            </div>
+                          <div class="action-buttons">
+                            <button class="btn btn-secondary btn-sm" onclick="editCoupon('<%= coupon.code %>')">Edit</button>
+                            <button class="btn btn-warning btn-sm" onclick="toggleCoupon('<%= coupon.code %>', <%= !coupon.isActive %>)">
+                              <%= coupon.isActive ? 'Block' : 'Unblock' %>
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteCoupon('<%= coupon.code %>')">Delete</button>
+                          </div>
                         </td>
-                    </tr>
-                    <tr>
-                        <td><strong>SUMMER25</strong></td>
-                        <td>Percentage</td>
-                        <td>25%</td>
-                        <td>$100.00</td>
-                        <td>2024-06-01</td>
-                        <td>2024-08-31</td>
-                        <td><span class="status-badge status-active">Active</span></td>
-                        <td>8/200</td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="btn btn-secondary btn-sm" onclick="editCoupon('SUMMER25')">Edit</button>
-                                <button class="btn btn-warning btn-sm" onclick="toggleCoupon('SUMMER25', false)">Block</button>
-                                <button class="btn btn-danger btn-sm" onclick="deleteCoupon('SUMMER25')">Delete</button>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
+                      </tr>
+                    <% }) %>
+                  </tbody>
+                  
             </table>
         </div>
 

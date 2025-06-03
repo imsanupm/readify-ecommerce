@@ -3,14 +3,19 @@ const code  = require('../../helpers/user/statusCode');
 const Coupen = require('../../models/admin/coupen');
 
 
-const getCoupenPage = async (req,res) => {
-    try {
-        res.render('coupen');
-    } catch (error) {
-        console.log('error during getCoupenPage',error);
-        res.status(code.HttpStatus.BAD_REQUEST).json({message:"Internal server errror",success:false})
-    }
-}
+const getCoupenPage = async (req, res) => {
+  try {
+    const coupenDatas = await Coupen.find({}).sort({ createdAt: -1 });
+    console.log("coupon datas====================", coupenDatas);
+    
+    res.render('coupen', { 
+     datas: coupenDatas 
+    }); // pass data to the view
+  } catch (error) {
+    console.log('Error during getCoupenPage:', error);
+    res.status(400).json({ message: "Internal server error", success: false });
+  }
+};
 
 
 
