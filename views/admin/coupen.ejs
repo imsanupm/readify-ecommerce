@@ -563,7 +563,7 @@
                             <input type="number" id="minPurchase" class="form-control" placeholder="0.00" min="0" step="0.01">
                         </div>
                         <div class="form-group">
-                            <label for="maxDiscount">Maximum Discount</label>
+                            <label for="maxDiscount">DUMMY YOU HAVE TO REMOVE</label>
                             <input type="number" id="maxDiscount" class="form-control" placeholder="0.00" min="0" step="0.01">
                         </div>
                     </div>
@@ -615,13 +615,13 @@
                     </div>
 
                     <div class="form-row">
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <label for="editDiscountType">Discount Type *</label>
                             <select id="editDiscountType" class="form-control" required>
                                 <option value="percentage">Percentage</option>
                                 <option value="fixed">Fixed Amount</option>
                             </select>
-                        </div>
+                        </div> -->
                         <div class="form-group">
                             <label for="editDiscountValue">Discount Value *</label>
                             <input type="number" id="editDiscountValue" class="form-control" min="0" step="0.01" required>
@@ -634,7 +634,7 @@
                             <input type="number" id="editMinPurchase" class="form-control" min="0" step="0.01">
                         </div>
                         <div class="form-group">
-                            <label for="editMaxDiscount">Maximum Discount</label>
+                            <label for="editMaxDiscount">DUMMY YOU HAVE TO REMOVE</label>
                             <input type="number" id="editMaxDiscount" class="form-control" min="0" step="0.01">
                         </div>
                     </div>
@@ -670,7 +670,10 @@
             </div>
         </div>
     </div>
-
+    <script>
+        const couponList = <%- JSON.stringify(datas) %>;
+    </script>
+    
     <script>
         // Modal Functions
         function openModal(modalId) {
@@ -688,24 +691,46 @@
             }
         }
 
-        // Coupon Management Functions (These would connect to your MVC Controller)
+        // // Coupon Management Functions (These would connect to your MVC Controller)
+        // function editCoupon(couponCode) {
+        //     // In a real MVC application, this would make an AJAX call to the controller
+        //     // Controller route: GET /admin/coupons/{code}/edit
+            
+        //     // Sample data population for demo
+        //      
+
+        //     document.getElementById('editCouponCode').value = couponCode;
+        //     //document.getElementById('editDiscountType').value = 'percentage';
+        //     document.getElementById('editDiscountValue').value = '20';
+        //     document.getElementById('editMinPurchase').value = '50';
+        //     document.getElementById('editMaxDiscount').value = '100';
+        //     document.getElementById('editStartDate').value = '2024-01-01';
+        //     document.getElementById('editExpiryDate').value = '2024-12-31';
+        //     document.getElementById('editMaxUsagePerUser').value = '10';
+        //     document.getElementById('editIsActive').checked = true;
+            
+        //     openModal('editCouponModal');
+        // }
+
         function editCoupon(couponCode) {
-            // In a real MVC application, this would make an AJAX call to the controller
-            // Controller route: GET /admin/coupons/{code}/edit
-            
-            // Sample data population for demo
-            document.getElementById('editCouponCode').value = couponCode;
-            document.getElementById('editDiscountType').value = 'percentage';
-            document.getElementById('editDiscountValue').value = '20';
-            document.getElementById('editMinPurchase').value = '50';
-            document.getElementById('editMaxDiscount').value = '100';
-            document.getElementById('editStartDate').value = '2024-01-01';
-            document.getElementById('editExpiryDate').value = '2024-12-31';
-            document.getElementById('editMaxUsagePerUser').value = '10';
-            document.getElementById('editIsActive').checked = true;
-            
-            openModal('editCouponModal');
+        const coupon = couponList.find(c => c.code === couponCode);
+        if (!coupon) {
+            alert("Coupon not found!");
+            return;
         }
+
+        document.getElementById('editCouponCode').value = coupon.code;
+        // document.getElementById('editDiscountType').value = coupon.discountType || 'percentage'; // Uncomment if using
+        document.getElementById('editDiscountValue').value = coupon.discount;
+        document.getElementById('editMinPurchase').value = coupon.minPurchase;
+        document.getElementById('editMaxDiscount').value = coupon.maxDiscount || 0; // Add this field to schema if needed
+        document.getElementById('editStartDate').value = new Date(coupon.startDate).toISOString().split('T')[0];
+        document.getElementById('editExpiryDate').value = new Date(coupon.expiryDate).toISOString().split('T')[0];
+        document.getElementById('editMaxUsagePerUser').value = coupon.maxUsagePerUser;
+        document.getElementById('editIsActive').checked = coupon.isActive;
+
+        openModal('editCouponModal');
+    }
 
         function toggleCoupon(couponCode, activate) {
             // Controller route: PUT /admin/coupons/{code}/toggle
@@ -738,7 +763,7 @@
                // discountType: document.getElementById('discountType').value,
                 discount: document.getElementById('discountValue').value,
                 minPurchase: document.getElementById('minPurchase').value,
-                maxDiscount: document.getElementById('maxDiscount').value,
+               // maxDiscount: document.getElementById('maxDiscount').value,
                 startDate: document.getElementById('startDate').value,
                 expiryDate: document.getElementById('expiryDate').value,
                 maxUsagePerUser: document.getElementById('maxUsagePerUser').value,
@@ -787,28 +812,83 @@
             // location.reload();
         });
 
-        document.getElementById('editCouponForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            // Controller route: PUT /admin/coupons/{code}
+        // document.getElementById('editCouponForm').addEventListener('submit', function(e) {
+        //     e.preventDefault();
+        //     // Controller route: PUT /admin/coupons/{code}
             
-            const couponCode = document.getElementById('editCouponCode').value;
-            const formData = {
-                discountType: document.getElementById('editDiscountType').value,
-                discount: document.getElementById('editDiscountValue').value,
-                minPurchase: document.getElementById('editMinPurchase').value,
-                maxDiscount: document.getElementById('editMaxDiscount').value,
-                startDate: document.getElementById('editStartDate').value,
-                expiryDate: document.getElementById('editExpiryDate').value,
-                maxUsagePerUser: document.getElementById('editMaxUsagePerUser').value,
-                isActive: document.getElementById('editIsActive').checked
-            };
+        //     const couponCode = document.getElementById('editCouponCode').value;
+        //     const formData = {
+        //         discountType: document.getElementById('editDiscountType').value,
+        //         discount: document.getElementById('editDiscountValue').value,
+        //         minPurchase: document.getElementById('editMinPurchase').value,
+        //         maxDiscount: document.getElementById('editMaxDiscount').value,
+        //         startDate: document.getElementById('editStartDate').value,
+        //         expiryDate: document.getElementById('editExpiryDate').value,
+        //         maxUsagePerUser: document.getElementById('editMaxUsagePerUser').value,
+        //         isActive: document.getElementById('editIsActive').checked
+        //     };
             
-            console.log('Updating coupon:', couponCode, formData);
-            // Make AJAX call to controller
-            // On success, close modal and reload page
-            closeModal('editCouponModal');
-            location.reload();
-        });
+        //     console.log('Updating coupon:', couponCode, formData);
+            
+        //     closeModal('editCouponModal');
+        //     location.reload();
+        // });
+               
+
+
+        document.getElementById('editCouponForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const couponCode = document.getElementById('editCouponCode').value;
+        const formData = {
+            // discountType: document.getElementById('editDiscountType').value, // Uncomment if using
+            discount: document.getElementById('editDiscountValue').value,
+            minPurchase: document.getElementById('editMinPurchase').value,
+            maxDiscount: document.getElementById('editMaxDiscount').value,
+            startDate: document.getElementById('editStartDate').value,
+            expiryDate: document.getElementById('editExpiryDate').value,
+            maxUsagePerUser: document.getElementById('editMaxUsagePerUser').value,
+            isActive: document.getElementById('editIsActive').checked
+        };
+
+        try {
+            const res = await fetch(`/admin/updateCoupen/${couponCode}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            const result = await res.json();
+
+            if (res.ok && result.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Coupon Updated',
+                    text: result.message || 'The coupon was updated successfully!',
+                    timer: 2000,
+                    showConfirmButton: false
+                }).then(() => {
+                    closeModal('editCouponModal');
+                    location.reload();
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Update Failed',
+                    text: result.message || 'Something went wrong!',
+                });
+            }
+        } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'An error occurred while updating the coupon.',
+            });
+            console.error('Fetch error:', error);
+        }
+    });
 
         // Search Functionality
         document.getElementById('searchInput').addEventListener('input', function(e) {
@@ -828,6 +908,12 @@
             document.getElementById('expiryDate').value = nextYear.toISOString().split('T')[0];
         });
     </script>
+
+
+
+
+
+
 </body>
 </html>
 

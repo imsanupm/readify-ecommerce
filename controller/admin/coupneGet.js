@@ -6,8 +6,6 @@ const Coupen = require('../../models/admin/coupen');
 const getCoupenPage = async (req, res) => {
   try {
     const coupenDatas = await Coupen.find({}).sort({ createdAt: -1 });
-    console.log("coupon datas====================", coupenDatas);
-    
     res.render('coupen', { 
      datas: coupenDatas 
     }); // pass data to the view
@@ -17,17 +15,16 @@ const getCoupenPage = async (req, res) => {
   }
 };
 
-
-
     const addCoupen = async (req, res) => {
         try {
 
-   
+        console.log('body datas======================',req.body);
               
           const {
             code,
             discount,
-            minPurchase,
+            maxDiscount,
+          //  minPurchase,
             startDate,
             expiryDate,
             isActive,
@@ -60,9 +57,56 @@ const getCoupenPage = async (req, res) => {
       };
 
 
+    
+
+      const updateCoupen = async (req, res) => {
+        try {
+          const coupenId = req.params.coupenId.toUpperCase(); // Ensure uppercase match
+          const {
+            discount,
+            minPurchase,
+            maxDiscount,
+            startDate,
+            expiryDate,
+            maxUsagePerUser,
+            isActive
+          } = req.body;
+      
+          // Find the coupon by code
+          const coupenData = await Coupen.findOne({ code: coupenId });
+          if (!coupenData) {
+            return res.status(code.HttpStatus.BAD_REQUEST).json({ success: false, message: 'Coupon not found' });
+          }
+      
+          // Update the fields
+          coupenData.discount = discount;
+          coupenData.minPurchase = minPurchase;
+          coupenData.maxDiscount = maxDiscount;
+          coupenData.startDate = startDate;
+          coupenData.expiryDate = expiryDate;
+          coupenData.maxUsagePerUser = maxUsagePerUser;
+          coupenData.isActive = isActive;
+      
+          // Save the updated document
+          await coupenData.save();
+      
+          res.status(code.HttpStatus.OK).json({
+            success: true,
+            message: 'Coupon updated successfully',
+            data: coupenData
+          });
+      
+        } catch (error) {
+          console.log('Error during updateCoupen:', error);
+          res.status(code.HttpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server error' });
+        }
+      };
+      
+
 
       
 module.exports = {
     getCoupenPage,
-    addCoupen
+    addCoupen,
+    updateCoupen
 }

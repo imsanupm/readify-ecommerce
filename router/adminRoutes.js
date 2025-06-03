@@ -13,6 +13,9 @@ const updateStatus = require('../controller/admin/order-status');
 const specificReturn = require('../controller/admin/sepecifc-return');
 const orderReturn = require('../controller/admin/return-order');
 const coupen = require('../controller/admin/coupneGet')
+const updateCoupenValidate = require('../validators/admin/updateCoupen')
+
+
 
 adminRouter.get('/adminlogin',authMiddleware.isUserLoggedOut, adminController.loadLogin);
 adminRouter.post('/adminlogin',adminController.verifyAdmin);
@@ -51,6 +54,7 @@ adminRouter.patch('/returns/approve/:id', orderReturn.approveReturn);
 //coupen management
 adminRouter.get('/coupenManagement',coupen.getCoupenPage)
 adminRouter.post('/addCoupens',coupen.addCoupen);
+adminRouter.put('/updateCoupen/:coupenId',updateCoupenValidate.validateCouponUpdate,coupen.updateCoupen)
 module.exports= adminRouter;
 
 
