@@ -55,6 +55,9 @@ adminRouter.patch('/returns/approve/:id', orderReturn.approveReturn);
 adminRouter.get('/coupenManagement',coupen.getCoupenPage)
 adminRouter.post('/addCoupens',coupen.addCoupen);
 adminRouter.put('/updateCoupen/:coupenId',updateCoupenValidate.validateCouponUpdate,coupen.updateCoupen)
+adminRouter.put('/coupons/:couponCode/toggle',coupen.coupenStatus);
+adminRouter.delete('/coupons/:couponCode', coupen.deleteCoupon);
+
 module.exports= adminRouter;
 
 

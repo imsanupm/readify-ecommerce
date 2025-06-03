@@ -24,7 +24,7 @@ const getCoupenPage = async (req, res) => {
             code,
             discount,
             maxDiscount,
-          //  minPurchase,
+           minPurchase,
             startDate,
             expiryDate,
             isActive,
@@ -104,9 +104,56 @@ const getCoupenPage = async (req, res) => {
       
 
 
+
+      const coupenStatus = async (req, res) => {
+        try {
+         
+          
+          const couponCode = req.params.couponCode.toUpperCase();
+          const { isActive } = req.body;
       
+          const coupon = await Coupen.findOne({ code: couponCode });
+      
+          if (!coupon) {
+            return res.status(404).json({ success: false, message: "Coupon not found" });
+          }
+      
+          coupon.isActive = isActive;
+          await coupon.save();
+      
+          const status = isActive ? 'activated' : 'blocked';
+          return res.status(200).json({ success: true, message: `Coupon ${status} successfully` });
+        } catch (error) {
+          console.error('Error toggling coupon status:', error);
+          return res.status(500).json({ success: false, message: 'Internal server error' });
+        }
+      };
+
+
+
+      const deleteCoupon = async (req, res) => {
+        try {
+         
+          
+          const couponCode = req.params.couponCode.toUpperCase();
+          const deleted = await Coupen.findOneAndDelete({ code: couponCode });
+      
+          if (!deleted) {
+            return res.status(404).json({ success: false, message: 'Coupon not found' });
+          }
+      
+          return res.status(200).json({ success: true, message: 'Coupon deleted successfully' });
+        } catch (error) {
+          console.error('Error deleting coupon:', error);
+          return res.status(500).json({ success: false, message: 'Internal server error' });
+        }
+      };
+      
+        
 module.exports = {
     getCoupenPage,
     addCoupen,
-    updateCoupen
+    updateCoupen,
+    coupenStatus,
+    deleteCoupon
 }

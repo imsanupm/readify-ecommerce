@@ -52,4 +52,73 @@ const validateCouponUpdate = async (req, res, next) => {
   }
 };
 
-module.exports = {validateCouponUpdate};
+
+
+
+
+// const validateAddCoupon = (req, res, next) => {
+//     const {
+//       code,
+//       discount,
+//       maxDiscount,
+//       minPurchase,
+//       startDate,
+//       expiryDate,
+//       isActive,
+//       maxUsagePerUser,
+//     } = req.body;
+  
+//     const errors = [];
+  
+//     if (!code || typeof code !== 'string' || code.trim() === '') {
+//       errors.push('Coupon code is required and must be a string.');
+//     }
+  
+//     if (isNaN(discount) || discount < 0) {
+//       errors.push('Discount must be a valid non-negative number.');
+//     }
+  
+//     if (maxDiscount !== undefined && (isNaN(maxDiscount) || maxDiscount < 0)) {
+//       errors.push('Max discount must be a valid non-negative number.');
+//     }
+  
+//     if (minPurchase !== undefined && (isNaN(minPurchase) || minPurchase < 0)) {
+//       errors.push('Min purchase must be a valid non-negative number.');
+//     }
+  
+//     if (!startDate || isNaN(new Date(startDate).getTime())) {
+//       errors.push('Start date must be a valid date.');
+//     }
+  
+//     if (!expiryDate || isNaN(new Date(expiryDate).getTime())) {
+//       errors.push('Expiry date must be a valid date.');
+//     }
+  
+//     if (new Date(startDate) >= new Date(expiryDate)) {
+//       errors.push('Expiry date must be after start date.');
+//     }
+  
+//     if (typeof isActive !== 'boolean' && isActive !== 'true' && isActive !== 'false') {
+//       errors.push('isActive must be a boolean value.');
+//     }
+  
+//     if (isNaN(maxUsagePerUser) || maxUsagePerUser < 1) {
+//       errors.push('Max usage per user must be a positive number.');
+//     }
+  
+//     if (errors.length > 0) {
+//       return res.status(400).json({
+//         success: false,
+//         message: 'Validation error',
+//         errors,
+//       });
+//     }
+  
+//     next();
+//   };
+  
+
+module.exports = {
+    validateCouponUpdate,
+   // validateAddCoupon
+};

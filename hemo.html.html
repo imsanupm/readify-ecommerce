@@ -732,26 +732,62 @@
             openModal('editCouponModal');
         }
 
-        function toggleCoupon(couponCode, activate) {
-            // Controller route: PUT /admin/coupons/{code}/toggle
-            const action = activate ? 'activate' : 'block';
-            if (confirm(`Are you sure you want to ${action} coupon ${couponCode}?`)) {
-                // Make AJAX call to controller
-                console.log(`${action} coupon: ${couponCode}`);
-                // Reload page or update UI
-                location.reload();
-            }
-        }
+        // function toggleCoupon(couponCode, activate) {
+        //     // Controller route: PUT /admin/coupons/{code}/toggle
+        //     const action = activate ? 'activate' : 'block';
+        //     if (confirm(`Are you sure you want to ${action} coupon ${couponCode}?`)) {
+        //         // Make AJAX call to controller
+        //         console.log(`${action} coupon: ${couponCode}`);
+        //         // Reload page or update UI
+        //         location.reload();
+        //     }
+        // }
 
-        function deleteCoupon(couponCode) {
-            // Controller route: DELETE /admin/coupons/{code}
-            if (confirm(`Are you sure you want to delete coupon ${couponCode}? This action cannot be undone.`)) {
-                // Make AJAX call to controller
-                console.log(`Delete coupon: ${couponCode}`);
-                // Reload page or update UI
-                location.reload();
-            }
+        function toggleCoupon(couponCode, activate) {
+    const action = activate ? 'activate' : 'block';
+
+    Swal.fire({
+        title: `Are you sure?`,
+        text: `You are about to ${action} coupon ${couponCode}`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: `Yes, ${action} it!`,
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/admin/coupons/${couponCode}/toggle`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ isActive: activate })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire('Success', data.message, 'success').then(() => location.reload());
+                } else {
+                    Swal.fire('Error', data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error toggling coupon:', error);
+                Swal.fire('Error', 'Something went wrong', 'error');
+            });
         }
+    });
+}
+
+
+        // function deleteCoupon(couponCode) {
+        //     // Controller route: DELETE /admin/coupons/{code}
+        //     if (confirm(`Are you sure you want to delete coupon ${couponCode}? This action cannot be undone.`)) {
+        //         // Make AJAX call to controller
+        //         console.log(`Delete coupon: ${couponCode}`);
+        //         // Reload page or update UI
+        //         location.reload();
+        //     }
+        // }
 
         // Form Submissions
         document.getElementById('addCouponForm').addEventListener('submit', function(e) {
