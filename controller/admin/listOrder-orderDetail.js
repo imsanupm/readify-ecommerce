@@ -15,7 +15,7 @@ const getOrderListPage = async (req,res) => {
          });
          return
     } catch (error) {
-        console.log('error during getOrderListPage',error)
+        console.log('error during getOrderListPage',error);
     }
 }
 
@@ -28,7 +28,7 @@ const orderDetailPage = async (req,res) => {
         const cutOfDeliveryAmount = 1000;
         const deliveryChargeAmount = 49;
         const orderData = await Order.findOne({_id:orderId}); 
-        console.log('orderData =================',orderData);
+      
 
 
         let subTotal = 0;
@@ -42,7 +42,6 @@ const orderDetailPage = async (req,res) => {
          const gst = (subTotal*gstPercentage)/100;
          totalAmount+=gst;
 
-        console.log('data=====================',subTotal,totalAmount,gst);
         
         res.render('order-detail-admin',{
             order:orderData,

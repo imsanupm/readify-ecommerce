@@ -12,7 +12,7 @@ const listPage = require('../controller/admin/listOrder-orderDetail');
 const updateStatus = require('../controller/admin/order-status');
 const specificReturn = require('../controller/admin/sepecifc-return');
 const orderReturn = require('../controller/admin/return-order');
-
+const coupen = require('../controller/admin/coupneGet')
 
 adminRouter.get('/adminlogin',authMiddleware.isUserLoggedOut, adminController.loadLogin);
 adminRouter.post('/adminlogin',adminController.verifyAdmin);
@@ -47,6 +47,10 @@ adminRouter.patch('/return-order/:orderId',specificReturn.returnOrder);
 
 //return approvel
 adminRouter.patch('/returns/approve/:id', orderReturn.approveReturn);
+
+//coupen management
+adminRouter.get('/coupenManagement',coupen.getCoupenPage)
+adminRouter.post('/addCoupens',coupen.addCoupen);
 module.exports= adminRouter;
 
 

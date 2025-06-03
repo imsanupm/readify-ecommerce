@@ -1,5 +1,6 @@
 
 const Category = require('../../models/admin/category');
+const product = require('../../models/admin/productSchema');
 const Product = require('../../models/admin/productSchema')
 
 
@@ -7,10 +8,14 @@ const Product = require('../../models/admin/productSchema')
 const getProductDetailPage = async (req, res) => {
     try {
         const id = req.params.id;
-        console.log('prdouctId for rendering----------',id)
+      
         const products = await Product.findOne({_id:id}).populate('category').lean();
         
-        
+        const isOffer = ''
+        if(products.productOffer){
+          isOffer = "Product Offer"
+        }
+
         
         if (!products) {
             return res.status(404).render('pagenotFound', { message: "Product not found" });

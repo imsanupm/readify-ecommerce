@@ -1,3 +1,15 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<%-include('partials/admin/headTag.ejs') %>
+<body>
+    <div class="screen-overlay"></div>
+   <%- include('partials/admin/navBar.ejs') %>
+    <main class="main-wrap">
+       <%- include('partials/admin/header.ejs') %> 
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -418,10 +430,7 @@
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <h1>Coupon Management System</h1>
-        </div>
+   
 
         <!-- Statistics Cards -->
         <div class="stats-container">
@@ -561,23 +570,23 @@
                 <span class="close" onclick="closeModal('addCouponModal')">&times;</span>
             </div>
             <div class="modal-body">
-                <form id="addCouponForm">
+                <form id="addCouponForm" novalidate>
                     <div class="form-group">
                         <label for="couponCode">Coupon Code *</label>
                         <input type="text" id="couponCode" class="form-control" placeholder="Enter coupon code" required>
                     </div>
 
                     <div class="form-row">
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <label for="discountType">Discount Type *</label>
                             <select id="discountType" class="form-control" required>
                                 <option value="">Select type</option>
                                 <option value="percentage">Percentage</option>
                                 <option value="fixed">Fixed Amount</option>
                             </select>
-                        </div>
+                        </div> -->
                         <div class="form-group">
-                            <label for="discountValue">Discount Value *</label>
+                            <label for="discountValue">Enter Flat Amount *</label>
                             <input type="number" id="discountValue" class="form-control" placeholder="Enter discount value" min="0" step="0.01" required>
                         </div>
                     </div>
@@ -633,7 +642,7 @@
                 <span class="close" onclick="closeModal('editCouponModal')">&times;</span>
             </div>
             <div class="modal-body">
-                <form id="editCouponForm">
+                <form id="editCouponForm" novalidate>
                     <div class="form-group">
                         <label for="editCouponCode">Coupon Code *</label>
                         <input type="text" id="editCouponCode" class="form-control" readonly>
@@ -760,7 +769,7 @@
             
             const formData = {
                 code: document.getElementById('couponCode').value,
-                discountType: document.getElementById('discountType').value,
+               // discountType: document.getElementById('discountType').value,
                 discount: document.getElementById('discountValue').value,
                 minPurchase: document.getElementById('minPurchase').value,
                 maxDiscount: document.getElementById('maxDiscount').value,
@@ -771,10 +780,45 @@
             };
             
             console.log('Creating coupon:', formData);
-            // Make AJAX call to controller
-            // On success, close modal and reload page
+            // Make a fetch here 
+            fetch('/admin/addCoupens', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => { throw err; });
+        }
+        return response.json();
+    })
+    .then(data => {
+       
+        Swal.fire({
+            icon: 'success',
+            title: 'Coupon Created',
+            text: 'The coupon was added successfully!',
+            confirmButtonColor: '#3b5d50'
+        }).then(() =>  {
             closeModal('addCouponModal');
             location.reload();
+        });
+    })
+    .catch(error => {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text:  data.message||'Failed to create coupon.',
+            confirmButtonColor: '#d33'
+        }).then(()=>{
+            location.reload()
+        })
+    });
+            // On success, close modal and reload page
+            // closeModal('addCouponModal');
+            // location.reload();
         });
 
         document.getElementById('editCouponForm').addEventListener('submit', function(e) {
@@ -820,3 +864,14 @@
     </script>
 </body>
 </html>
+
+
+        
+        <%- include('partials/admin/footer.ejs')  %>
+    </main>
+    <%- include('partials/admin/scriptTags.ejs') %>
+</body>
+
+</html>
+
+

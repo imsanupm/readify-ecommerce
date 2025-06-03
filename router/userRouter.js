@@ -79,6 +79,7 @@ router.delete('/wishlist/delete/:productId',updatWishlist.deleteProduct)
 //order related
 router.get('/checkout', userAuth.isUserSignedIn,checkout.getCheckout);
 router.post('/placeOrder',placeOrder.placeNewOrder);
+router.post('/verifyPayment', placeOrder.verifyRazorpayPayment);
 router.get('/orderConfirmation',userAuth.isUserSignedIn,checkout.getOrderConfirmation)
 
 

@@ -1,10 +1,10 @@
-
+const Order = require('../../models/user/order-schema');
 
 const returnOrder = async (req,res) => {
     try {
-        console.log('you are getting call from return order====================')
-        console.log(req.params);
-        console.log(req.body)
+        const orderId = req.params.orderId;
+        const {reason}=  req.body;
+        
     } catch (error) {
         console.log('error during return order',error);
     }

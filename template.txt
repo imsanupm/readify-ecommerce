@@ -19,20 +19,3 @@
 </html>
 
 
-
-
-<div class="col-6 col-md-3 col-lg-2 mb-3"> 
-						<a class="product-item" href="#"> 
-						  <img src="images/product-1.png" class="img-fluid product-thumbnail">
-						  <h4 class="product-title">Nordic Chair</h4>
-						  <p class="product-author">By John Designer</p>
-						  <div class="product-rating">
-							<span style="color: #FFD700;">★★★★</span><span>☆</span>
-							<small>(4.2/5)</small>
-						  </div>
-						  <strong class="product-price"> Price 50.00</strong>
-						  <span class="icon-cross"> 
-							<img src="images/cross.svg" class="img-fluid"> 
-						  </span> 
-						</a> 
-					  </div>

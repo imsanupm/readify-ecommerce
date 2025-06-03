@@ -8,7 +8,7 @@ const getOrderListPage = async (req,res) => {
    try {
     const userId = req.session.user_id;
     const userOrder = await Order.find({userId}).sort({ createdAt: -1 });
-    console.log(userOrder);
+   
     return res.render('order-list',{
         orders : userOrder
     });
@@ -112,7 +112,7 @@ const getOrderDetailPage = async (req, res) => {
   
       const gst = (subTotal * gstPercentage) / 100;
       const deliveryCharge = subTotal < deliveryThreshold ? deliveryChargeAmount : 0;
-      const totalPrice = subTotal + gst + deliveryCharge - (order.discount || 0); // minus discount if any
+      const totalPrice = subTotal + gst + deliveryCharge - (order.discount || 0); 
   
       return res.render('order-detail', {
         orderData: order,

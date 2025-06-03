@@ -4,8 +4,7 @@ const Order = require('../../models/user/order-schema')
 const updateStatus = async (req,res) => {
     try {
         const {orderId} = req.params;
-        const {status} = req.body;
-        console.log("=============",orderId);
+        const {status} = req.body;   console.log("=============",orderId);
         console.log(status);
         console.log(req.params);
         console.log(req.params);

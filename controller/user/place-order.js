@@ -182,7 +182,7 @@ const createRazorpayOrder = async (req, res, cartData, addressData, user, userId
       }
     });
 
-    return res.status(200).json({
+    return res.status(code.HttpStatus.OK).json({
       success: true,
       orderId: order.id,
       amount: order.amount,
