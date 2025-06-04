@@ -70,6 +70,10 @@ const orderSchema = new Schema({
         type: Number,
         required: true
     },
+    couponAmount:{
+       type:Number,
+       default:false
+    },
     shippingCharge:{
         type:Number,
         required:true,

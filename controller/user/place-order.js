@@ -10,119 +10,7 @@ require('dotenv').config();
 const crypto = require('crypto');
 
 
-// const placeNewOrder = async (req,res) => {
-//     try {
-   
-//      const userId = req.session.user_id;
-//      const {addressId,paymentMethod} = req.body;
-//      const address  = await User.findById(userId).populate('addresses');
-//     const cartData =  await Cart.findOne({userId}).populate('items.productId');
-//       const user = await User.findById(userId);
-  
-//      const addressData = address.addresses.filter((val)=>val._id.toString()==addressId);
-    
-//         if(paymentMethod =="cod"){
-//             return await cod(req,res,cartData,addressData,user,userId);
-//         }
-     
-//         } catch (error) {
-//         console.log("error from placeNewOrder",error);
-//         return res.status(500).json({ success: false, message: 'Something went wrong' });
-//     }
-// }
 
-// const cod = async (req,res,cartData,addressData,user,userId) => {
-//   try {
-//     let subTotal = 0;
-//     let totalAmount = 0;
-//     let gstAmount = null;
-//     const deliveryCharge = 49;
-//     const gstpercentage = 14;
-//     const cutOfMoneyForDeleveryCharge = 1000;
-//     const orderedItems = [];
-  
-
-//     for (const item of cartData.items) {
-//         const product = item.productId;
-//         const price = product.regularPrice;
-//         const quantity = item.quantity;
-      
-//         subTotal += price * quantity;
-      
-//         orderedItems.push({
-//           product: product._id,
-//           productDetails: {
-//             name: product.productTitle,
-//             images: product.productImage,
-  
-//             category: product.category
-//           },
-//           quantity: quantity,
-//           price: price,
-//           status: 'Processing'
-//         });
-      
-//         await Product.findByIdAndUpdate(
-//           product._id,
-//           { $inc: { quantity: -quantity } }
-//         );
-//       }
-//      totalAmount+=subTotal;
-//       gstAmount = (subTotal * gstpercentage )/ 100;
-//       totalAmount += gstAmount;
-
-     
-//       if(subTotal<cutOfMoneyForDeleveryCharge){
-//         totalAmount += deliveryCharge;
-//       }
-      
-//       const orderData = new Order({
-//         userId: userId,
-//         userData:{
-//             name:user.name,
-//             email:user.email,
-//             phone:user.phonenumber
-//         },
-//         orderedItems,
-//         totalPrice:subTotal,
-//         discount: 0,
-//         finalAmount: totalAmount,
-//         shippingCharge:totalAmount>1000?deliveryCharge:0,
-//         totalQuantity: orderedItems.reduce((sum, item) => sum + item.quantity, 0),
-//         address: {
-//             fullname: addressData[0].fullname,
-//             state: addressData[0].state,
-//             district: addressData[0].district,
-//             house_flat: addressData[0].house_flat,
-//             pincode: addressData[0].pincode,
-//             landmark: addressData[0].landmark,
-//             mobile: addressData[0].mobile,
-//             alt_phone: addressData[0].alt_phone,
-//             village_city: addressData[0].village_city,
-//             street: addressData[0].street,
-//             addressType: addressData[0].addressType
-//           },
-//           invoiceDate: new Date(),
-//           status: 'Pending',
-//           paymentMethod: paymentMethod,
-//           createdOn: new Date()
-//       })
-
-
-
-//       await orderData.save();
-
-//       cartData.items = [];
-//       await cartData.save();
-  
-//       return res.status(200).json({ success: true });
-
-//   } catch (error) {
-//     console.log("error during cod payment",error);
-    
-//   }
-  
-// }
 
 
 
@@ -132,29 +20,264 @@ const razorpayInstance = new Razorpay({
 });
 
 
-const placeNewOrder = async (req,res) => {
+
+
+// const placeNewOrder = async (req, res) => {
+//   try {
+//     const userId = req.session.user_id;
+//     const { addressId, paymentMethod } = req.body;
+
+//     const address = await User.findById(userId).populate('addresses');
+//     const cartData = await Cart.findOne({ userId }).populate({
+//       path: 'items.productId',
+//       populate: { path: 'category', select: 'offer' }
+//     });
+//     const user = await User.findById(userId);
+
+//     const addressData = address.addresses.filter((val) => val._id.toString() == addressId);
+
+//     let subTotal = 0;
+//     let totalAmount = 0;
+//     let gstAmount = null;
+
+//     const deliveryCharge = 49;
+//     const gstpercentage = 14;
+//     const cutOfMoneyForDeleveryCharge = 1000;
+//     const orderedItems = [];
+
+//     let orgTotal = 0; // ✅ Original price without discount
+
+//     for (const item of cartData.items) {
+//       const product = item.productId;
+//       const price = product.regularPrice;
+//       const quantity = item.quantity;
+
+//       orgTotal += price * quantity; // ✅ Original MRP total
+
+//       // ✅ Use finalAmount if valid offer exists
+//       const offerPrice =
+//         product.offerType && product.offerType !== 'null' && product.finalAmount > 0
+//           ? product.finalAmount
+//           : product.regularPrice;
+
+//       const itemTotal = offerPrice * quantity;
+//       subTotal += itemTotal;
+
+//       orderedItems.push({
+//         product: product._id,
+//         productDetails: {
+//           name: product.productTitle,
+//           images: product.productImage,
+//           category: product.category
+//         },
+//         quantity: quantity,
+//         price: price, // ✅ Still store regular price as original price
+//         status: 'Processing'
+//       });
+
+//       await Product.findByIdAndUpdate(
+//         product._id,
+//         { $inc: { quantity: -quantity } }
+//       );
+//     }
+
+//     gstAmount = (subTotal * gstpercentage) / 100;
+//     totalAmount = subTotal + gstAmount;
+
+//     if (subTotal < cutOfMoneyForDeleveryCharge) {
+//       totalAmount += deliveryCharge;
+//     }
+     
+//     console.log("orgTotal (MRP):", orgTotal);
+//     console.log("subTotal (after offer):", subTotal);
+//     console.log("totalAmount (final):", totalAmount);
+
+//     if (paymentMethod == "cod") {
+//       return await cod(
+//         req,
+//         res,
+//         cartData,
+//         addressData,
+//         user,
+//         userId,
+//         paymentMethod,
+//         orderedItems,
+//         subTotal,
+//         totalAmount,
+//         deliveryCharge
+//       );
+//     } else if (paymentMethod == "razorpay") {
+//       return await createRazorpayOrder(
+//         req,
+//         res,
+//         cartData,
+//         addressData,
+//         user,
+//         userId,
+//         paymentMethod
+//       );
+//     }
+
+//   } catch (error) {
+//     console.log("error from placeNewOrder", error);
+//     return res.status(500).json({ success: false, message: 'Something went wrong' });
+//   }
+// };
+
+
+
+const placeNewOrder = async (req, res) => {
   try {
-      const userId = req.session.user_id;
-      const {addressId, paymentMethod} = req.body;
+    const userId = req.session.user_id;
+    const { addressId, paymentMethod } = req.body;
 
-      const address = await User.findById(userId).populate('addresses');
-      const cartData = await Cart.findOne({ userId }).populate('items.productId');
-      const user = await User.findById(userId);
+    const address = await User.findById(userId).populate('addresses');
+    const cartData = await Cart.findOne({ userId }).populate({
+      path: 'items.productId',
+      populate: { path: 'category', select: 'offer' }
+    });
+    const user = await User.findById(userId);
 
-      const addressData = address.addresses.filter((val) => val._id.toString() == addressId);
+    const addressData = address.addresses.filter((val) => val._id.toString() == addressId);
 
-      if(paymentMethod == "cod"){
-          return await cod(req, res, cartData, addressData, user, userId, paymentMethod); // pass paymentMethod here
-      }else if(paymentMethod=="razorpay"){
-        return await createRazorpayOrder(req,res,cartData,addressData,user,userId,paymentMethod)
-      }
+    let subTotal = 0; // ✅ This will now be the MRP total
+    let totalAmount = 0;
+    let gstAmount = null;
 
+    const deliveryCharge = 49;
+    const gstpercentage = 14;
+    const cutOfMoneyForDeleveryCharge = 1000;
+    const orderedItems = [];
+
+    for (const item of cartData.items) {
+      const product = item.productId;
+      const price = product.regularPrice;
+      const quantity = item.quantity;
+
+      subTotal += price * quantity; // ✅ MRP total
+
+      // ✅ Offer-based price used only for totalAmount
+      const offerPrice =
+        product.offerType && product.offerType !== 'null' && product.finalAmount > 0
+          ? product.finalAmount
+          : product.regularPrice;
+
+      totalAmount += offerPrice * quantity;
+
+      orderedItems.push({
+        product: product._id,
+        productDetails: {
+          name: product.productTitle,
+          images: product.productImage,
+          category: product.category
+        },
+        quantity: quantity,
+        price: price,
+        status: 'Processing'
+      });
+
+      await Product.findByIdAndUpdate(
+        product._id,
+        { $inc: { quantity: -quantity } }
+      );
+    }
+
+    gstAmount = (totalAmount * gstpercentage) / 100;
+    totalAmount += gstAmount;
+
+    if (totalAmount < cutOfMoneyForDeleveryCharge) {
+      totalAmount += deliveryCharge;
+    }
+     console.log('total amount (after offer , delivery , gst)',totalAmount);
+     console.log('now subtota as (mrp)',subTotal);
+    if (paymentMethod == "cod") {
+      return await cod(
+        req,
+        res,
+        cartData,
+        addressData,
+        user,
+        userId,
+        paymentMethod,
+        orderedItems,
+        subTotal,
+        totalAmount,
+        deliveryCharge
+      );
+    } else if (paymentMethod == "razorpay") {
+      return await createRazorpayOrder(
+        req,
+        res,
+        cartData,
+        addressData,
+        user,
+        userId,
+        paymentMethod
+      );
+    }
 
   } catch (error) {
-      console.log("error from placeNewOrder", error);
-      return res.status(500).json({ success: false, message: 'Something went wrong' });
+    console.log("error from placeNewOrder", error);
+    return res.status(500).json({ success: false, message: 'Something went wrong' });
+  }
+};
+
+
+
+const cod = async (req, res, cartData, addressData, user, userId, paymentMethod, orderedItems, subTotal, totalAmount, deliveryCharge) => {
+  try {
+      const orderData = new Order({
+          userId: userId,
+          userData: {
+              name: user.name,
+              email: user.email,
+              phone: user.phonenumber
+          },
+          orderedItems,
+          totalPrice: subTotal,
+          discount: 0,
+          finalAmount: totalAmount,
+          shippingCharge: totalAmount > 1000 ? deliveryCharge : 0,
+          totalQuantity: orderedItems.reduce((sum, item) => sum + item.quantity, 0),
+          address: {
+              fullname: addressData[0].fullname,
+              state: addressData[0].state,
+              district: addressData[0].district,
+              house_flat: addressData[0].house_flat,
+              pincode: addressData[0].pincode,
+              landmark: addressData[0].landmark,
+              mobile: addressData[0].mobile,
+              alt_phone: addressData[0].alt_phone,
+              village_city: addressData[0].village_city,
+              street: addressData[0].street,
+              addressType: addressData[0].addressType
+          },
+          invoiceDate: new Date(),
+          status: 'Pending',
+          paymentMethod: paymentMethod,
+          createdOn: new Date()
+      });
+
+      await orderData.save();
+
+      cartData.items = [];
+      await cartData.save();
+
+      return res.status(200).json({ success: true });
+
+  } catch (error) {
+      console.log("error during cod payment", error);
+      return res.status(500).json({ success: false, message: 'COD payment failed' });
   }
 }
+
+
+
+
+
+
+
+
 
 const createRazorpayOrder = async (req, res, cartData, addressData, user, userId) => {
   try {
@@ -245,93 +368,7 @@ const verifyRazorpayPayment = async (req, res) => {
 
 
 
-const cod = async (req, res, cartData, addressData, user, userId, paymentMethod) => { // accept it here
-  try {
-      let subTotal = 0;
-      let totalAmount = 0;
-      let gstAmount = null;
-      const deliveryCharge = 49;
-      const gstpercentage = 14;
-      const cutOfMoneyForDeleveryCharge = 1000;
-      const orderedItems = [];
 
-      for (const item of cartData.items) {
-          const product = item.productId;
-          const price = product.regularPrice;
-          const quantity = item.quantity;
-
-          subTotal += price * quantity;
-
-          orderedItems.push({
-              product: product._id,
-              productDetails: {
-                  name: product.productTitle,
-                  images: product.productImage,
-                  category: product.category
-              },
-              quantity: quantity,
-              price: price,
-              status: 'Processing'
-          });
-
-          await Product.findByIdAndUpdate(
-              product._id,
-              { $inc: { quantity: -quantity } }
-          );
-      }
-
-      totalAmount += subTotal;
-      gstAmount = (subTotal * gstpercentage) / 100;
-      totalAmount += gstAmount;
-
-      if (subTotal < cutOfMoneyForDeleveryCharge) {
-          totalAmount += deliveryCharge;
-      }
-
-      const orderData = new Order({
-          userId: userId,
-          userData: {
-              name: user.name,
-              email: user.email,
-              phone: user.phonenumber
-          },
-          orderedItems,
-          totalPrice: subTotal,
-          discount: 0,
-          finalAmount: totalAmount,
-          shippingCharge: totalAmount > 1000 ? deliveryCharge : 0,
-          totalQuantity: orderedItems.reduce((sum, item) => sum + item.quantity, 0),
-          address: {
-              fullname: addressData[0].fullname,
-              state: addressData[0].state,
-              district: addressData[0].district,
-              house_flat: addressData[0].house_flat,
-              pincode: addressData[0].pincode,
-              landmark: addressData[0].landmark,
-              mobile: addressData[0].mobile,
-              alt_phone: addressData[0].alt_phone,
-              village_city: addressData[0].village_city,
-              street: addressData[0].street,
-              addressType: addressData[0].addressType
-          },
-          invoiceDate: new Date(),
-          status: 'Pending',
-          paymentMethod: paymentMethod, // now it's defined
-          createdOn: new Date()
-      });
-
-      await orderData.save();
-
-      cartData.items = [];
-      await cartData.save();
-
-      return res.status(200).json({ success: true });
-
-  } catch (error) {
-      console.log("error during cod payment", error);
-      return res.status(500).json({ success: false, message: 'COD payment failed' });
-  }
-}
 
 
 
