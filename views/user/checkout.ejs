@@ -13,11 +13,9 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            /* background: linear-gradient(135deg, #3b5d50 0%, #2a4238 100%); */
             background:#e0e0e0;
             min-height: 100vh;
             color: #333;
-                        
             line-height: 1.6;
         }
 
@@ -271,41 +269,166 @@
             font-size: 0.9rem;
         }
 
-        /* Coupon Section */
-        .coupon-container {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
+        /* Coupon Cards Section */
+        .coupon-cards-container {
+            display: grid;
+            gap: 1rem;
         }
 
-        .coupon-input {
-            flex: 1;
-            padding: 0.75rem;
+        .coupon-card {
+            background: white;
             border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 1rem;
-            transition: border-color 0.3s ease;
+            border-radius: 12px;
+            padding: 1.25rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
 
-        .coupon-input:focus {
-            outline: none;
+        .coupon-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
             border-color: #3b5d50;
+        }
+
+        .coupon-card.applied {
+            border-color: #28a745;
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.1), rgba(255, 193, 7, 0.05));
+        }
+
+        .coupon-card.applied::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(135deg, #28a745, #ffc107);
+        }
+
+        .coupon-card.expired {
+            opacity: 0.6;
+            border-color: #dc3545;
+            background: rgba(220, 53, 69, 0.05);
+        }
+
+        .coupon-card.not-eligible {
+            opacity: 0.5;
+            border-color: #6c757d;
+            background: rgba(108, 117, 125, 0.05);
+        }
+
+        .coupon-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .coupon-code {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #3b5d50;
+            background: rgba(59, 93, 80, 0.1);
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            border: 1px dashed #3b5d50;
+        }
+
+        .coupon-discount {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #ffc107;
+        }
+
+        .coupon-description {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            line-height: 1.4;
+        }
+
+        .coupon-terms {
+            color: #888;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+            font-style: italic;
+        }
+
+        .coupon-action {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .coupon-btn {
             background: linear-gradient(135deg, #3b5d50, #ffc107);
             color: white;
             border: none;
-            border-radius: 10px;
-            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            padding: 0.6rem 1.25rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
+            font-size: 0.9rem;
+            min-width: 80px;
         }
 
         .coupon-btn:hover {
             transform: translateY(-1px);
             box-shadow: 0 4px 15px rgba(59, 93, 80, 0.3);
+        }
+
+        .coupon-btn.remove {
+            background: linear-gradient(135deg, #dc3545, #ff6b6b);
+        }
+
+        .coupon-btn.remove:hover {
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        .coupon-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .coupon-validity {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .coupon-savings {
+            font-size: 0.85rem;
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .no-coupons {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+            font-style: italic;
+        }
+
+        .coupon-status {
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            font-weight: 600;
+        }
+
+        .coupon-status.expired {
+            color: #dc3545;
+        }
+
+        .coupon-status.not-eligible {
+            color: #6c757d;
+        }
+
+        .coupon-status.usage-limit {
+            color: #ffc107;
         }
 
         /* Order Summary */
@@ -417,6 +540,18 @@
             .product-item {
                 flex-direction: column;
                 text-align: center;
+            }
+
+            .coupon-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .coupon-action {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.5rem;
             }
         }
 
@@ -537,13 +672,124 @@
             <section class="section">
                 <h3 class="section-title">
                     <span class="section-icon">🎫</span>
-                    Apply Coupon
+                    Available Coupons
                 </h3>
-                <div class="coupon-container">
-                    <input type="text" class="coupon-input" placeholder="Enter coupon code" id="couponCode">
-                    <button class="coupon-btn" id="applyCoupon">Apply</button>
+                <div class="coupon-cards-container">
+                    <% 
+                    // Check if coupenData exists and has coupons
+                    if (typeof coupenData !== 'undefined' && coupenData && coupenData.length > 0) { 
+                        // Get current date for comparison
+                        const currentDate = new Date();
+                        const userId = typeof user !== 'undefined' && user ? user._id : null;
+                        
+                        // Process each coupon
+                        coupenData.forEach(coupon => {
+                            // Check coupon validity
+                            const startDate = new Date(coupon.startDate);
+                            const expiryDate = new Date(coupon.expiryDate);
+                            const isExpired = currentDate > expiryDate || currentDate < startDate;
+                            const isActive = coupon.isActive;
+                            const meetsMinPurchase = subTotal >= coupon.minPurchase;
+                            
+                            // Check user usage
+                            let userUsageCount = 0;
+                            let hasReachedLimit = false;
+                            if (userId && coupon.usage && coupon.usage.length > 0) {
+                                const userUsage = coupon.usage.find(u => u.userId.toString() === userId.toString());
+                                if (userUsage) {
+                                    userUsageCount = userUsage.usageCount;
+                                    hasReachedLimit = userUsageCount >= coupon.maxUsagePerUser;
+                                }
+                            }
+                            
+                            // Determine if coupon is eligible
+                            const isEligible = isActive && !isExpired && meetsMinPurchase && !hasReachedLimit;
+                            
+                            // Calculate remaining uses
+                            const remainingUses = coupon.maxUsagePerUser - userUsageCount;
+                            
+                            // Format dates
+                            const expiryFormatted = expiryDate.toLocaleDateString('en-IN', { 
+                                day: 'numeric', 
+                                month: 'short', 
+                                year: 'numeric' 
+                            });
+                            
+                            // Determine discount type and display
+                            const isPercentage = coupon.discount <= 100; // Assuming percentage if <= 100
+                            const discountType = isPercentage ? 'percentage' : 'fixed';
+                            const discountDisplay = isPercentage ? `${coupon.discount}% OFF` : `₹${coupon.discount} OFF`;
+                            
+                            // Determine card class
+                            let cardClass = 'coupon-card';
+                            if (isExpired) cardClass += ' expired';
+                            else if (!isEligible) cardClass += ' not-eligible';
+                            
+                            // Determine status message
+                            let statusMessage = '';
+                            let statusClass = '';
+                            if (isExpired) {
+                                statusMessage = 'Expired';
+                                statusClass = 'expired';
+                            } else if (!isActive) {
+                                statusMessage = 'Inactive';
+                                statusClass = 'not-eligible';
+                            } else if (!meetsMinPurchase) {
+                                statusMessage = `Minimum order ₹${coupon.minPurchase} required`;
+                                statusClass = 'not-eligible';
+                            } else if (hasReachedLimit) {
+                                statusMessage = 'Usage limit reached';
+                                statusClass = 'usage-limit';
+                            }
+                    %>
+                    <div class="<%= cardClass %>" data-coupon="<%= coupon.code %>">
+                        <div class="coupon-header">
+                            <div class="coupon-code"><%= coupon.code %></div>
+                            <div class="coupon-discount"><%= discountDisplay %></div>
+                        </div>
+                        <div class="coupon-description">
+                            <% if (isPercentage) { %>
+                                Get <%= coupon.discount %>% discount on your order
+                            <% } else { %>
+                                Get ₹<%= coupon.discount %> off on your order
+                            <% } %>
+                        </div>
+                        <div class="coupon-terms">
+                            *Minimum order value ₹<%= coupon.minPurchase %>
+                            <% if (coupon.maxDiscount > 0) { %>
+                                • Maximum discount ₹<%= coupon.maxDiscount %>
+                            <% } %>
+                            • Valid till <%= expiryFormatted %>
+                        </div>
+                        
+                        <% if (statusMessage) { %>
+                            <div class="coupon-status <%= statusClass %>"><%= statusMessage %></div>
+                        <% } %>
+                        
+                        <div class="coupon-action">
+                            <div class="coupon-validity">
+                                <% if (isEligible && remainingUses < coupon.maxUsagePerUser) { %>
+                                    <%= remainingUses %> uses remaining
+                                <% } else if (isEligible) { %>
+                                    Valid till <%= expiryFormatted %>
+                                <% } else { %>
+                                    Not eligible
+                                <% } %>
+                            </div>
+                            <button 
+                                class="coupon-btn" 
+                                onclick="toggleCoupon(this, '<%= coupon.code %>', <%= coupon.discount %>, '<%= discountType %>', <%= coupon.maxDiscount || 'null' %>)"
+                                <%= !isEligible ? 'disabled' : '' %>
+                            >
+                                Apply
+                            </button>
+                        </div>
+                    </div>
+                    <% }); %>
+                    <% } else { %>
+                        <div class="no-coupons">No coupons available</div>
+                    <% } %>
                 </div>
-                <div id="couponMessage" style="margin-top: 0.5rem; font-size: 0.9rem;"></div>
             </section>
 
             <!-- Order Summary Section -->
@@ -609,34 +855,107 @@
             });
         });
 
-        // Coupon functionality (basic implementation)
-        document.getElementById('applyCoupon').addEventListener('click', function() {
-            const couponCode = document.getElementById('couponCode').value.trim();
-            const messageDiv = document.getElementById('couponMessage');
+        // Coupon functionality
+        let appliedCoupon = null;
+        const originalTotal = <%= totalAmount %>;
+        const subTotal = <%= subTotal %>;
+
+        function toggleCoupon(button, couponCode, discountValue, discountType, maxDiscount = null) {
+            const couponCard = button.closest('.coupon-card');
+            const isApplied = couponCard.classList.contains('applied');
+
+            if (isApplied) {
+                // Remove coupon
+                removeCoupon(button, couponCard);
+            } else {
+                // Apply coupon (remove any existing coupon first)
+                if (appliedCoupon) {
+                    const currentAppliedCard = document.querySelector('.coupon-card.applied');
+                    if (currentAppliedCard) {
+                        const currentAppliedButton = currentAppliedCard.querySelector('.coupon-btn');
+                        removeCoupon(currentAppliedButton, currentAppliedCard);
+                    }
+                }
+                applyCoupon(button, couponCard, couponCode, discountValue, discountType, maxDiscount);
+            }
+        }
+
+        function applyCoupon(button, couponCard, couponCode, discountValue, discountType, maxDiscount) {
+            let discount = 0;
             
-            if (!couponCode) {
-                messageDiv.style.color = '#dc3545';
-                messageDiv.textContent = 'Please enter a coupon code';
-                return;
+            if (discountType === 'percentage') {
+                discount = (subTotal * discountValue) / 100;
+                if (maxDiscount && maxDiscount > 0 && discount > maxDiscount) {
+                    discount = maxDiscount;
+                }
+            } else {
+                discount = discountValue;
+                // Ensure discount doesn't exceed subtotal
+                if (discount > subTotal) {
+                    discount = subTotal;
+                }
             }
 
-            // Simulate coupon validation (replace with actual API call)
-            if (couponCode.toUpperCase() === 'SAVE10') {
-                const currentTotal = <%= totalAmount %>;
-                const discount = currentTotal * 0.1;
-                const newTotal = currentTotal - discount;
-                
-                document.getElementById('couponDiscount').style.display = 'flex';
-                document.getElementById('discountAmount').textContent = discount.toFixed(2);
-                document.getElementById('finalTotal').textContent = '₹' + newTotal.toFixed(2);
-                
-                messageDiv.style.color = '#28a745';
-                messageDiv.textContent = 'Coupon applied successfully!';
-            } else {
-                messageDiv.style.color = '#dc3545';
-                messageDiv.textContent = 'Invalid coupon code';
+            const newTotal = originalTotal - discount;
+            
+            // Update UI
+            couponCard.classList.add('applied');
+            button.textContent = 'Remove';
+            button.classList.add('remove');
+            
+            // Update order summary
+            document.getElementById('couponDiscount').style.display = 'flex';
+            document.getElementById('discountAmount').textContent = discount.toFixed(2);
+            document.getElementById('finalTotal').textContent = '₹' + newTotal.toFixed(2);
+            
+            // Add savings indicator
+            const savingsElement = couponCard.querySelector('.coupon-savings');
+            if (savingsElement) {
+                savingsElement.remove();
             }
-        });
+            const newSavings = document.createElement('div');
+            newSavings.className = 'coupon-savings';
+            newSavings.textContent = `You save ₹${discount.toFixed(2)}!`;
+            couponCard.querySelector('.coupon-action').prepend(newSavings);
+            
+            appliedCoupon = couponCode;
+            
+            // Disable other coupon buttons
+            document.querySelectorAll('.coupon-btn').forEach(btn => {
+                if (btn !== button && !btn.disabled) {
+                    btn.disabled = true;
+                    btn.textContent = 'Apply';
+                }
+            });
+        }
+
+        function removeCoupon(button, couponCard) {
+            // Update UI
+            couponCard.classList.remove('applied');
+            button.textContent = 'Apply';
+            button.classList.remove('remove');
+            
+            // Remove savings indicator
+            const savingsElement = couponCard.querySelector('.coupon-savings');
+            if (savingsElement) {
+                savingsElement.remove();
+            }
+            
+            // Update order summary
+            document.getElementById('couponDiscount').style.display = 'none';
+            document.getElementById('discountAmount').textContent = '0.00';
+            document.getElementById('finalTotal').textContent = '₹' + originalTotal.toFixed(2);
+            
+            appliedCoupon = null;
+            
+            // Enable all eligible coupon buttons
+            document.querySelectorAll('.coupon-btn').forEach(btn => {
+                if (!btn.closest('.coupon-card').classList.contains('expired') && 
+                    !btn.closest('.coupon-card').classList.contains('not-eligible')) {
+                    btn.disabled = false;
+                }
+            });
+        }
     </script>
 
     <!-- Original Scripts (unchanged) -->
@@ -667,7 +986,8 @@
                         },
                         body: JSON.stringify({
                             addressId,
-                            paymentMethod
+                            paymentMethod,
+                            couponCode: appliedCoupon
                         })
                     });
 
@@ -695,8 +1015,9 @@
                         },
                         body: JSON.stringify({ 
                             addressId,
-                            paymentMethod
-                        }) // Payment method is implicitly "razorpay"
+                            paymentMethod,
+                            couponCode: appliedCoupon
+                        })
                     });
 
                     const data = await res.json();
@@ -724,7 +1045,8 @@
                                     razorpay_payment_id: response.razorpay_payment_id,
                                     razorpay_signature: response.razorpay_signature,
                                     addressId: addressId,
-                                    paymentMethod: "razorpay"
+                                    paymentMethod: "razorpay",
+                                    couponCode: appliedCoupon
                                 })
                             });
 

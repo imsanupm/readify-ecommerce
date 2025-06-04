@@ -11,7 +11,7 @@ const getProductDetailPage = async (req, res) => {
       
         const products = await Product.findOne({_id:id}).populate('category').lean();
         
-        const isOffer = ''
+        let isOffer = ''
         if(products.productOffer){
           isOffer = "Product Offer"
         }

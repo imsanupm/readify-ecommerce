@@ -18,7 +18,7 @@ const getCoupenPage = async (req, res) => {
     const addCoupen = async (req, res) => {
         try {
 
-        console.log('body datas======================',req.body);
+        
               
           const {
             code,
