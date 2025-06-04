@@ -307,6 +307,18 @@
             background: linear-gradient(135deg, #28a745, #ffc107);
         }
 
+        .coupon-card.expired {
+            opacity: 0.6;
+            border-color: #dc3545;
+            background: rgba(220, 53, 69, 0.05);
+        }
+
+        .coupon-card.not-eligible {
+            opacity: 0.5;
+            border-color: #6c757d;
+            background: rgba(108, 117, 125, 0.05);
+        }
+
         .coupon-header {
             display: flex;
             justify-content: space-between;
@@ -392,6 +404,31 @@
             font-size: 0.85rem;
             color: #28a745;
             font-weight: 600;
+        }
+
+        .no-coupons {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+            font-style: italic;
+        }
+
+        .coupon-status {
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            font-weight: 600;
+        }
+
+        .coupon-status.expired {
+            color: #dc3545;
+        }
+
+        .coupon-status.not-eligible {
+            color: #6c757d;
+        }
+
+        .coupon-status.usage-limit {
+            color: #ffc107;
         }
 
         /* Order Summary */
@@ -638,25 +675,120 @@
                     Available Coupons
                 </h3>
                 <div class="coupon-cards-container">
-                    <% coupenData.forEach((val) => { %>
-                        <div class="coupon-card" data-coupon="<%= val.code %>">
-                          <div class="coupon-header">
-                            <div class="coupon-code"><%= val.code %></div>
-                            <div class="coupon-discount">₹<%= val.discount %> OFF</div>
-                          </div>
-                          <!-- <div class="coupon-description">
-                            Welcome bonus! Get ₹<%= val.discount %> off on your first order
-                          </div> -->
-                          <div class="coupon-terms">
-                            *Minimum order value ₹<%= val.minPurchase %>. One-time use only
-                          </div>
-                          <div class="coupon-action">
-                            <div class="coupon-validity">Each coupon you can only use once</div>
-                            <button class="coupon-btn" onclick="toggleCoupon(this, '<%= val.code %>', <%= val.discount %>, 'fixed')">Apply</button>
-                          </div>
+                    <% 
+                    // Check if coupenData exists and has coupons
+                    if (typeof coupenData !== 'undefined' && coupenData && coupenData.length > 0) { 
+                        // Get current date for comparison
+                        const currentDate = new Date();
+                        const userId = typeof user !== 'undefined' && user ? user._id : null;
+                        
+                        // Process each coupon
+                        coupenData.forEach(coupon => {
+                            // Check coupon validity
+                            const startDate = new Date(coupon.startDate);
+                            const expiryDate = new Date(coupon.expiryDate);
+                            const isExpired = currentDate > expiryDate || currentDate < startDate;
+                            const isActive = coupon.isActive;
+                            const meetsMinPurchase = subTotal >= coupon.minPurchase;
+                            
+                            // Check user usage
+                            let userUsageCount = 0;
+                            let hasReachedLimit = false;
+                            if (userId && coupon.usage && coupon.usage.length > 0) {
+                                const userUsage = coupon.usage.find(u => u.userId.toString() === userId.toString());
+                                if (userUsage) {
+                                    userUsageCount = userUsage.usageCount;
+                                    hasReachedLimit = userUsageCount >= coupon.maxUsagePerUser;
+                                }
+                            }
+                            
+                            // Determine if coupon is eligible
+                            const isEligible = isActive && !isExpired && meetsMinPurchase && !hasReachedLimit;
+                            
+                            // Calculate remaining uses
+                            const remainingUses = coupon.maxUsagePerUser - userUsageCount;
+                            
+                            // Format dates
+                            const expiryFormatted = expiryDate.toLocaleDateString('en-IN', { 
+                                day: 'numeric', 
+                                month: 'short', 
+                                year: 'numeric' 
+                            });
+                            
+                            // Determine discount type and display
+                            const isPercentage = coupon.discount <= 100; // Assuming percentage if <= 100
+                            const discountType = isPercentage ? 'percentage' : 'fixed';
+                            const discountDisplay = isPercentage ? `${coupon.discount}% OFF` : `₹${coupon.discount} OFF`;
+                            
+                            // Determine card class
+                            let cardClass = 'coupon-card';
+                            if (isExpired) cardClass += ' expired';
+                            else if (!isEligible) cardClass += ' not-eligible';
+                            
+                            // Determine status message
+                            let statusMessage = '';
+                            let statusClass = '';
+                            if (isExpired) {
+                                statusMessage = 'Expired';
+                                statusClass = 'expired';
+                            } else if (!isActive) {
+                                statusMessage = 'Inactive';
+                                statusClass = 'not-eligible';
+                            } else if (!meetsMinPurchase) {
+                                statusMessage = `Minimum order ₹${coupon.minPurchase} required`;
+                                statusClass = 'not-eligible';
+                            } else if (hasReachedLimit) {
+                                statusMessage = 'Usage limit reached';
+                                statusClass = 'usage-limit';
+                            }
+                    %>
+                    <div class="<%= cardClass %>" data-coupon="<%= coupon.code %>">
+                        <div class="coupon-header">
+                            <div class="coupon-code"><%= coupon.code %></div>
+                            <div class="coupon-discount"><%= discountDisplay %></div>
                         </div>
-                      <% }) %>
-                      
+                        <div class="coupon-description">
+                            <% if (isPercentage) { %>
+                                Get <%= coupon.discount %> ₹ discount on your order
+                            <% } else { %>
+                                Get ₹<%= coupon.discount %> off on your order
+                            <% } %>
+                        </div>
+                        <div class="coupon-terms">
+                            *Minimum order value ₹<%= coupon.minPurchase %>
+                            <% if (coupon.maxDiscount > 0) { %>
+                                • Maximum discount ₹<%= coupon.maxDiscount %>
+                            <% } %>
+                            • Valid till <%= expiryFormatted %>
+                        </div>
+                        
+                        <% if (statusMessage) { %>
+                            <div class="coupon-status <%= statusClass %>"><%= statusMessage %></div>
+                        <% } %>
+                        
+                        <div class="coupon-action">
+                            <div class="coupon-validity">
+                                <% if (isEligible && remainingUses < coupon.maxUsagePerUser) { %>
+                                    <%= remainingUses %> uses remaining
+                                <% } else if (isEligible) { %>
+                                    Valid till <%= expiryFormatted %>
+                                <% } else { %>
+                                    Not eligible
+                                <% } %>
+                            </div>
+                            <button 
+                                class="coupon-btn" 
+                                onclick="toggleCoupon(this, '<%= coupon.code %>', <%= coupon.discount %>, '<%= discountType %>', <%= coupon.maxDiscount || 'null' %>)"
+                                <%= !isEligible ? 'disabled' : '' %>
+                            >
+                                Apply
+                            </button>
+                        </div>
+                    </div>
+                    <% }); %>
+                    <% } else { %>
+                        <div class="no-coupons">No coupons available</div>
+                    <% } %>
                 </div>
             </section>
 
@@ -673,9 +805,12 @@
                         Congratulations! Your order is eligible for FREE Delivery.
                     </div>
                 <% } %>
-
                 <div class="summary-item">
-                    <div class="summary-label">Subtotal</div>
+                    <div class="summary-label">Actual amount</div>
+                    <div class="summary-value">₹<%= orgTotal.toFixed(2) %></div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">OfferAmount</div>
                     <div class="summary-value">₹<%= subTotal.toFixed(2) %></div>
                 </div>
 
@@ -726,6 +861,7 @@
         // Coupon functionality
         let appliedCoupon = null;
         const originalTotal = <%= totalAmount %>;
+        const subTotal = <%= subTotal %>;
 
         function toggleCoupon(button, couponCode, discountValue, discountType, maxDiscount = null) {
             const couponCard = button.closest('.coupon-card');
@@ -738,8 +874,10 @@
                 // Apply coupon (remove any existing coupon first)
                 if (appliedCoupon) {
                     const currentAppliedCard = document.querySelector('.coupon-card.applied');
-                    const currentAppliedButton = currentAppliedCard.querySelector('.coupon-btn');
-                    removeCoupon(currentAppliedButton, currentAppliedCard);
+                    if (currentAppliedCard) {
+                        const currentAppliedButton = currentAppliedCard.querySelector('.coupon-btn');
+                        removeCoupon(currentAppliedButton, currentAppliedCard);
+                    }
                 }
                 applyCoupon(button, couponCard, couponCode, discountValue, discountType, maxDiscount);
             }
@@ -749,12 +887,16 @@
             let discount = 0;
             
             if (discountType === 'percentage') {
-                discount = (originalTotal * discountValue) / 100;
-                if (maxDiscount && discount > maxDiscount) {
+                discount = (subTotal * discountValue) / 100;
+                if (maxDiscount && maxDiscount > 0 && discount > maxDiscount) {
                     discount = maxDiscount;
                 }
             } else {
                 discount = discountValue;
+                // Ensure discount doesn't exceed subtotal
+                if (discount > subTotal) {
+                    discount = subTotal;
+                }
             }
 
             const newTotal = originalTotal - discount;
@@ -783,7 +925,7 @@
             
             // Disable other coupon buttons
             document.querySelectorAll('.coupon-btn').forEach(btn => {
-                if (btn !== button) {
+                if (btn !== button && !btn.disabled) {
                     btn.disabled = true;
                     btn.textContent = 'Apply';
                 }
@@ -809,9 +951,12 @@
             
             appliedCoupon = null;
             
-            // Enable all coupon buttons
+            // Enable all eligible coupon buttons
             document.querySelectorAll('.coupon-btn').forEach(btn => {
-                btn.disabled = false;
+                if (!btn.closest('.coupon-card').classList.contains('expired') && 
+                    !btn.closest('.coupon-card').classList.contains('not-eligible')) {
+                    btn.disabled = false;
+                }
             });
         }
     </script>
@@ -844,7 +989,8 @@
                         },
                         body: JSON.stringify({
                             addressId,
-                            paymentMethod
+                            paymentMethod,
+                            couponCode: appliedCoupon
                         })
                     });
 
@@ -872,8 +1018,9 @@
                         },
                         body: JSON.stringify({ 
                             addressId,
-                            paymentMethod
-                        }) // Payment method is implicitly "razorpay"
+                            paymentMethod,
+                            couponCode: appliedCoupon
+                        })
                     });
 
                     const data = await res.json();
@@ -901,7 +1048,8 @@
                                     razorpay_payment_id: response.razorpay_payment_id,
                                     razorpay_signature: response.razorpay_signature,
                                     addressId: addressId,
-                                    paymentMethod: "razorpay"
+                                    paymentMethod: "razorpay",
+                                    couponCode: appliedCoupon
                                 })
                             });
 

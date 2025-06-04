@@ -749,7 +749,7 @@
                         </div>
                         <div class="coupon-description">
                             <% if (isPercentage) { %>
-                                Get <%= coupon.discount %>% discount on your order
+                                Get <%= coupon.discount %> ₹ discount on your order
                             <% } else { %>
                                 Get ₹<%= coupon.discount %> off on your order
                             <% } %>
@@ -805,9 +805,12 @@
                         Congratulations! Your order is eligible for FREE Delivery.
                     </div>
                 <% } %>
-
                 <div class="summary-item">
-                    <div class="summary-label">Subtotal</div>
+                    <div class="summary-label">Actual amount</div>
+                    <div class="summary-value">₹<%= orgTotal.toFixed(2) %></div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">OfferAmount</div>
                     <div class="summary-value">₹<%= subTotal.toFixed(2) %></div>
                 </div>
 
@@ -880,54 +883,98 @@
             }
         }
 
-        function applyCoupon(button, couponCard, couponCode, discountValue, discountType, maxDiscount) {
-            let discount = 0;
+        // function applyCoupon(button, couponCard, couponCode, discountValue, discountType, maxDiscount) {
+        //     let discount = 0;
             
-            if (discountType === 'percentage') {
-                discount = (subTotal * discountValue) / 100;
-                if (maxDiscount && maxDiscount > 0 && discount > maxDiscount) {
-                    discount = maxDiscount;
-                }
-            } else {
-                discount = discountValue;
-                // Ensure discount doesn't exceed subtotal
-                if (discount > subTotal) {
-                    discount = subTotal;
-                }
-            }
+        //     if (discountType === 'percentage') {
+        //         discount = (subTotal * discountValue) / 100;
+        //         if (maxDiscount && maxDiscount > 0 && discount > maxDiscount) {
+        //             discount = maxDiscount;
+        //         }
+        //     } else {
+        //         discount = discountValue;
+        //         // Ensure discount doesn't exceed subtotal
+        //         if (discount > subTotal) {
+        //             discount = subTotal;
+        //         }
+        //     }
 
-            const newTotal = originalTotal - discount;
+        //     const newTotal = originalTotal - discount;
             
-            // Update UI
-            couponCard.classList.add('applied');
-            button.textContent = 'Remove';
-            button.classList.add('remove');
+        //     // Update UI
+        //     couponCard.classList.add('applied');
+        //     button.textContent = 'Remove';
+        //     button.classList.add('remove');
             
-            // Update order summary
-            document.getElementById('couponDiscount').style.display = 'flex';
-            document.getElementById('discountAmount').textContent = discount.toFixed(2);
-            document.getElementById('finalTotal').textContent = '₹' + newTotal.toFixed(2);
+        //     // Update order summary
+        //     document.getElementById('couponDiscount').style.display = 'flex';
+        //     document.getElementById('discountAmount').textContent = discount.toFixed(2);
+        //     document.getElementById('finalTotal').textContent = '₹' + newTotal.toFixed(2);
             
-            // Add savings indicator
-            const savingsElement = couponCard.querySelector('.coupon-savings');
-            if (savingsElement) {
-                savingsElement.remove();
-            }
-            const newSavings = document.createElement('div');
-            newSavings.className = 'coupon-savings';
-            newSavings.textContent = `You save ₹${discount.toFixed(2)}!`;
-            couponCard.querySelector('.coupon-action').prepend(newSavings);
+        //     // Add savings indicator
+        //     const savingsElement = couponCard.querySelector('.coupon-savings');
+        //     if (savingsElement) {
+        //         savingsElement.remove();
+        //     }
+        //     const newSavings = document.createElement('div');
+        //     newSavings.className = 'coupon-savings';
+        //     newSavings.textContent = `You save ₹${discount.toFixed(2)}!`;
+        //     couponCard.querySelector('.coupon-action').prepend(newSavings);
             
-            appliedCoupon = couponCode;
+        //     appliedCoupon = couponCode;
             
-            // Disable other coupon buttons
-            document.querySelectorAll('.coupon-btn').forEach(btn => {
-                if (btn !== button && !btn.disabled) {
-                    btn.disabled = true;
-                    btn.textContent = 'Apply';
-                }
-            });
+        //     // Disable other coupon buttons
+        //     document.querySelectorAll('.coupon-btn').forEach(btn => {
+        //         if (btn !== button && !btn.disabled) {
+        //             btn.disabled = true;
+        //             btn.textContent = 'Apply';
+        //         }
+        //     });
+        // }
+
+
+
+
+        function applyCoupon(button, couponCard, couponCode, discountValue, discountType, maxDiscount) {
+    let discount = discountValue;
+
+    // Ensure discount doesn't exceed subtotal
+    if (discount > subTotal) {
+        discount = subTotal;
+    }
+
+    const newTotal = originalTotal - discount;
+
+    // Update UI
+    couponCard.classList.add('applied');
+    button.textContent = 'Remove';
+    button.classList.add('remove');
+
+    // Update order summary
+    document.getElementById('couponDiscount').style.display = 'flex';
+    document.getElementById('discountAmount').textContent = discount.toFixed(2);
+    document.getElementById('finalTotal').textContent = '₹' + newTotal.toFixed(2);
+
+    // Add savings indicator
+    const savingsElement = couponCard.querySelector('.coupon-savings');
+    if (savingsElement) {
+        savingsElement.remove();
+    }
+    const newSavings = document.createElement('div');
+    newSavings.className = 'coupon-savings';
+    newSavings.textContent = `You save ₹${discount.toFixed(2)}!`;
+    couponCard.querySelector('.coupon-action').prepend(newSavings);
+
+    appliedCoupon = couponCode;
+
+    // Disable other coupon buttons
+    document.querySelectorAll('.coupon-btn').forEach(btn => {
+        if (btn !== button && !btn.disabled) {
+            btn.disabled = true;
+            btn.textContent = 'Apply';
         }
+    });
+}
 
         function removeCoupon(button, couponCard) {
             // Update UI
