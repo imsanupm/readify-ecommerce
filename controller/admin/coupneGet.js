@@ -61,7 +61,7 @@ const getCoupenPage = async (req, res) => {
 
       const updateCoupen = async (req, res) => {
         try {
-          const coupenId = req.params.coupenId.toUpperCase(); // Ensure uppercase match
+          const coupenId = req.params.coupenId.toUpperCase(); 
           const {
             discount,
             minPurchase,
@@ -72,13 +72,13 @@ const getCoupenPage = async (req, res) => {
             isActive
           } = req.body;
       
-          // Find the coupon by code
+       
           const coupenData = await Coupen.findOne({ code: coupenId });
           if (!coupenData) {
             return res.status(code.HttpStatus.BAD_REQUEST).json({ success: false, message: 'Coupon not found' });
           }
       
-          // Update the fields
+         
           coupenData.discount = discount;
           coupenData.minPurchase = minPurchase;
           coupenData.maxDiscount = maxDiscount;
@@ -87,7 +87,7 @@ const getCoupenPage = async (req, res) => {
           coupenData.maxUsage = maxUsagePerUser;
           coupenData.isActive = isActive;
       
-          // Save the updated document
+        
           await coupenData.save();
       
           res.status(code.HttpStatus.OK).json({
@@ -118,7 +118,7 @@ const getCoupenPage = async (req, res) => {
             return res.status(404).json({ success: false, message: "Coupon not found" });
           }
       
-          // Prevent activating if usage limit is already reached
+     
           if (isActive && coupon.currentUsage >= coupon.maxUsage) {
             return res.status(400).json({
               success: false,

@@ -5,8 +5,8 @@ const  env = require('dotenv').config();
 const Product=require('../../models/admin/productSchema');
 const { session } = require('passport');
 const { json } = require('body-parser');
-
-
+const referCode = require('../../helpers/user/referelCode')
+const findUser = require('../../helpers/user/findUser')
 
 
 
@@ -140,8 +140,16 @@ const loadVerifyOtp = async (req, res) => {
 
 const signup = async (req, res) => {
     try {
-        const { email, password, Phone, cPassword, name } = req.body;
-        
+        const { email, password, Phone, cPassword, name ,referralCode} = req.body;
+        console.log('referel code ===============================',referralCode);
+        if (referralCode) {
+            console.log('referral code inside the if condition ==================', referralCode);
+            const isValid = await findUser.findByreferralCode(referralCode); // ✅ use correct variable
+            if (!isValid) {
+                return res.render('signin', { message: 'Invalid Referral Code. Please try again.' });
+            }
+        }
+       
         
         if (password !== cPassword) {
             return res.render('signin', { message: 'Passwords do not match' });
@@ -166,7 +174,7 @@ const signup = async (req, res) => {
         req.session.userOtp = otp;
         req.session.userData = { email, hashedPassword, Phone, name };
         req.session.otpExpiry = Date.now() + 120000; // 2 minutes in milliseconds
-
+      //  req.session.referralCode = referralCode?referralCode:null
         res.redirect('/verify-otp');
     } catch (error) {
         console.log(`error during user signup ${error}`);
@@ -195,21 +203,25 @@ const verifyOtp = async (req, res) => {
         }
 
         // Create new user
+        const referralCode = await referCode.generateReferralCode(userData.name);
         const newUser = new User({
             name: userData.name,
             email: userData.email,
             password: userData.hashedPassword,
             phonenumber: userData.Phone,
-            isVerified: true
+            isVerified: true,
+            referelcode:referralCode
+            
         });   
                  
         await newUser.save();
 
+   
         
         req.session.userOtp = null;
         req.session.userData = null;
         req.session.otpExpiry = null;
-
+        req.session.referralCode = null;
         res.status(200).json({success:true,message:'otp verified'}); // Redirect to homepage after successful verification
     } catch (error) {
         console.log(`error during verifyOtp ${error}`);

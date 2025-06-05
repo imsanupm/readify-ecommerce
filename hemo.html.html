@@ -1,1084 +1,184 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout - Readify</title>
+    <title>Readify Signup</title>
+    <!-- Include SweetAlert CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        * {
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f7f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
             margin: 0;
-            padding: 0;
+        }
+        .signup-container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 350px;
+            text-align: center;
+        }
+        .signup-container h2 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+        .signup-container input[type="text"],
+        .signup-container input[type="email"],
+        .signup-container input[type="tel"],
+        .signup-container input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
             box-sizing: border-box;
         }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background:#e0e0e0;
-            min-height: 100vh;
-            color: #333;
-            line-height: 1.6;
-        }
-
-        .checkout-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
-            display: grid;
-            grid-template-columns: 1fr 400px;
-            gap: 2rem;
-            min-height: 100vh;
-        }
-
-        .main-content {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 2rem;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .sidebar {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 2rem;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            height: fit-content;
-            position: sticky;
-            top: 2rem;
-        }
-
-        .page-header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .page-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #3b5d50, #ffc107);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 0.5rem;
-        }
-
-        .page-subtitle {
-            color: #666;
-            font-size: 1.1rem;
-        }
-
-        .section {
-            margin-bottom: 2.5rem;
-            padding: 1.5rem;
-            background: rgba(255, 255, 255, 0.7);
-            border-radius: 15px;
-            border: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .section-title {
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .section-icon {
-            width: 24px;
-            height: 24px;
-            background: linear-gradient(135deg, #3b5d50, #ffc107);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        /* Address Section */
-        .address-container {
-            display: grid;
-            gap: 1rem;
-        }
-
-        .address-card {
-            border: 2px solid transparent;
-            border-radius: 12px;
-            padding: 1.5rem;
-            background: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        }
-
-        .address-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-        }
-
-        .address-card.selected {
-            border-color: #3b5d50;
-            background: linear-gradient(135deg, rgba(59, 93, 80, 0.1), rgba(255, 193, 7, 0.05));
-        }
-
-        .address-selector {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            width: 20px;
-            height: 20px;
-            accent-color: #3b5d50;
-        }
-
-        .address-name {
-            font-weight: 600;
-            font-size: 1.1rem;
-            color: #333;
-            margin-bottom: 0.5rem;
-        }
-
-        .address-details {
-            color: #666;
-            line-height: 1.5;
-        }
-
-        .add-address-btn {
-            background: linear-gradient(135deg, #3b5d50, #ffc107);
+        .signup-container button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4CAF50;
             color: white;
             border: none;
-            border-radius: 10px;
-            padding: 0.75rem 1.5rem;
-            font-weight: 600;
+            border-radius: 5px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 1rem;
-            width: 100%;
-        }
-
-        .add-address-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(59, 93, 80, 0.3);
-        }
-
-        /* Payment Methods */
-        .payment-options {
-            display: grid;
-            gap: 1rem;
-        }
-
-        .payment-option {
-            display: flex;
-            align-items: center;
-            border: 2px solid transparent;
-            border-radius: 12px;
-            padding: 1.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: white;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        }
-
-        .payment-option:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-        }
-
-        .payment-option.selected {
-            border-color: #3b5d50;
-            background: linear-gradient(135deg, rgba(59, 93, 80, 0.1), rgba(255, 193, 7, 0.05));
-        }
-
-        .payment-radio {
-            margin-right: 1rem;
-            width: 20px;
-            height: 20px;
-            accent-color: #3b5d50;
-        }
-
-        .payment-label {
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            font-size: 1.1rem;
-        }
-
-        .payment-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #3b5d50, #ffc107);
-            border-radius: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
             font-size: 16px;
-            font-weight: bold;
+            margin-top: 10px;
         }
-
-        /* Product List */
-        .product-list {
-            display: grid;
-            gap: 1rem;
+        .signup-container button:hover {
+            background-color: #45a049;
         }
-
-        .product-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1rem;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        }
-
-        .product-image {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
-            border-radius: 8px;
+        .signup-container .google-btn {
+            background-color: #ffffff;
+            color: #333;
+            border: 1px solid #ddd;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            gap: 10px;
         }
-
-        .product-info {
-            flex: 1;
+        .signup-container .google-btn:hover {
+            background-color: #f0f7f0;
         }
-
-        .product-name {
-            font-weight: 600;
-            margin-bottom: 0.25rem;
+        .signup-container a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-size: 14px;
+            display: block;
+            margin-top: 10px;
         }
-
-        .product-price {
-            color: #3b5d50;
-            font-weight: 500;
-        }
-
-        .product-quantity {
-            color: #666;
-            font-size: 0.9rem;
-        }
-
-        /* Coupon Cards Section */
-        .coupon-cards-container {
-            display: grid;
-            gap: 1rem;
-        }
-
-        .coupon-card {
-            background: white;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            padding: 1.25rem;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        }
-
-        .coupon-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            border-color: #3b5d50;
-        }
-
-        .coupon-card.applied {
-            border-color: #28a745;
-            background: linear-gradient(135deg, rgba(40, 167, 69, 0.1), rgba(255, 193, 7, 0.05));
-        }
-
-        .coupon-card.applied::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(135deg, #28a745, #ffc107);
-        }
-
-        .coupon-card.expired {
-            opacity: 0.6;
-            border-color: #dc3545;
-            background: rgba(220, 53, 69, 0.05);
-        }
-
-        .coupon-card.not-eligible {
-            opacity: 0.5;
-            border-color: #6c757d;
-            background: rgba(108, 117, 125, 0.05);
-        }
-
-        .coupon-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 0.75rem;
-        }
-
-        .coupon-code {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #3b5d50;
-            background: rgba(59, 93, 80, 0.1);
-            padding: 0.25rem 0.75rem;
-            border-radius: 6px;
-            border: 1px dashed #3b5d50;
-        }
-
-        .coupon-discount {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #ffc107;
-        }
-
-        .coupon-description {
-            color: #666;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-            line-height: 1.4;
-        }
-
-        .coupon-terms {
-            color: #888;
-            font-size: 0.8rem;
-            margin-bottom: 1rem;
-            font-style: italic;
-        }
-
-        .coupon-action {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .coupon-btn {
-            background: linear-gradient(135deg, #3b5d50, #ffc107);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 0.6rem 1.25rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-            min-width: 80px;
-        }
-
-        .coupon-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 15px rgba(59, 93, 80, 0.3);
-        }
-
-        .coupon-btn.remove {
-            background: linear-gradient(135deg, #dc3545, #ff6b6b);
-        }
-
-        .coupon-btn.remove:hover {
-            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
-        }
-
-        .coupon-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .coupon-validity {
-            font-size: 0.8rem;
-            color: #666;
-        }
-
-        .coupon-savings {
-            font-size: 0.85rem;
-            color: #28a745;
-            font-weight: 600;
-        }
-
-        .no-coupons {
-            text-align: center;
-            padding: 2rem;
-            color: #666;
-            font-style: italic;
-        }
-
-        .coupon-status {
-            font-size: 0.8rem;
-            margin-top: 0.5rem;
-            font-weight: 600;
-        }
-
-        .coupon-status.expired {
-            color: #dc3545;
-        }
-
-        .coupon-status.not-eligible {
-            color: #6c757d;
-        }
-
-        .coupon-status.usage-limit {
-            color: #ffc107;
-        }
-
-        /* Order Summary */
-        .summary-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-        }
-
-        .summary-item:last-child {
-            border-bottom: none;
-        }
-
-        .summary-label {
-            font-weight: 500;
-            color: #666;
-        }
-
-        .summary-value {
-            font-weight: 600;
-            color: #333;
-        }
-
-        .summary-total {
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 2px solid #3b5d50;
-            font-size: 1.2rem;
-        }
-
-        .summary-total .summary-label,
-        .summary-total .summary-value {
-            font-weight: 700;
-            color: #3b5d50;
-        }
-
-        .place-order-btn {
-            background: linear-gradient(135deg, #3b5d50, #ffc107);
-            color: white;
-            border: none;
-            border-radius: 15px;
-            padding: 1rem 2rem;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 1.5rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(59, 93, 80, 0.3);
-        }
-
-        .place-order-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(59, 93, 80, 0.4);
-        }
-
-        /* Alert */
-        .alert {
-            background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 235, 59, 0.1));
-            border: 1px solid #ffc107;
-            border-left: 4px solid #ffc107;
-            border-radius: 10px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .alert-icon {
-            color: #ffc107;
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 1200px) {
-            .checkout-container {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-
-            .sidebar {
-                position: static;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .checkout-container {
-                padding: 1rem;
-                gap: 1rem;
-            }
-
-            .main-content,
-            .sidebar {
-                padding: 1.5rem;
-            }
-
-            .page-title {
-                font-size: 2rem;
-            }
-
-            .section {
-                padding: 1rem;
-            }
-
-            .product-item {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .coupon-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 0.5rem;
-            }
-
-            .coupon-action {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 0.5rem;
-            }
-        }
-
-        .no-products {
-            text-align: center;
-            padding: 2rem;
-            color: #666;
-            font-style: italic;
+        .signup-container a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
-<%-include('partials/user/header')%>
 <body>
-    <div class="checkout-container">
-        <!-- Main Content -->
-        <div class="main-content">
-            <div class="page-header">
-                <h1 class="page-title">Checkout</h1>
-                <p class="page-subtitle">Complete your order securely</p>
-            </div>
-
-            <!-- Products Section -->
-            <section class="section">
-                <h2 class="section-title">
-                    <span class="section-icon">🛍️</span>
-                    Your Items
-                </h2>
-                <div class="product-list">
-                    <!-- This will be populated by your EJS data -->
-                    <% if (typeof cartData !== 'undefined' && cartData && cartData.items && cartData.items.length > 0) { %>
-                        <% cartData.items.forEach(item => { %>
-                            <div class="product-item">
-                                <div class="product-image">📚</div>
-                                <div class="product-info">
-                                    <div class="product-name"><%= item.productId.productName %></div>
-                                    <div class="product-price">₹<%= item.productId.regularPrice.toFixed(2) %></div>
-                                    <div class="product-quantity">Quantity: <%= item.quantity %></div>
-                                </div>
-                            </div>
-                        <% }) %>
-                    <% } else { %>
-                        <div class="no-products">No items in your cart</div>
-                    <% } %>
-                </div>
-            </section>
-
-            <!-- Delivery Address Section -->
-            <section class="section">
-                <h2 class="section-title">
-                    <span class="section-icon">📍</span>
-                    Delivery Address
-                </h2>
-
-                <% if (address && address.length > 0) { %>
-                    <div class="address-container">
-                        <% for (let i = 0; i < address.length; i++) {
-                            const addr = address[i]; %>
-                            <div class="address-card <%= i === 0 ? 'selected' : '' %>">
-                                <input 
-                                    type="radio" 
-                                    name="address" 
-                                    class="address-selector" 
-                                    value="<%= addr._id %>" 
-                                    <%= i === 0 ? 'checked' : '' %>>
-                                <div class="address-content">
-                                    <div class="address-name">Name: <strong><%= addr.fullname %></strong></div>
-                                    <div class="address-details">
-                                        HouseNo: <%= addr.house_flat %>, <%= addr.district %><br>
-                                        State: <%= addr.state %> - Pincode: <%= addr.pincode %><br>
-                                        Phone: <%= addr.mobile %>
-                                    </div>
-                                </div>
-                            </div>
-                        <% } %>
-                    </div>
-                <% } else { %>
-                    <p style="text-align: center; color: #666; padding: 2rem;">No saved addresses found.</p>
-                <% } %>
-
-                <button class="add-address-btn">+ Add New Address</button>
-            </section>
-
-            <!-- Payment Options Section -->
-            <section class="section">
-                <h2 class="section-title">
-                    <span class="section-icon">💳</span>
-                    Payment Method
-                </h2>
-                <div class="payment-options">
-                    <div class="payment-option selected">
-                        <input type="radio" name="payment" id="cod" class="payment-radio" checked>
-                        <label for="cod" class="payment-label">
-                            <div class="payment-icon">💰</div>
-                            Cash on Delivery
-                        </label>
-                    </div>
-                    <div class="payment-option">
-                        <input type="radio" name="payment" id="razorpay" class="payment-radio">
-                        <label for="razorpay" class="payment-label">
-                            <div class="payment-icon">💳</div>
-                            Razorpay
-                        </label>
-                    </div>
-                    <div class="payment-option">
-                        <input type="radio" name="payment" id="wallet" class="payment-radio">
-                        <label for="wallet" class="payment-label">
-                            <div class="payment-icon">👛</div>
-                            Wallet Payment
-                        </label>
-                    </div>
-                </div>
-            </section>
-        </div>
-
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <!-- Coupon Section -->
-            <section class="section">
-                <h3 class="section-title">
-                    <span class="section-icon">🎫</span>
-                    Available Coupons
-                </h3>
-                <div class="coupon-cards-container">
-                    <% 
-                    // Check if coupenData exists and has coupons
-                    if (typeof coupenData !== 'undefined' && coupenData && coupenData.length > 0) { 
-                        // Get current date for comparison
-                        const currentDate = new Date();
-                        const userId = typeof user !== 'undefined' && user ? user._id : null;
-                        
-                        // Process each coupon
-                        coupenData.forEach(coupon => {
-                            // Check coupon validity
-                            const startDate = new Date(coupon.startDate);
-                            const expiryDate = new Date(coupon.expiryDate);
-                            const isExpired = currentDate > expiryDate || currentDate < startDate;
-                            const isActive = coupon.isActive;
-                            const meetsMinPurchase = subTotal >= coupon.minPurchase;
-                            
-                            // Check user usage
-                            let userUsageCount = 0;
-                            let hasReachedLimit = false;
-                            if (userId && coupon.usage && coupon.usage.length > 0) {
-                                const userUsage = coupon.usage.find(u => u.userId.toString() === userId.toString());
-                                if (userUsage) {
-                                    userUsageCount = userUsage.usageCount;
-                                    hasReachedLimit = userUsageCount >= coupon.maxUsagePerUser;
-                                }
-                            }
-                            
-                            // Determine if coupon is eligible
-                            const isEligible = isActive && !isExpired && meetsMinPurchase && !hasReachedLimit;
-                            
-                            // Calculate remaining uses
-                            const remainingUses = coupon.maxUsagePerUser - userUsageCount;
-                            
-                            // Format dates
-                            const expiryFormatted = expiryDate.toLocaleDateString('en-IN', { 
-                                day: 'numeric', 
-                                month: 'short', 
-                                year: 'numeric' 
-                            });
-                            
-                            // Determine discount type and display
-                            const isPercentage = coupon.discount <= 100; // Assuming percentage if <= 100
-                            const discountType = isPercentage ? 'percentage' : 'fixed';
-                            const discountDisplay = isPercentage ? `${coupon.discount}% OFF` : `₹${coupon.discount} OFF`;
-                            
-                            // Determine card class
-                            let cardClass = 'coupon-card';
-                            if (isExpired) cardClass += ' expired';
-                            else if (!isEligible) cardClass += ' not-eligible';
-                            
-                            // Determine status message
-                            let statusMessage = '';
-                            let statusClass = '';
-                            if (isExpired) {
-                                statusMessage = 'Expired';
-                                statusClass = 'expired';
-                            } else if (!isActive) {
-                                statusMessage = 'Inactive';
-                                statusClass = 'not-eligible';
-                            } else if (!meetsMinPurchase) {
-                                statusMessage = `Minimum order ₹${coupon.minPurchase} required`;
-                                statusClass = 'not-eligible';
-                            } else if (hasReachedLimit) {
-                                statusMessage = 'Usage limit reached';
-                                statusClass = 'usage-limit';
-                            }
-                    %>
-                    <div class="<%= cardClass %>" data-coupon="<%= coupon.code %>">
-                        <div class="coupon-header">
-                            <div class="coupon-code"><%= coupon.code %></div>
-                            <div class="coupon-discount"><%= discountDisplay %></div>
-                        </div>
-                        <div class="coupon-description">
-                            <% if (isPercentage) { %>
-                                Get <%= coupon.discount %> ₹ discount on your order
-                            <% } else { %>
-                                Get ₹<%= coupon.discount %> off on your order
-                            <% } %>
-                        </div>
-                        <div class="coupon-terms">
-                            *Minimum order value ₹<%= coupon.minPurchase %>
-                            <% if (coupon.maxDiscount > 0) { %>
-                                • Maximum discount ₹<%= coupon.maxDiscount %>
-                            <% } %>
-                            • Valid till <%= expiryFormatted %>
-                        </div>
-                        
-                        <% if (statusMessage) { %>
-                            <div class="coupon-status <%= statusClass %>"><%= statusMessage %></div>
-                        <% } %>
-                        
-                        <div class="coupon-action">
-                            <div class="coupon-validity">
-                                <% if (isEligible && remainingUses < coupon.maxUsagePerUser) { %>
-                                    <%= remainingUses %> uses remaining
-                                <% } else if (isEligible) { %>
-                                    Valid till <%= expiryFormatted %>
-                                <% } else { %>
-                                    Not eligible
-                                <% } %>
-                            </div>
-                            <button 
-                                class="coupon-btn" 
-                                onclick="toggleCoupon(this, '<%= coupon.code %>', <%= coupon.discount %>, '<%= discountType %>', <%= coupon.maxDiscount || 'null' %>)"
-                                <%= !isEligible ? 'disabled' : '' %>
-                            >
-                                Apply
-                            </button>
-                        </div>
-                    </div>
-                    <% }); %>
-                    <% } else { %>
-                        <div class="no-coupons">No coupons available</div>
-                    <% } %>
-                </div>
-            </section>
-
-            <!-- Order Summary Section -->
-            <section class="section">
-                <h3 class="section-title">
-                    <span class="section-icon">📊</span>
-                    Order Summary
-                </h3>
-
-                <% if (subTotal >= 1000) { %>
-                    <div class="alert">
-                        <span class="alert-icon">✅</span>
-                        Congratulations! Your order is eligible for FREE Delivery.
-                    </div>
-                <% } %>
-                <div class="summary-item">
-                    <div class="summary-label">Actual amount</div>
-                    <div class="summary-value">₹<%= orgTotal.toFixed(2) %></div>
-                </div>
-                <div class="summary-item">
-                    <div class="summary-label">OfferAmount</div>
-                    <div class="summary-value">₹<%= subTotal.toFixed(2) %></div>
-                </div>
-
-                <div class="summary-item">
-                    <div class="summary-label">Total GST (14%)</div>
-                    <div class="summary-value">₹<%= gstAmount.toFixed(2) %></div>
-                </div>
-
-                <div class="summary-item">
-                    <div class="summary-label">Delivery Charge</div>
-                    <div class="summary-value">₹<%= deliveryCharge %></div>
-                </div>
-
-                <div class="summary-item" id="couponDiscount" style="display: none;">
-                    <div class="summary-label">Coupon Discount</div>
-                    <div class="summary-value" style="color: #28a745;">-₹<span id="discountAmount">0.00</span></div>
-                </div>
-
-                <div class="summary-item summary-total">
-                    <div class="summary-label">Total</div>
-                    <div class="summary-value" id="finalTotal">₹<%= totalAmount.toFixed(2) %></div>
-                </div>
-
-                <button class="place-order-btn">Place Order</button>
-            </section>
-        </div>
+    <div class="signup-container">
+        <h2>Sign Up for Readify</h2>
+        <form method="post" action="/signup" onsubmit="return validateForm(event)" onsubmit="return validateForm(event)" novalidate>
+            <input name="name" type="text" placeholder="Full Name" required>
+            <input name="email" type="email" placeholder="Email" required>
+            <input name="Phone" type="tel" placeholder="Phone Number" required>
+            <input name="password" type="password" placeholder="Password" required>
+            <input name="cPassword" type="password" placeholder="Confirm Password" required>
+            <button type="submit">Sign Up</button>
+            <a href="#">Forgot Password?</a>
+            <button onclick="window.location.href='/auth/google'" type="button" class="google-btn">
+                <img src="https://img.icons8.com/color/24/google-logo.png" alt="Google Icon">
+                Sign Up with Google
+            </button>
+        </form>
     </div>
 
     <script>
-        // Address selection
-        document.querySelectorAll('.address-card').forEach(card => {
-            card.addEventListener('click', function() {
-                document.querySelectorAll('.address-card').forEach(c => c.classList.remove('selected'));
-                this.classList.add('selected');
-                this.querySelector('input[type="radio"]').checked = true;
-            });
+        function validateForm(event) {
+            event.preventDefault();
+
+            // Get form values
+            const name = document.querySelector('input[name="name"]').value;
+            const email = document.querySelector('input[name="email"]').value;
+            const phone = document.querySelector('input[name="Phone"]').value;
+            const password = document.querySelector('input[name="password"]').value;
+            const cPassword = document.querySelector('input[name="cPassword"]').value;
+
+            // Validate name (no numbers)
+            if (/\d/.test(name)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Name',
+                    text: 'Name cannot contain numbers'
+                });
+                return false;
+            }
+
+           if (!name || !email || !phone || !password || !cPassword) {
+        Swal.fire({
+            icon: 'error',
+            title: 'All Fields Required',
+            text: 'Please fill in all the fields'
         });
+        return false;
+    }
 
-        // Payment method selection
-        document.querySelectorAll('.payment-option').forEach(option => {
-            option.addEventListener('click', function() {
-                document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
-                this.classList.add('selected');
-                this.querySelector('input[type="radio"]').checked = true;
+
+            // Validate email (must contain @gmail.com)
+            if (!email.toLowerCase().endsWith('@gmail.com')) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Email',
+                    text: 'Email must be a Gmail address (e.g., example@gmail.com)'
+                });
+                return false;
+            }
+
+            // Validate phone (exactly 10 digits, no letters)
+            if (!/^\d{10}$/.test(phone)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Phone',
+                    text: 'Phone number must be exactly 10 digits with no letters'
+                });
+                return false;
+            }
+
+            // Validate password (at least one uppercase and one lowercase)
+            if (!/[A-Z]/.test(password) || !/[a-z]/.test(password)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Password',
+                    text: 'Password must contain at least one uppercase and one lowercase letter'
+                });
+                return false;
+            }
+
+            // Validate password match
+            if (password !== cPassword) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Password Mismatch',
+                    text: 'Password and Confirm Password must match'
+                });
+                return false;
+            }
+
+            // If all validations pass
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: 'Form submitted successfully!'
+            }).then(() => {
+                event.target.submit(); // Submit the form if all validations pass
             });
-        });
 
-        // Coupon functionality
-        let appliedCoupon = null;
-        const originalTotal = <%= totalAmount %>;
-        const subTotal = <%= subTotal %>;
-
-        function toggleCoupon(button, couponCode, discountValue, discountType, maxDiscount = null) {
-            const couponCard = button.closest('.coupon-card');
-            const isApplied = couponCard.classList.contains('applied');
-
-            if (isApplied) {
-                // Remove coupon
-                removeCoupon(button, couponCard);
-            } else {
-                // Apply coupon (remove any existing coupon first)
-                if (appliedCoupon) {
-                    const currentAppliedCard = document.querySelector('.coupon-card.applied');
-                    if (currentAppliedCard) {
-                        const currentAppliedButton = currentAppliedCard.querySelector('.coupon-btn');
-                        removeCoupon(currentAppliedButton, currentAppliedCard);
-                    }
-                }
-                applyCoupon(button, couponCard, couponCode, discountValue, discountType, maxDiscount);
-            }
+            return false; // Prevent default submission until success
         }
-
-        function applyCoupon(button, couponCard, couponCode, discountValue, discountType, maxDiscount) {
-            let discount = 0;
-            
-            if (discountType === 'percentage') {
-                discount = (subTotal * discountValue) / 100;
-                if (maxDiscount && maxDiscount > 0 && discount > maxDiscount) {
-                    discount = maxDiscount;
-                }
-            } else {
-                discount = discountValue;
-                // Ensure discount doesn't exceed subtotal
-                if (discount > subTotal) {
-                    discount = subTotal;
-                }
-            }
-
-            const newTotal = originalTotal - discount;
-            
-            // Update UI
-            couponCard.classList.add('applied');
-            button.textContent = 'Remove';
-            button.classList.add('remove');
-            
-            // Update order summary
-            document.getElementById('couponDiscount').style.display = 'flex';
-            document.getElementById('discountAmount').textContent = discount.toFixed(2);
-            document.getElementById('finalTotal').textContent = '₹' + newTotal.toFixed(2);
-            
-            // Add savings indicator
-            const savingsElement = couponCard.querySelector('.coupon-savings');
-            if (savingsElement) {
-                savingsElement.remove();
-            }
-            const newSavings = document.createElement('div');
-            newSavings.className = 'coupon-savings';
-            newSavings.textContent = `You save ₹${discount.toFixed(2)}!`;
-            couponCard.querySelector('.coupon-action').prepend(newSavings);
-            
-            appliedCoupon = couponCode;
-            
-            // Disable other coupon buttons
-            document.querySelectorAll('.coupon-btn').forEach(btn => {
-                if (btn !== button && !btn.disabled) {
-                    btn.disabled = true;
-                    btn.textContent = 'Apply';
-                }
-            });
-        }
-
-        function removeCoupon(button, couponCard) {
-            // Update UI
-            couponCard.classList.remove('applied');
-            button.textContent = 'Apply';
-            button.classList.remove('remove');
-            
-            // Remove savings indicator
-            const savingsElement = couponCard.querySelector('.coupon-savings');
-            if (savingsElement) {
-                savingsElement.remove();
-            }
-            
-            // Update order summary
-            document.getElementById('couponDiscount').style.display = 'none';
-            document.getElementById('discountAmount').textContent = '0.00';
-            document.getElementById('finalTotal').textContent = '₹' + originalTotal.toFixed(2);
-            
-            appliedCoupon = null;
-            
-            // Enable all eligible coupon buttons
-            document.querySelectorAll('.coupon-btn').forEach(btn => {
-                if (!btn.closest('.coupon-card').classList.contains('expired') && 
-                    !btn.closest('.coupon-card').classList.contains('not-eligible')) {
-                    btn.disabled = false;
-                }
-            });
-        }
-    </script>
-
-    <!-- Original Scripts (unchanged) -->
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-    <script>
-        document.querySelector('.place-order-btn').addEventListener('click', async () => {
-            // Get selected address ID
-            const selectedAddress = document.querySelector('input[name="address"]:checked');
-            const addressId = selectedAddress ? selectedAddress.value : null;
-
-            // Get selected payment method
-            const selectedPayment = document.querySelector('input[name="payment"]:checked');
-            const paymentMethod = selectedPayment ? selectedPayment.id : null;
-
-            // Validate
-            if (!addressId || !paymentMethod) {
-                alert("Please select both address and payment method.");
-                return;
-            }
-
-            // Case 1: COD
-            if (paymentMethod === "cod") {
-                try {
-                    const response = await fetch('/placeOrder', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            addressId,
-                            paymentMethod,
-                            couponCode: appliedCoupon
-                        })
-                    });
-
-                    const result = await response.json();
-
-                    if (result.success) {
-                        window.location.href = '/orderConfirmation';
-                    } else {
-                        alert(result.message || 'Order failed. Try again.');
-                    }
-                } catch (error) {
-                    console.error('Error placing COD order:', error);
-                    alert('An error occurred. Please try again later.');
-                }
-            }
-
-            // Case 2: Razorpay
-            if (paymentMethod === "razorpay") {
-                try {
-                    // Step 1: Create Razorpay order from backend
-                    const res = await fetch('/placeOrder', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ 
-                            addressId,
-                            paymentMethod,
-                            couponCode: appliedCoupon
-                        })
-                    });
-
-                    const data = await res.json();
-                    if (!data.success) {
-                        alert(data.message || 'Something went wrong while creating Razorpay order');
-                        return;
-                    }
-
-                    const options = {
-                        key: data.key,
-                        amount: data.amount,
-                        currency: data.currency,
-                        name: "Readify",
-                        description: "Readify Order Payment",
-                        order_id: data.orderId,
-                        handler: async function (response) {
-                            // Step 2: Verify payment and place order
-                            const verifyRes = await fetch('/verifyRazorpayPayment', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify({
-                                    razorpay_order_id: response.razorpay_order_id,
-                                    razorpay_payment_id: response.razorpay_payment_id,
-                                    razorpay_signature: response.razorpay_signature,
-                                    addressId: addressId,
-                                    paymentMethod: "razorpay",
-                                    couponCode: appliedCoupon
-                                })
-                            });
-
-                            const verifyResult = await verifyRes.json();
-                            if (verifyResult.success) {
-                                window.location.href = '/orderConfirmation';
-                            } else {
-                                alert(verifyResult.message || 'Payment verification failed.');
-                            }
-                        },
-                        prefill: {
-                            name: data.user.name,
-                            email: data.user.email,
-                            contact: data.user.phone
-                        },
-                        theme: {
-                            color: "#3b5d50"
-                        }
-                    };
-
-                    const razorpay = new Razorpay(options);
-                    razorpay.open();
-                } catch (error) {
-                    console.error('Error during Razorpay order creation:', error);
-                    alert('Something went wrong. Please try again.');
-                }
-            }
-        });
-    </script>
+    </script>  
 </body>
 </html>
-<%- include("../../views/partials/user/footer") %>
