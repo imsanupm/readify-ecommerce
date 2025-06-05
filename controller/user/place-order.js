@@ -450,8 +450,37 @@ const cod = async (req, res, cartData, addressData, user, userId, paymentMethod,
       });
 
       await orderData.save();
-     
-
+       
+      
+      //  coupon count logics new one        
+      if (coupon && isCouponApplied) {
+        // Use update operators to perform multiple updates in one go
+        const updatedCoupon = await Coupon.findOneAndUpdate(
+          { code: coupon.code },
+          {
+            $push: {
+              usage: { userId: userId }
+            },
+            $inc: {
+              currentUsage: 1
+            }
+          },
+          { new: true } // Return the updated document
+        );
+        if (updatedCoupon){
+          console.log('Coupon updated==========',updatedCoupon);
+          
+        }
+      
+        // If coupon usage limit is reached, deactivate it
+        if (updatedCoupon.currentUsage >= updatedCoupon.maxUsage) {
+          await Coupon.updateOne(
+            { code: coupon.code },
+            { $set: { isActive: false } }
+          );
+        }
+      }
+      
 
 
 

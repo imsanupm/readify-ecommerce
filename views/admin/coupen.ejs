@@ -497,11 +497,13 @@
                           <% } %>
                         </td>
                         <td>
-                          <% 
-                            const totalUsage = coupon.usage.reduce((sum, entry) => sum + entry.usageCount, 0);
-                          %>
-                          <%= totalUsage %>/<%= coupon.maxUsagePerUser * coupon.usage.length || coupon.maxUsagePerUser %>
-                        </td>
+                            <% if (coupon.currentUsage === coupon.maxUsage) { %>
+                              <span style="color: red;">Limit Exceeded</span>
+                            <% } else { %>
+                              <%= coupon.currentUsage %>/<%= coupon.maxUsage %>
+                            <% } %>
+                          </td>
+                          
                         <td>
                           <div class="action-buttons">
                             <button class="btn btn-secondary btn-sm" onclick="editCoupon('<%= coupon.code %>')">Edit</button>
@@ -694,26 +696,7 @@
             }
         }
 
-        // // Coupon Management Functions (These would connect to your MVC Controller)
-        // function editCoupon(couponCode) {
-        //     // In a real MVC application, this would make an AJAX call to the controller
-        //     // Controller route: GET /admin/coupons/{code}/edit
-            
-        //     // Sample data population for demo
-        //      
-
-        //     document.getElementById('editCouponCode').value = couponCode;
-        //     //document.getElementById('editDiscountType').value = 'percentage';
-        //     document.getElementById('editDiscountValue').value = '20';
-        //     document.getElementById('editMinPurchase').value = '50';
-        //     document.getElementById('editMaxDiscount').value = '100';
-        //     document.getElementById('editStartDate').value = '2024-01-01';
-        //     document.getElementById('editExpiryDate').value = '2024-12-31';
-        //     document.getElementById('editMaxUsagePerUser').value = '10';
-        //     document.getElementById('editIsActive').checked = true;
-            
-        //     openModal('editCouponModal');
-        // }
+      
 
         function editCoupon(couponCode) {
         const coupon = couponList.find(c => c.code === couponCode);
@@ -735,16 +718,7 @@
         openModal('editCouponModal');
     }
 
-        // function toggleCoupon(couponCode, activate) {
-        //     // Controller route: PUT /admin/coupons/{code}/toggle
-        //     const action = activate ? 'activate' : 'block';
-        //     if (confirm(`Are you sure you want to ${action} coupon ${couponCode}?`)) {
-        //         // Make fetch to controller
-        //         console.log(`${action} coupon: ${couponCode}`);
-        //         // Reload page or update UI
-        //         location.reload();
-        //     }
-        // }
+    
         function toggleCoupon(couponCode, activate) {
     const action = activate ? 'activate' : 'block';
 
@@ -781,16 +755,6 @@
 }
 
 
-        // function deleteCoupon(couponCode) {
-        //     // Controller route: DELETE /admin/coupons/{code}
-        //     if (confirm(`Are you sure you want to delete coupon ${couponCode}? This action cannot be undone.`)) {
-        //         // Make fetch 
-        //         console.log(`Delete coupon: ${couponCode}`);
-        //         // Reload page or update UI
-        //         location.reload();
-        //     }
-        // }
-         //delete====================================================================================================================
         function deleteCoupon(couponCode) {
     Swal.fire({
         title: `Are you sure?`,
@@ -880,33 +844,10 @@
             location.reload()
         })
     });
-            // On success, close modal and reload page
-            // closeModal('addCouponModal');
-            // location.reload();
+            
         });
 
-        // document.getElementById('editCouponForm').addEventListener('submit', function(e) {
-        //     e.preventDefault();
-        //     // Controller route: PUT /admin/coupons/{code}
-            
-        //     const couponCode = document.getElementById('editCouponCode').value;
-        //     const formData = {
-        //         discountType: document.getElementById('editDiscountType').value,
-        //         discount: document.getElementById('editDiscountValue').value,
-        //         minPurchase: document.getElementById('editMinPurchase').value,
-        //         maxDiscount: document.getElementById('editMaxDiscount').value,
-        //         startDate: document.getElementById('editStartDate').value,
-        //         expiryDate: document.getElementById('editExpiryDate').value,
-        //         maxUsagePerUser: document.getElementById('editMaxUsagePerUser').value,
-        //         isActive: document.getElementById('editIsActive').checked
-        //     };
-            
-        //     console.log('Updating coupon:', couponCode, formData);
-            
-        //     closeModal('editCouponModal');
-        //     location.reload();
-        // });
-               
+    
 
 
         document.getElementById('editCouponForm').addEventListener('submit', async function(e) {

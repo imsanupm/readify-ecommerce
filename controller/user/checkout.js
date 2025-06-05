@@ -175,7 +175,11 @@ const getCheckout = async (req, res) => {
        const userId = req.session.user_id;
             
        const addresss = await User.findById(userId).populate('addresses');
-      const   coupen = await Coupen.find({}).sort({ createdAt: -1 });   
+      //const   coupen = await Coupen.find({}).sort({ createdAt: -1 });  
+      const coupen = await Coupen.find({
+        isActive: true,
+        'usage.userId': { $ne: userId }  // userId must NOT be in the usage list
+      }).sort({ createdAt: -1 }); 
        const cartData = await Cart.findOne({ userId }).populate({
            path: 'items.productId',
            populate: { path: 'category', select: 'offer' } // Populate category to access offer

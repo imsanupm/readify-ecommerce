@@ -38,7 +38,7 @@ const getCoupenPage = async (req, res) => {
             startDate,
             expiryDate,
             isActive,
-            maxUsagePerUser,
+            maxUsage:maxUsagePerUser,
           });
       
           await savedData.save();
@@ -84,7 +84,7 @@ const getCoupenPage = async (req, res) => {
           coupenData.maxDiscount = maxDiscount;
           coupenData.startDate = startDate;
           coupenData.expiryDate = expiryDate;
-          coupenData.maxUsagePerUser = maxUsagePerUser;
+          coupenData.maxUsage = maxUsagePerUser;
           coupenData.isActive = isActive;
       
           // Save the updated document
