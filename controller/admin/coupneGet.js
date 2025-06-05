@@ -105,10 +105,10 @@ const getCoupenPage = async (req, res) => {
 
 
 
+     
+
       const coupenStatus = async (req, res) => {
         try {
-         
-          
           const couponCode = req.params.couponCode.toUpperCase();
           const { isActive } = req.body;
       
@@ -118,18 +118,26 @@ const getCoupenPage = async (req, res) => {
             return res.status(404).json({ success: false, message: "Coupon not found" });
           }
       
+          // Prevent activating if usage limit is already reached
+          if (isActive && coupon.currentUsage >= coupon.maxUsage) {
+            return res.status(400).json({
+              success: false,
+              message: "Cannot activate. Usage limit reached. Please update maxUsage."
+            });
+          }
+      
           coupon.isActive = isActive;
           await coupon.save();
       
           const status = isActive ? 'activated' : 'blocked';
           return res.status(200).json({ success: true, message: `Coupon ${status} successfully` });
+      
         } catch (error) {
           console.error('Error toggling coupon status:', error);
           return res.status(500).json({ success: false, message: 'Internal server error' });
         }
       };
-
-
+      
 
       const deleteCoupon = async (req, res) => {
         try {
