@@ -72,7 +72,7 @@ const orderSchema = new Schema({
     },
     couponAmount:{
        type:Number,
-       default:false
+       default:0
     },
     shippingCharge:{
         type:Number,

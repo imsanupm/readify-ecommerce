@@ -209,8 +209,7 @@ const getCheckout = async (req, res) => {
                appliedOffers.push(`${item.productId.offerType}: Applied on ${item.productId.productTitle}`);
            }
            
-           console.log('first subTotal===========', itemTotal);
-           console.log('org total=============',orgTotal);
+          
        });
        
        gstAmount = subTotal * gstPercentage / 100;

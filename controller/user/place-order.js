@@ -1,5 +1,5 @@
 
-
+const Coupon = require('../../models/admin/coupen');
 const code = require('../../helpers/user/statusCode')
 const User = require('../../models/user/userSchema');
 const Order = require('../../models/user/order-schema');
@@ -126,10 +126,156 @@ const razorpayInstance = new Razorpay({
 
 
 
+// const placeNewOrder = async (req, res) => {
+//   try {
+//     const userId = req.session.user_id;
+//     const { addressId, paymentMethod,couponCode } = req.body;
+    
+
+//     let coupon = null;
+// let discountToApply = 0;
+
+// if (couponCode) {
+//   coupon = await Coupon.findOne({ code: couponCode.toUpperCase().trim() });
+
+//   if (!coupon) {
+//     return res.status(404).json({ message: "Coupon not found", success: false });
+//   }
+
+//   const now = new Date();
+
+//   if (!coupon.isActive || now < coupon.startDate || now > coupon.expiryDate) {
+//     return res.status(400).json({ message: "Coupon is not valid at this time", success: false });
+//   }
+
+//   if (subTotal < coupon.minPurchase) {
+//     return res.status(400).json({ message: `Minimum purchase of ₹${coupon.minPurchase} required`, success: false });
+//   }
+
+//   const userUsage = coupon.usage.find(entry => entry.userId.toString() === userId.toString());
+//   const usageCount = userUsage ? userUsage.usageCount : 0;
+
+//   if (usageCount >= coupon.maxUsagePerUser) {
+//     return res.status(400).json({ message: "Coupon usage limit reached", success: false });
+//   }
+
+//   // Calculate applicable discount
+//   discountToApply = coupon.discount;
+//   if (coupon.maxDiscount && coupon.maxDiscount > 0) {
+//     discountToApply = Math.min(coupon.discount, coupon.maxDiscount);
+//   }
+// }
+
+    
+//     const address = await User.findById(userId).populate('addresses');
+//     const cartData = await Cart.findOne({ userId }).populate({
+//       path: 'items.productId',
+//       populate: { path: 'category', select: 'offer' }
+//     });
+//     const user = await User.findById(userId);
+
+//     const addressData = address.addresses.filter((val) => val._id.toString() == addressId);
+
+//     let subTotal = 0; // ✅ This will now be the MRP total
+//     let totalAmount = 0;
+//     let gstAmount = null;
+
+//     const deliveryCharge = 49;
+//     const gstpercentage = 14;
+//     const cutOfMoneyForDeleveryCharge = 1000;
+//     const orderedItems = [];
+
+//     for (const item of cartData.items) {
+//       const product = item.productId;
+//       const price = product.regularPrice;
+//       const quantity = item.quantity;
+
+//       subTotal += price * quantity; // ✅ MRP total
+
+//       // ✅ Offer-based price used only for totalAmount
+//       const offerPrice =
+//         product.offerType && product.offerType !== 'null' && product.finalAmount > 0
+//           ? product.finalAmount
+//           : product.regularPrice;
+
+//       totalAmount += offerPrice * quantity;
+
+//       orderedItems.push({
+//         product: product._id,
+//         productDetails: {
+//           name: product.productTitle,
+//           images: product.productImage,
+//           category: product.category
+//         },
+//         quantity: quantity,
+//         price: price,
+//         status: 'Processing'
+//       });
+
+//       await Product.findByIdAndUpdate(
+//         product._id,
+//         { $inc: { quantity: -quantity } }
+//       );
+//     }
+
+//     gstAmount = (totalAmount * gstpercentage) / 100;
+//     totalAmount += gstAmount;
+//     let isCoupneapplyied = false
+//     if (totalAmount < cutOfMoneyForDeleveryCharge) {
+//       totalAmount += deliveryCharge;
+//     }
+//     if (coupon !== null) {
+//       totalAmount -= discountToApply;
+//       if (totalAmount < 0) totalAmount = 0; // safety check
+//       isCoupneapplyied = true
+//     }
+//     console.log('coupen applyied aanou',isCoupneapplyied);
+//     console.log('iscoupen amount=======',discountToApply);
+    
+    
+    
+//     if (paymentMethod == "cod") {
+//       return await cod(
+//         req,
+//         res,
+//         cartData,
+//         addressData,
+//         user,
+//         userId,
+//         paymentMethod,
+//         orderedItems,
+//         subTotal,
+//         totalAmount,
+//         deliveryCharge,
+//         isCoupneapplyied,
+//         discountToApply
+
+
+//       );
+//     } else if (paymentMethod == "razorpay") {
+//       return await createRazorpayOrder(
+//         req,
+//         res,
+//         cartData,
+//         addressData,
+//         user,
+//         userId,
+//         paymentMethod
+//       );
+//     }
+
+//   } catch (error) {
+//     console.log("error from placeNewOrder", error);
+//     return res.status(500).json({ success: false, message: 'Something went wrong' });
+//   }
+// };
+
+
+
 const placeNewOrder = async (req, res) => {
   try {
     const userId = req.session.user_id;
-    const { addressId, paymentMethod } = req.body;
+    const { addressId, paymentMethod, couponCode } = req.body;
 
     const address = await User.findById(userId).populate('addresses');
     const cartData = await Cart.findOne({ userId }).populate({
@@ -137,13 +283,11 @@ const placeNewOrder = async (req, res) => {
       populate: { path: 'category', select: 'offer' }
     });
     const user = await User.findById(userId);
-
     const addressData = address.addresses.filter((val) => val._id.toString() == addressId);
 
-    let subTotal = 0; // ✅ This will now be the MRP total
+    let subTotal = 0;
     let totalAmount = 0;
     let gstAmount = null;
-
     const deliveryCharge = 49;
     const gstpercentage = 14;
     const cutOfMoneyForDeleveryCharge = 1000;
@@ -154,9 +298,8 @@ const placeNewOrder = async (req, res) => {
       const price = product.regularPrice;
       const quantity = item.quantity;
 
-      subTotal += price * quantity; // ✅ MRP total
+      subTotal += price * quantity;
 
-      // ✅ Offer-based price used only for totalAmount
       const offerPrice =
         product.offerType && product.offerType !== 'null' && product.finalAmount > 0
           ? product.finalAmount
@@ -176,20 +319,62 @@ const placeNewOrder = async (req, res) => {
         status: 'Processing'
       });
 
-      await Product.findByIdAndUpdate(
-        product._id,
-        { $inc: { quantity: -quantity } }
-      );
+      await Product.findByIdAndUpdate(product._id, { $inc: { quantity: -quantity } });
     }
 
+    // GST and delivery charges
     gstAmount = (totalAmount * gstpercentage) / 100;
     totalAmount += gstAmount;
 
     if (totalAmount < cutOfMoneyForDeleveryCharge) {
       totalAmount += deliveryCharge;
     }
-     console.log('total amount (after offer , delivery , gst)',totalAmount);
-     console.log('now subtota as (mrp)',subTotal);
+
+    // ✅ Coupon validation AFTER subtotal is available
+    let coupon = null;
+    let discountToApply = 0;
+    let isCouponApplied = false;
+
+    if (couponCode) {
+      coupon = await Coupon.findOne({ code: couponCode.toUpperCase().trim() });
+
+      if (!coupon) {
+        return res.status(404).json({ message: "Coupon not found", success: false });
+      }
+
+      const now = new Date();
+
+      if (!coupon.isActive || now < coupon.startDate || now > coupon.expiryDate) {
+        return res.status(400).json({ message: "Coupon is not valid at this time", success: false });
+      }
+
+      if (subTotal < coupon.minPurchase) {
+        return res.status(400).json({ message: `Minimum purchase of ₹${coupon.minPurchase} required`, success: false });
+      }
+
+      const userUsage = coupon.usage.find(entry => entry.userId.toString() === userId.toString());
+      const usageCount = userUsage ? userUsage.usageCount : 0;
+
+      if (usageCount >= coupon.maxUsagePerUser) {
+        return res.status(400).json({ message: "Coupon usage limit reached", success: false });
+      }
+
+      discountToApply = Number(coupon.discount);
+
+      if (coupon.maxDiscount && Number(coupon.maxDiscount) > 0) {
+        discountToApply = Math.min(Number(coupon.discount), Number(coupon.maxDiscount));
+      }
+      
+
+      totalAmount -= discountToApply;
+      if (totalAmount < 0) totalAmount = 0;
+
+      isCouponApplied = true;
+    }
+
+   
+
+
     if (paymentMethod == "cod") {
       return await cod(
         req,
@@ -202,7 +387,10 @@ const placeNewOrder = async (req, res) => {
         orderedItems,
         subTotal,
         totalAmount,
-        deliveryCharge
+        deliveryCharge,
+        isCouponApplied,
+        discountToApply,
+        coupon
       );
     } else if (paymentMethod == "razorpay") {
       return await createRazorpayOrder(
@@ -223,9 +411,10 @@ const placeNewOrder = async (req, res) => {
 };
 
 
-
-const cod = async (req, res, cartData, addressData, user, userId, paymentMethod, orderedItems, subTotal, totalAmount, deliveryCharge) => {
+const cod = async (req, res, cartData, addressData, user, userId, paymentMethod, orderedItems, subTotal, totalAmount, deliveryCharge,discountToApply,isCouponApplied,coupon) => {
   try {
+
+   
       const orderData = new Order({
           userId: userId,
           userData: {
@@ -236,7 +425,7 @@ const cod = async (req, res, cartData, addressData, user, userId, paymentMethod,
           orderedItems,
           totalPrice: subTotal,
           discount: 0,
-          finalAmount: totalAmount,
+          finalAmount: Number(totalAmount.toFixed(2)),
           shippingCharge: totalAmount > 1000 ? deliveryCharge : 0,
           totalQuantity: orderedItems.reduce((sum, item) => sum + item.quantity, 0),
           address: {
@@ -252,6 +441,8 @@ const cod = async (req, res, cartData, addressData, user, userId, paymentMethod,
               street: addressData[0].street,
               addressType: addressData[0].addressType
           },
+          couponAmount:coupon.discount,
+          couponApplied:isCouponApplied?true:false,
           invoiceDate: new Date(),
           status: 'Pending',
           paymentMethod: paymentMethod,
@@ -259,6 +450,10 @@ const cod = async (req, res, cartData, addressData, user, userId, paymentMethod,
       });
 
       await orderData.save();
+     
+
+
+
 
       cartData.items = [];
       await cartData.save();
