@@ -13,6 +13,10 @@ const userSchema = new mongoose.Schema({
     referelcode:{
         type:String,
     },
+    referedBy:{
+        type:String,
+        default:null
+    },
     password: {
         type: String,
         required: false

@@ -1,184 +1,32 @@
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Readify Signup</title>
-    <!-- Include SweetAlert CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f7f0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .signup-container {
-            background-color: #ffffff;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 350px;
-            text-align: center;
-        }
-        .signup-container h2 {
-            color: #4CAF50;
-            margin-bottom: 20px;
-        }
-        .signup-container input[type="text"],
-        .signup-container input[type="email"],
-        .signup-container input[type="tel"],
-        .signup-container input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-        .signup-container button {
-            width: 100%;
-            padding: 12px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-top: 10px;
-        }
-        .signup-container button:hover {
-            background-color: #45a049;
-        }
-        .signup-container .google-btn {
-            background-color: #ffffff;
-            color: #333;
-            border: 1px solid #ddd;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        .signup-container .google-btn:hover {
-            background-color: #f0f7f0;
-        }
-        .signup-container a {
-            color: #4CAF50;
-            text-decoration: none;
-            font-size: 14px;
-            display: block;
-            margin-top: 10px;
-        }
-        .signup-container a:hover {
-            text-decoration: underline;
-        }
-    </style>
-</head>
-<body>
-    <div class="signup-container">
-        <h2>Sign Up for Readify</h2>
-        <form method="post" action="/signup" onsubmit="return validateForm(event)" onsubmit="return validateForm(event)" novalidate>
-            <input name="name" type="text" placeholder="Full Name" required>
-            <input name="email" type="email" placeholder="Email" required>
-            <input name="Phone" type="tel" placeholder="Phone Number" required>
-            <input name="password" type="password" placeholder="Password" required>
-            <input name="cPassword" type="password" placeholder="Confirm Password" required>
-            <button type="submit">Sign Up</button>
-            <a href="#">Forgot Password?</a>
-            <button onclick="window.location.href='/auth/google'" type="button" class="google-btn">
-                <img src="https://img.icons8.com/color/24/google-logo.png" alt="Google Icon">
-                Sign Up with Google
-            </button>
-        </form>
-    </div>
-
-    <script>
-        function validateForm(event) {
-            event.preventDefault();
-
-            // Get form values
-            const name = document.querySelector('input[name="name"]').value;
-            const email = document.querySelector('input[name="email"]').value;
-            const phone = document.querySelector('input[name="Phone"]').value;
-            const password = document.querySelector('input[name="password"]').value;
-            const cPassword = document.querySelector('input[name="cPassword"]').value;
-
-            // Validate name (no numbers)
-            if (/\d/.test(name)) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Invalid Name',
-                    text: 'Name cannot contain numbers'
-                });
-                return false;
-            }
-
-           if (!name || !email || !phone || !password || !cPassword) {
-        Swal.fire({
-            icon: 'error',
-            title: 'All Fields Required',
-            text: 'Please fill in all the fields'
-        });
-        return false;
-    }
-
-
-            // Validate email (must contain @gmail.com)
-            if (!email.toLowerCase().endsWith('@gmail.com')) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Invalid Email',
-                    text: 'Email must be a Gmail address (e.g., example@gmail.com)'
-                });
-                return false;
-            }
-
-            // Validate phone (exactly 10 digits, no letters)
-            if (!/^\d{10}$/.test(phone)) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Invalid Phone',
-                    text: 'Phone number must be exactly 10 digits with no letters'
-                });
-                return false;
-            }
-
-            // Validate password (at least one uppercase and one lowercase)
-            if (!/[A-Z]/.test(password) || !/[a-z]/.test(password)) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Invalid Password',
-                    text: 'Password must contain at least one uppercase and one lowercase letter'
-                });
-                return false;
-            }
-
-            // Validate password match
-            if (password !== cPassword) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Password Mismatch',
-                    text: 'Password and Confirm Password must match'
-                });
-                return false;
-            }
-
-            // If all validations pass
-            Swal.fire({
-                icon: 'success',
-                title: 'Success',
-                text: 'Form submitted successfully!'
-            }).then(() => {
-                event.target.submit(); // Submit the form if all validations pass
-            });
-
-            return false; // Prevent default submission until success
-        }
-    </script>  
-</body>
-</html>
+<div class="referral-section">
+    <h3 class="form-label">Apply Referral Code</h3>
+    <form id="referral-form" onsubmit="applyReferralCode(event)">
+        <div class="form-group">
+            <div class="referral-input-container">
+                <input type="text" 
+                       id="referral-input" 
+                       class="form-control" 
+                       placeholder="Enter code..."
+                       maxlength="20"
+                       aria-describedby="referral-help">
+                <button type="submit" class="btn-primary">
+                    <i class="bi bi-check-circle" aria-hidden="true"></i>
+                    Apply
+                </button>
+            </div>
+            <small id="referral-help" class="info-text">
+                Enter a valid referral code to receive bonus rewards
+            </small>
+        </div>
+        <!-- Success Message -->
+        <div id="success-message" class="success-message" role="alert">
+            <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+            <span id="success-text">Referral code applied successfully! You've earned bonus rewards.</span>
+        </div>
+        <!-- Error Message -->
+        <div id="error-message" class="error-message" role="alert">
+            <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+            <span id="error-text">Invalid or expired referral code!</span>
+        </div>
+    </form>
+</div>

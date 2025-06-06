@@ -6,7 +6,7 @@ const Product=require('../../models/admin/productSchema');
 const { session } = require('passport');
 const { json } = require('body-parser');
 const referCode = require('../../helpers/user/referelCode')
-const findUser = require('../../helpers/user/findUser')
+
 
 
 
@@ -141,15 +141,8 @@ const loadVerifyOtp = async (req, res) => {
 const signup = async (req, res) => {
     try {
         const { email, password, Phone, cPassword, name ,referralCode} = req.body;
-        console.log('referel code ===============================',referralCode);
-        if (referralCode) {
-            console.log('referral code inside the if condition ==================', referralCode);
-            const isValid = await findUser.findByreferralCode(referralCode); // ✅ use correct variable
-            if (!isValid) {
-                return res.render('signin', { message: 'Invalid Referral Code. Please try again.' });
-            }
-        }
-       
+        console.log('referel code ===============',referralCode);
+        
         
         if (password !== cPassword) {
             return res.render('signin', { message: 'Passwords do not match' });

@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+        }
+
+        /* Respect user's motion preferences */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Main color scheme */
+        :root {
+            --primary-color: #3b5d50;
+            --primary-dark: #2e4a40;
+            --primary-light: #4a6b5e;
+            --white-color: #ffffff;
+            --light-gray: #f5f5f5;
+            --text-color: #333333;
+            --text-muted: #666666;
+            --border-color: #e0e0e0;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+            --shadow-light: 0 2px 4px rgba(0, 0, 0, 0.04);
+            --shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.06);
+            --shadow-heavy: 0 8px 20px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 12px 28px rgba(0, 0, 0, 0.12);
+        }
+
+        .main-container {
+            min-height: 100vh;
+            padding: 15px;
+            opacity: 0;
+            animation: pageLoad 0.8s ease-out 0.2s forwards;
+        }
+
+        @keyframes pageLoad {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Enhanced Sidebar with Animations */
+        .sidebar {
+            background-color: var(--white-color);
+            border-radius: 8px;
+            padding: 18px;
+            box-shadow: var(--shadow-medium);
+            height: fit-content;
+            position: sticky;
+            top: 15px;
+            border: 1px solid var(--border-color);
+            transform: translateX(-10px);
+            opacity: 0;
+            animation: slideInLeft 0.6s ease-out 0.3s forwards;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                transform: translateX(-10px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .sidebar-title {
+            font-weight: 600;
+            margin-bottom: 18px;
+            color: var(--primary-color);
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-align: center;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--primary-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary-light), transparent);
+            animation: shimmer 2s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { left: -100%; }
+            50% { left: 100%; }
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 10px 14px;
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            font-size: 0.9rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .sidebar-link:hover::before {
+            left: 100%;
+        }
+
+        .sidebar-link:hover {
+            background-color: var(--primary-color);
+            color: var(--white-color);
+            text-decoration: none;
+            transform: translateX(6px) scale(1.02);
+            box-shadow: var(--shadow-light);
+        }
+
+        .sidebar-link.active {
+            background-color: var(--primary-color);
+            color: var(--white-color);
+            box-shadow: var(--shadow-light);
+            transform: translateX(3px);
+        }
+
+        .sidebar-link.logout {
+            color: var(--danger-color);
+            margin-top: 18px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 18px;
+        }
+
+        .sidebar-link.logout:hover {
+            background-color: var(--danger-color);
+            color: var(--white-color);
+        }
+
+        .sidebar-link i {
+            margin-right: 10px;
+            font-size: 1rem;
+            width: 18px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-link:hover i {
+            transform: scale(1.1);
+        }
+
+        /* Animated Profile Card */
+        .profile-card {
+            background-color: var(--white-color);
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: var(--shadow-medium);
+            margin-bottom: 20px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transform: translateY(20px);
+            opacity: 0;
+            animation: slideInUp 0.6s ease-out 0.4s forwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(59, 93, 80, 0.05), transparent);
+            transition: left 0.8s ease;
+        }
+
+        .profile-card:hover::before {
+            left: 100%;
+        }
+
+        @keyframes slideInUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .profile-image-container {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 20px;
+        }
+
+        .profile-image {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary-color);
+            box-shadow: 0 4px 12px rgba(59, 93, 80, 0.2);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .profile-image:hover {
+            transform: scale(1.05) rotate(2deg);
+            box-shadow: 0 8px 25px rgba(59, 93, 80, 0.3);
+        }
+
+        .camera-icon {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            padding: 6px;
+            color: var(--white-color);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-light);
+            border: 2px solid var(--white-color);
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        .camera-icon:hover {
+            background-color: var(--primary-dark);
+            transform: scale(1.15) rotate(15deg);
+            box-shadow: var(--shadow-medium);
+            opacity: 1;
+        }
+
+        .profile-name {
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+            transition: color 0.3s ease;
+        }
+
+        .profile-email {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: color 0.3s ease;
+        }
+
+        .profile-email i {
+            transition: transform 0.3s ease;
+        }
+
+        .profile-card:hover .profile-email i {
+            transform: scale(1.1);
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .action-button {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--primary-color);
+            background-color: var(--white-color);
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            font-weight: 500;
+            text-decoration: none;
+            font-size: 0.85rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background-color: var(--primary-color);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .action-button:hover::before {
+            left: 0;
+        }
+
+        .action-button:hover {
+            color: var(--white-color);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+            text-decoration: none;
+        }
+
+        .action-button:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        /* Animated Statistics */
+        .stats-section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            text-align: center;
+            position: relative;
+            padding-bottom: 8px;
+            opacity: 0;
+            animation: fadeInDown 0.6s ease-out 0.5s forwards;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: var(--primary-color);
+            border-radius: 1px;
+            animation: expandLine 0.8s ease-out 0.7s forwards;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes expandLine {
+            from { width: 0; }
+            to { width: 40px; }
+        }
+
+        .stat-card {
+            background-color: var(--white-color);
+            border-radius: 8px;
+            padding: 18px 15px;
+            text-align: center;
+            box-shadow: var(--shadow-medium);
+            height: 100%;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--border-color);
+            transform: translateY(30px);
+            opacity: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary-color);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+            transform-origin: left;
+        }
+
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .stat-card:nth-child(1) { animation: slideInUp 0.6s ease-out 0.6s forwards; }
+        .stat-card:nth-child(2) { animation: slideInUp 0.6s ease-out 0.7s forwards; }
+        .stat-card:nth-child(3) { animation: slideInUp 0.6s ease-out 0.8s forwards; }
+        .stat-card:nth-child(4) { animation: slideInUp 0.6s ease-out 0.9s forwards; }
+
+        .stat-icon {
+            font-size: 1.8rem;
+            margin-bottom: 12px;
+            padding: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .stat-card:hover .stat-icon {
+            transform: scale(1.1) rotateY(180deg);
+        }
+
+        .stat-icon.wallet {
+            color: var(--success-color);
+            background-color: rgba(40, 167, 69, 0.1);
+        }
+
+        .stat-icon.orders {
+            color: var(--primary-color);
+            background-color: rgba(59, 93, 80, 0.1);
+        }
+
+        .stat-icon.canceled {
+            color: var(--danger-color);
+            background-color: rgba(220, 53, 69, 0.1);
+        }
+
+        .stat-icon.returned {
+            color: var(--warning-color);
+            background-color: rgba(255, 193, 7, 0.1);
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover .stat-value {
+            transform: scale(1.05);
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            transition: color 0.3s ease;
+        }
+
+        .currency {
+            color: var(--success-color);
+        }
+
+        /* Minimalist Referral Section */
+        .referral-card {
+            background-color: var(--white-color);
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: var(--shadow-medium);
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            transform: translateY(20px);
+            opacity: 0;
+            animation: slideInUp 0.6s ease-out 1s forwards;
+        }
+
+        .referral-section {
+            margin-bottom: 20px;
+        }
+
+        .referral-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .referral-code-display {
+            background: linear-gradient(135deg, var(--primary-color), var(--success-color));
+            color: var(--white-color);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 15px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .referral-code-display:hover {
+            transform: scale(1.02);
+        }
+
+        .referral-code-display::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255,255,255,0.05) 10px,
+                rgba(255,255,255,0.05) 20px
+            );
+            animation: subtleShimmer 4s linear infinite;
+        }
+
+        @keyframes subtleShimmer {
+            0% { transform: translateX(-100%) translateY(-100%); }
+            100% { transform: translateX(100%) translateY(100%); }
+        }
+
+        .referral-code {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 6px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .referral-description {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .copy-button {
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: var(--white-color);
+            padding: 6px 14px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            margin-top: 10px;
+            font-size: 0.8rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .copy-button:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .copy-button:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        /* Minimalist Form Styling */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+
+        .referral-input-container {
+            position: relative;
+            display: flex;
+            gap: 8px;
+            align-items: stretch;
+        }
+
+        .form-control {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background-color: var(--white-color);
+            min-height: 36px;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(59, 93, 80, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .form-control::placeholder {
+            color: var(--text-muted);
+            opacity: 0.7;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            color: var(--white-color);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+            min-height: 36px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        /* Success and Error Messages - Both Inline */
+        .success-message, .error-message {
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-top: 8px;
+            border-left: 3px solid;
+            display: none;
+            font-size: 0.8rem;
+            transform: translateY(-10px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .success-message {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success-color);
+            border-left-color: var(--success-color);
+        }
+
+        .error-message {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger-color);
+            border-left-color: var(--danger-color);
+        }
+
+        .success-message.show, .error-message.show {
+            display: block;
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .info-text {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            margin-top: 6px;
+            transition: color 0.3s ease;
+        }
+
+        /* Loading States */
+        .loading {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        /* Responsive design */
+        @media (max-width: 992px) {
+            .sidebar {
+                margin-bottom: 20px;
+                position: static;
+                animation: slideInUp 0.6s ease-out 0.3s forwards;
+            }
+            
+            .main-container {
+                padding: 12px;
+            }
+            
+            .profile-card {
+                padding: 20px;
+            }
+            
+            .profile-name {
+                font-size: 1.4rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .action-button {
+                width: 180px;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .referral-code {
+                font-size: 1.2rem;
+                letter-spacing: 1.5px;
+            }
+            
+            .stat-icon {
+                font-size: 1.6rem;
+                padding: 10px;
+            }
+            
+            .stat-value {
+                font-size: 1.6rem;
+            }
+            
+            .section-title {
+                font-size: 1.2rem;
+            }
+
+            .referral-input-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .btn-primary {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .profile-image-container {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .referral-card {
+                padding: 20px 15px;
+            }
+            
+            .stat-card {
+                margin-bottom: 15px;
+                padding: 15px 12px;
+            }
+            
+            .sidebar {
+                padding: 15px;
+            }
+        }
+
+        /* Accessibility improvements */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Focus styles */
+        .sidebar-link:focus,
+        .action-button:focus,
+        .form-control:focus,
+        .btn-primary:focus,
+        .copy-button:focus {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+
+        /* Pulse animation for interactive elements */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .pulse {
+            animation: pulse 0.6s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid main-container">
+        <div class="row">
+          
+
+            <%- include("../../views/partials/user/profileSidebar") %>
+            <div class="col-lg-9 col-md-8">
+                <!-- Animated Profile Card -->
+                <section class="profile-card" aria-labelledby="profile-heading">
+                    <div class="profile-image-container">
+                        <img src="/placeholder.svg?height=100&width=100" 
+                             alt="Profile picture of Sarah Johnson" 
+                             class="profile-image">
+                        <button class="camera-icon" 
+                                aria-label="Change profile picture"
+                                title="Change profile picture">
+                            <i class="bi bi-camera" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="profile-details">
+                        <h1 id="profile-heading" class="profile-name"><%=user.name%></h1>
+                        <p class="profile-email">
+                            <i class="bi bi-envelope" aria-hidden="true"></i>
+                            <span><%=user.email%></span>
+                        </p>
+                        
+                        <div class="action-buttons">
+                            <a href="#" class="action-button" role="button">
+                                <i class="bi bi-pencil" aria-hidden="true"></i> 
+                                <span>Edit Profile</span>
+                            </a>
+                         
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Animated Statistics Section -->
+                <section class="stats-section" aria-labelledby="stats-heading">
+                    <h2 id="stats-heading" class="section-title">Account Overview</h2>
+                    <div class="row g-3">
+                        <div class="col-lg-3 col-md-6">
+                            <div class="stat-card" role="region" aria-labelledby="wallet-label">
+                                <div class="stat-icon wallet" aria-hidden="true">
+                                    <i class="bi bi-wallet2"></i>
+                                </div>
+                                <div class="stat-value currency">₹ <%=wallet.balance%></div>
+                                <div id="wallet-label" class="stat-label">Wallet Balance</div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-3 col-md-6">
+                            <div class="stat-card" role="region" aria-labelledby="completed-label">
+                                <div class="stat-icon orders" aria-hidden="true">
+                                    <i class="bi bi-bag-check"></i>
+                                </div>
+                                <div class="stat-value">142</div>
+                                <div id="completed-label" class="stat-label">Completed</div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-3 col-md-6">
+                            <div class="stat-card" role="region" aria-labelledby="canceled-label">
+                                <div class="stat-icon canceled" aria-hidden="true">
+                                    <i class="bi bi-bag-x"></i>
+                                </div>
+                                <div class="stat-value">5</div>
+                                <div id="canceled-label" class="stat-label">Canceled</div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-3 col-md-6">
+                            <div class="stat-card" role="region" aria-labelledby="returned-label">
+                                <div class="stat-icon returned" aria-hidden="true">
+                                    <i class="bi bi-arrow-return-left"></i>
+                                </div>
+                                <div class="stat-value">2</div>
+                                <div id="returned-label" class="stat-label">Returned</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Minimalist Referral Section -->
+                <!-- <section class="referral-card" aria-labelledby="referral-heading">
+                    <h2 id="referral-heading" class="section-title">Referral Program</h2>
+                     -->
+                    <!-- User's Referral Code -->
+                    <!-- <div class="referral-section">
+                        <h3 class="form-label">Your Referral Code</h3>
+                        <div class="referral-code-display">
+                            <div class="referral-code" id="user-referral-code"><%=user.referelcode%></div>
+                            <div class="referral-description">
+                                Share this code with friends and earn rewards!
+                            </div>
+                            <button class="copy-button" 
+                                    onclick="copyReferralCode()" 
+                                    aria-label="Copy referral code to clipboard">
+                                <i class="bi bi-clipboard" aria-hidden="true"></i> Copy Code
+                            </button>
+                        </div>
+                        <p class="info-text">
+                            <i class="bi bi-info-circle" aria-hidden="true"></i>
+                            Earn $10 for each friend who signs up using your code!
+                        </p>
+                    </div> -->
+                    
+                    <!-- Minimalist Apply Referral Code -->
+                   
+                   <!-- Minimalist Referral Section -->
+<section class="referral-card" aria-labelledby="referral-heading">
+    <h2 id="referral-heading" class="section-title">Referral Program</h2>
+    
+    <!-- User's Referral Code -->
+    <div class="referral-section">
+        <h3 class="form-label">Your Referral Code</h3>
+        <div class="referral-code-display">
+            <div class="referral-code" id="user-referral-code"><%=user.referelcode%></div>
+            <div class="referral-description">
+                Share this code with friends and earn rewards!
+            </div>
+            <button class="copy-button" 
+                    onclick="copyReferralCode()" 
+                    aria-label="Copy referral code to clipboard">
+                <i class="bi bi-clipboard" aria-hidden="true"></i> Copy Code
+            </button>
+        </div>
+        <p class="info-text">
+            <i class="bi bi-info-circle" aria-hidden="true"></i>
+            Earn ₹50 for each friend who signs up using your code!
+        </p>
+    </div>
+    
+    <!-- Conditional Section: Apply Referral Code OR Claimed Bonus Message -->
+    <% if (!user.referedBy) { %>
+        <!-- Show Apply Referral Code Form when user hasn't been referred -->
+        <div class="referral-section">
+            <h3 class="form-label">Apply Referral Code</h3>
+            <form id="referral-form" onsubmit="applyReferralCode(event)">
+                <div class="form-group">
+                    <div class="referral-input-container">
+                        <input type="text" 
+                               id="referral-input" 
+                               class="form-control" 
+                               placeholder="Enter code..."
+                               maxlength="20"
+                               aria-describedby="referral-help">
+                        <button type="submit" class="btn-primary">
+                            <i class="bi bi-check-circle" aria-hidden="true"></i>
+                            Apply
+                        </button>
+                    </div>
+                    <small id="referral-help" class="info-text">
+                        Enter a valid referral code to receive bonus rewards
+                    </small>
+                </div>
+                <!-- Success Message -->
+                <div id="success-message" class="success-message" role="alert">
+                    <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+                    <span id="success-text">Referral code applied successfully! You've earned bonus rewards.</span>
+                </div>
+                <!-- Error Message -->
+                <div id="error-message" class="error-message" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+                    <span id="error-text">Invalid or expired referral code!</span>
+                </div>
+            </form>
+        </div>
+    <% } else { %>
+        <!-- Show Claimed Bonus Message when user has been referred -->
+        <div class="referral-section">
+            <div class="claimed-bonus-display">
+                <div class="claimed-icon">
+                    <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+                </div>
+                <div class="claimed-content">
+                    <h3 class="claimed-title">Referral Bonus Claimed!</h3>
+                    <p class="claimed-message">
+                        You claimed referral bonus ₹50. Now you can refer your friends and earn more rewards!
+                    </p>
+                    <div class="claimed-details">
+                        <small class="info-text">
+                            <i class="bi bi-person-check" aria-hidden="true"></i>
+                            Referred by: <strong><%=user.referedBy%></strong>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <% } %>
+</section>
+
+<style>
+/* Additional CSS for the claimed bonus display */
+.claimed-bonus-display {
+    background: linear-gradient(135deg, rgba(40, 167, 69, 0.1), rgba(40, 167, 69, 0.05));
+    border: 2px solid rgba(40, 167, 69, 0.2);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.claimed-bonus-display:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(40, 167, 69, 0.15);
+}
+
+.claimed-bonus-display::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(40, 167, 69, 0.1), transparent);
+    transition: left 0.8s ease;
+}
+
+.claimed-bonus-display:hover::before {
+    left: 100%;
+}
+
+.claimed-icon {
+    font-size: 3rem;
+    color: var(--success-color);
+    margin-bottom: 15px;
+    animation: successPulse 2s infinite;
+}
+
+@keyframes successPulse {
+    0%, 100% { 
+        transform: scale(1); 
+        opacity: 1;
+    }
+    50% { 
+        transform: scale(1.05); 
+        opacity: 0.8;
+    }
+}
+
+.claimed-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--success-color);
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+}
+
+.claimed-message {
+    font-size: 1rem;
+    color: var(--text-color);
+    margin-bottom: 15px;
+    line-height: 1.5;
+    position: relative;
+    z-index: 1;
+}
+
+.claimed-details {
+    padding-top: 10px;
+    border-top: 1px solid rgba(40, 167, 69, 0.2);
+    position: relative;
+    z-index: 1;
+}
+
+.claimed-details .info-text {
+    color: var(--success-color);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.claimed-details strong {
+    color: var(--primary-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .claimed-icon {
+        font-size: 2.5rem;
+    }
+    
+    .claimed-title {
+        font-size: 1.2rem;
+    }
+    
+    .claimed-message {
+        font-size: 0.9rem;
+    }
+}
+</style>
+           
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Enhanced animations and interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Staggered stat card animations
+            const statCards = document.querySelectorAll('.stat-card');
+            statCards.forEach((card, index) => {
+                card.addEventListener('click', function() {
+                    this.classList.add('pulse');
+                    setTimeout(() => {
+                        this.classList.remove('pulse');
+                    }, 600);
+                });
+
+                // Add hover sound effect simulation
+                card.addEventListener('mouseenter', function() {
+                    this.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+                });
+            });
+
+            // Enhanced sidebar interactions
+            const sidebarLinks = document.querySelectorAll('.sidebar-link');
+            sidebarLinks.forEach((link, index) => {
+                // Staggered entrance animation
+                link.style.animationDelay = `${0.1 + index * 0.05}s`;
+                link.style.opacity = '0';
+                link.style.transform = 'translateX(-20px)';
+                link.style.animation = 'slideInLeft 0.4s ease-out forwards';
+
+                link.addEventListener('mouseenter', function() {
+                    if (!this.classList.contains('active')) {
+                        this.style.paddingLeft = '20px';
+                    }
+                });
+                
+                link.addEventListener('mouseleave', function() {
+                    if (!this.classList.contains('active')) {
+                        this.style.paddingLeft = '14px';
+                    }
+                });
+
+                link.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        this.click();
+                    }
+                });
+            });
+
+            // Enhanced profile image interactions
+            const cameraIcon = document.querySelector('.camera-icon');
+            const profileImage = document.querySelector('.profile-image');
+            
+            cameraIcon.addEventListener('click', function() {
+                // Add loading animation
+                this.classList.add('loading');
+                
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.accept = 'image/*';
+                fileInput.style.display = 'none';
+                
+                fileInput.addEventListener('change', function(e) {
+                    if (e.target.files && e.target.files[0]) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            profileImage.style.transform = 'scale(0.8)';
+                            setTimeout(() => {
+                                profileImage.src = e.target.result;
+                                profileImage.style.transform = 'scale(1.05)';
+                                setTimeout(() => {
+                                    profileImage.style.transform = 'scale(1)';
+                                }, 300);
+                            }, 200);
+                        };
+                        reader.readAsDataURL(e.target.files[0]);
+                    }
+                    cameraIcon.classList.remove('loading');
+                });
+                
+                document.body.appendChild(fileInput);
+                fileInput.click();
+                document.body.removeChild(fileInput);
+            });
+
+            // Enhanced action button interactions
+            const actionButtons = document.querySelectorAll('.action-button');
+            actionButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const buttonText = this.querySelector('span').textContent.trim();
+                    
+                    // Create ripple effect
+                    const ripple = document.createElement('span');
+                    ripple.style.position = 'absolute';
+                    ripple.style.borderRadius = '50%';
+                    ripple.style.background = 'rgba(255,255,255,0.6)';
+                    ripple.style.transform = 'scale(0)';
+                    ripple.style.animation = 'ripple 0.6s linear';
+                    ripple.style.left = '50%';
+                    ripple.style.top = '50%';
+                    ripple.style.width = '20px';
+                    ripple.style.height = '20px';
+                    ripple.style.marginLeft = '-10px';
+                    ripple.style.marginTop = '-10px';
+                    
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                        alert(`${buttonText} functionality would be implemented here.`);
+                    }, 300);
+                });
+            });
+
+            // Form validation with animations
+            const referralInput = document.getElementById('referral-input');
+            referralInput.addEventListener('input', function() {
+                this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                
+                // Add typing animation
+                this.style.transform = 'scale(1.02)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 100);
+            });
+
+            // Add CSS for ripple animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes ripple {
+                    to {
+                        transform: scale(4);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        });
+
+        // Enhanced copy referral code function
+        function copyReferralCode() {
+            const referralCode = document.getElementById('user-referral-code').textContent;
+            const copyButton = document.querySelector('.copy-button');
+            const referralDisplay = document.querySelector('.referral-code-display');
+            
+            navigator.clipboard.writeText(referralCode).then(function() {
+                // Enhanced visual feedback
+                const originalText = copyButton.innerHTML;
+                copyButton.innerHTML = '<i class="bi bi-check" aria-hidden="true"></i> Copied!';
+                copyButton.style.backgroundColor = 'rgba(40, 167, 69, 0.3)';
+                
+                // Add success animation to the entire display
+                referralDisplay.style.transform = 'scale(1.05)';
+                referralDisplay.style.boxShadow = '0 8px 25px rgba(40, 167, 69, 0.3)';
+                
+                setTimeout(() => {
+                    copyButton.innerHTML = originalText;
+                    copyButton.style.backgroundColor = '';
+                    referralDisplay.style.transform = '';
+                    referralDisplay.style.boxShadow = '';
+                }, 2000);
+                
+                // Screen reader announcement
+                const announcement = document.createElement('div');
+                announcement.setAttribute('aria-live', 'polite');
+                announcement.setAttribute('aria-atomic', 'true');
+                announcement.className = 'sr-only';
+                announcement.textContent = 'Referral code copied to clipboard';
+                document.body.appendChild(announcement);
+                
+                setTimeout(() => {
+                    document.body.removeChild(announcement);
+                }, 1000);
+            }).catch(function(err) {
+                console.error('Could not copy text: ', err);
+                
+                // Error animation
+                referralDisplay.style.transform = 'translateX(-5px)';
+                setTimeout(() => {
+                    referralDisplay.style.transform = 'translateX(5px)';
+                    setTimeout(() => {
+                        referralDisplay.style.transform = '';
+                    }, 100);
+                }, 100);
+                
+                alert('Failed to copy referral code. Please try again.');
+            });
+        }
+
+        // Fixed apply referral code function - Both success and error messages show inline
+        function applyReferralCode(event) {
+            event.preventDefault();
+
+            const referralInput = document.getElementById('referral-input');
+            const successMessage = document.getElementById('success-message');
+            const errorMessage = document.getElementById('error-message');
+            const successText = document.getElementById('success-text');
+            const errorText = document.getElementById('error-text');
+            const submitButton = event.target.querySelector('.btn-primary');
+            const inputContainer = document.querySelector('.referral-input-container');
+
+            const referralCode = referralInput.value.trim();
+
+            // Hide any existing messages
+            successMessage.classList.remove('show');
+            errorMessage.classList.remove('show');
+
+            if (!referralCode) {
+                referralInput.focus();
+                referralInput.style.borderColor = 'var(--danger-color)';
+                referralInput.style.transform = 'translateX(-5px)';
+                setTimeout(() => {
+                    referralInput.style.transform = 'translateX(5px)';
+                    setTimeout(() => {
+                        referralInput.style.transform = '';
+                        referralInput.style.borderColor = '';
+                    }, 100);
+                }, 100);
+                return;
+            }
+
+            // Loading state
+            submitButton.innerHTML = '<i class="bi bi-hourglass-split" aria-hidden="true"></i> Applying...';
+            submitButton.disabled = true;
+            submitButton.classList.add('loading');
+            inputContainer.style.opacity = '0.7';
+
+            // Fetch to apply referral code
+            fetch('/apply-referral', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ referralCode }),
+            })
+                .then((res) => res.json())
+                .then((data) => {
+                    // Reset button state
+                    submitButton.innerHTML = '<i class="bi bi-check-circle" aria-hidden="true"></i> Apply';
+                    submitButton.disabled = false;
+                    submitButton.classList.remove('loading');
+                    inputContainer.style.opacity = '1';
+
+                    if (data.success) {
+                        // Show success message inline
+                        successText.textContent = data.message || 'Referral code applied successfully! You\'ve earned bonus rewards.';
+                        successMessage.classList.add('show');
+                        referralInput.value = '';
+
+                        // Add success glow effect
+                        inputContainer.style.boxShadow = '0 0 20px rgba(40, 167, 69, 0.3)';
+                        setTimeout(() => {
+                            inputContainer.style.boxShadow = '';
+                        }, 1000);
+
+                        // Hide success message after 5 seconds
+                        setTimeout(() => {
+                            successMessage.classList.remove('show');
+                        }, 5000);
+
+                        // Screen reader announcement
+                        const announcement = document.createElement('div');
+                        announcement.setAttribute('aria-live', 'polite');
+                        announcement.setAttribute('aria-atomic', 'true');
+                        announcement.className = 'sr-only';
+                        announcement.textContent = 'Referral code applied successfully';
+                        document.body.appendChild(announcement);
+
+                        setTimeout(() => {
+                            document.body.removeChild(announcement);
+                        }, 1000);
+
+                    } else {
+                        // Show error message inline (same style as success)
+                        errorText.textContent = data.message || 'Invalid or expired referral code!';
+                        errorMessage.classList.add('show');
+
+                        // Add error glow effect
+                        inputContainer.style.boxShadow = '0 0 20px rgba(220, 53, 69, 0.3)';
+                        setTimeout(() => {
+                            inputContainer.style.boxShadow = '';
+                        }, 1000);
+
+                        // Hide error message after 5 seconds
+                        setTimeout(() => {
+                            errorMessage.classList.remove('show');
+                        }, 5000);
+
+                        // Screen reader announcement
+                        const announcement = document.createElement('div');
+                        announcement.setAttribute('aria-live', 'polite');
+                        announcement.setAttribute('aria-atomic', 'true');
+                        announcement.className = 'sr-only';
+                        announcement.textContent = 'Error: ' + (data.message || 'Invalid referral code');
+                        document.body.appendChild(announcement);
+
+                        setTimeout(() => {
+                            document.body.removeChild(announcement);
+                        }, 1000);
+                    }
+                })
+                .catch((err) => {
+                    console.error('Error applying referral code:', err);
+                    
+                    // Reset button state
+                    submitButton.innerHTML = '<i class="bi bi-check-circle" aria-hidden="true"></i> Apply';
+                    submitButton.disabled = false;
+                    submitButton.classList.remove('loading');
+                    inputContainer.style.opacity = '1';
+
+                    // Show error message inline for network errors
+                    errorText.textContent = 'Something went wrong! Please try again.';
+                    errorMessage.classList.add('show');
+
+                    // Add error glow effect
+                    inputContainer.style.boxShadow = '0 0 20px rgba(220, 53, 69, 0.3)';
+                    setTimeout(() => {
+                        inputContainer.style.boxShadow = '';
+                    }, 1000);
+
+                    // Hide error message after 5 seconds
+                    setTimeout(() => {
+                        errorMessage.classList.remove('show');
+                    }, 5000);
+                });
+        }
+
+        // Enhanced keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.altKey && e.key === 'c') {
+                e.preventDefault();
+                copyReferralCode();
+            }
+            
+            if (e.altKey && e.key === 'r') {
+                e.preventDefault();
+                const input = document.getElementById('referral-input');
+                input.focus();
+                input.style.transform = 'scale(1.05)';
+                setTimeout(() => {
+                    input.style.transform = 'scale(1)';
+                }, 200);
+            }
+        });
+
+        // Add intersection observer for scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all animated elements
+        document.querySelectorAll('.stat-card, .profile-card, .referral-card').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

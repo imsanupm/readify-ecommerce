@@ -349,9 +349,12 @@
                     <h3 class="transactions-header">Wallet Transactions</h3>
                     
                     <div class="transaction-item">
-                        <span class="transaction-description">Refund from Order redify-<%= val.transactionId %></span>
+                        <span class="transaction-description">
+                            <%= val.description.replace(/[0-9]/g, '') %> - <%= val.transactionId %>
+                        </span>
                         <span class="transaction-amount">+₹ <%= val.amount.toFixed(2) %></span>
                     </div>
+                    
                 </div>
             <% }); %>
             

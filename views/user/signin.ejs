@@ -86,7 +86,7 @@
             <input name="Phone" type="tel" placeholder="Phone Number" required>
             <input name="password" type="password" placeholder="Password" required>
             <input name="cPassword" type="password" placeholder="Confirm Password" required>
-            <input name="referralCode" type="text" placeholder="Referral Code (Optional)">
+           
             <button type="submit">Sign Up</button>
             <a href="#">Forgot Password?</a>
             <button onclick="window.location.href='/auth/google'" type="button" class="google-btn">
@@ -106,7 +106,7 @@
             const phone = document.querySelector('input[name="Phone"]').value;
             const password = document.querySelector('input[name="password"]').value;
             const cPassword = document.querySelector('input[name="cPassword"]').value;
-            const referralCode = document.querySelector('input[name="referralCode"]').value; 
+
             // Validate name (no numbers)
             if (/\d/.test(name)) {
                 Swal.fire({

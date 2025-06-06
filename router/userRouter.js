@@ -20,7 +20,7 @@ const orderDetails = require('../controller/user/orderList');
 const invoicePdf = require('../helpers/user/invoice-download');
 const returnCancel = require('../controller/user/return-cancel-request');
 const wallet = require('../controller/user/wallet');
-
+const profile = require('../controller/user/referral');
 
 
 
@@ -62,8 +62,8 @@ router.post('/addNewAddress', addresManageMent.saveAddress)
 router.get('/addresses/edit/:AddressId',userAuth.isUserSignedIn,addresManageMent.getUpdateAddress);
 router.put('/addresses/edit/:addressId',validateAddressForm.updateAddress,addresManageMent.updateAddress)
 router.delete('/addresses/delete/:addressId',addresManageMent.deleteAddress)
-
-
+router.get('/profile',userAuth.isUserSignedIn,profile.getProfile)
+router.post('/apply-referral',profile.applyReferral)
 //cart
 router.get('/cart',userAuth.main,userAuth.isUserSignedIn,cartController.getCart);
 router.post('/addToCart',cartController.addToCart)
