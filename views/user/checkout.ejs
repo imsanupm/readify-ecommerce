@@ -1073,6 +1073,9 @@
                         return;
                     }
 
+                    //console.log('data-----------',data);
+                    
+
                     const options = {
                         key: data.key,
                         amount: data.amount,
@@ -1096,12 +1099,14 @@
                                     couponCode: appliedCoupon
                                 })
                             });
+       
 
                             const verifyResult = await verifyRes.json();
                             if (verifyResult.success) {
                                 window.location.href = '/orderConfirmation';
                             } else {
                                 alert(verifyResult.message || 'Payment verification failed.');
+                                windo.location.href = '/melvin'
                             }
                         },
                         prefill: {

@@ -891,7 +891,14 @@
                                 <div class="stat-icon wallet" aria-hidden="true">
                                     <i class="bi bi-wallet2"></i>
                                 </div>
-                                <div class="stat-value currency">₹ <%=wallet.balance%></div>
+                                <% if (wallet && wallet.balance !== undefined) { %>
+                                    <div class="stat-value currency">₹ <%= wallet.balance %></div>
+                                  <% } else { %>
+                                    <div class="stat-value text-red-500">
+                                        ₹ 0
+                                    </div>
+                                  <% } %>
+                                  
                                 <div id="wallet-label" class="stat-label">Wallet Balance</div>
                             </div>
                         </div>
