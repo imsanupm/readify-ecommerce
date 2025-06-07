@@ -18,10 +18,10 @@ const checkout = require('../controller/user/checkout');
 const placeOrder = require('../controller/user/place-order');
 const orderDetails = require('../controller/user/orderList');
 const invoicePdf = require('../helpers/user/invoice-download');
-const returnCancel = require('../controller/user/return-cancel-request');
+const returnCancel = require('../controller/user/return-request');
 const wallet = require('../controller/user/wallet');
 const profile = require('../controller/user/referral');
-
+const cancelOrder = require('../controller/user/cancel-order')
 
 
 router.get('/', userController.loadHomepage);
@@ -89,8 +89,7 @@ router.get('/orderDetailPage/:id',userAuth.isUserSignedIn,orderDetails.getOrderD
 router.get('/downloadInvoice/:orderId',invoicePdf.downloadInvoice)
 
 //return cancel
-
-router.get('/cancelOrder/:orderId', returnCancel.cancelRequest);
+router.post('/cancelOrder/:orderId', cancelOrder.cancelRequest);
 router.patch('/returnOrder/:orderId', returnCancel.returnRequest);
 
 //wallet management

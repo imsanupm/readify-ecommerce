@@ -33,21 +33,10 @@ const Wallet = require('../../models/user/wallet');
     }
 
 
-const cancelRequest = async (req,res) => {
-    try {
-       
-       
- 
-        return res.status(code.HttpStatus.OK).json({message:"Request sended Accepted We will inform you the output",success:true})
-        
-    } catch (error) {
-        console.log('error during cancelRequest',error);
-        res.status(code.HttpStatus.INTERNAL_SERVER_ERROR).json({message:"Internal server error",success:false})
-    }
-}
+
 
 
 module.exports = {
     returnRequest,
-    cancelRequest
+  
 }

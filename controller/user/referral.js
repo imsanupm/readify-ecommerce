@@ -106,5 +106,6 @@ const refundToUser = async (userId, amount, description, orderId = null) => {
 
 module.exports = {
     getProfile,
-    applyReferral
+    applyReferral,
+    refundToUser
 }

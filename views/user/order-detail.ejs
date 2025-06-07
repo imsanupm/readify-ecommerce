@@ -612,28 +612,31 @@ body {
       <button class="btn btn-primary">Track Order</button>
     </div>
 
-    <% if(orderData.status == "Delivered") { %>
+    <% if (orderData.status === "Delivered") { %>
       <div class="order-actions">
-        <button 
-          class="btn btn-danger" 
+        <button
+          class="btn btn-danger"
           style="background-color: #3b5d50; border-color: #3b5d50; color: white;"
           onclick="openReturnModal('<%= orderData.orderId %>')">
           Return Order
         </button>
       </div>
-    <% } else { %>
+    <% } else if (orderData.status !== "Returned") { %>
       <div class="order-actions">
-        <a href="/cancelOrder/<%= orderData.orderId %>" 
-           class="btn btn-danger" 
-           style="background-color: #dc3545; border-color: #dc3545; color: white;">
-           Cancel Order
-        </a>
+        <button
+          class="btn btn-danger"
+          style="background-color: #dc3545; border-color: #dc3545; color: white;"
+          onclick="showCancelConfirmation('<%= orderData.orderId %>')">
+          Cancel Order
+        </button>
       </div>
     <% } %>
     
+    
+    
 
 
-    <!-- Modal -->
+    <!-- Modal -->  
 <div id="returnModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color: rgba(0,0,0,0.5); z-index:1000;">
   <div style="background-color:white; margin:10% auto; padding:20px; border-radius:8px; width:90%; max-width:400px; position:relative;">
     <h5 style="color:#3b5d50;">Return Reason</h5>
@@ -698,6 +701,288 @@ body {
     }
   }
 </script> -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+
+<style>
+  /* Custom SweetAlert Styles */
+  .custom-swal-popup {
+    border-radius: 12px !important;
+    box-shadow: 0 10px 30px rgba(59, 93, 80, 0.2) !important;
+    border: 2px solid #f8f9fa !important;
+  }
+  
+  .custom-swal-title {
+    font-size: 1.5rem !important;
+    font-weight: 600 !important;
+    color: #3b5d50 !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .custom-swal-title-success {
+    font-size: 1.5rem !important;
+    font-weight: 600 !important;
+    color: #28a745 !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .custom-swal-title-error {
+    font-size: 1.5rem !important;
+    font-weight: 600 !important;
+    color: #dc3545 !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .custom-swal-content {
+    font-size: 1rem !important;
+    color: #6c757d !important;
+    line-height: 1.5 !important;
+  }
+  
+  .custom-swal-confirm {
+    background-color: #3b5d50 !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 12px 24px !important;
+    font-weight: 500 !important;
+    font-size: 1rem !important;
+    transition: all 0.3s ease !important;
+    margin: 0 8px !important;
+  }
+  
+  .custom-swal-confirm:hover {
+    background-color: #2d4a40 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(59, 93, 80, 0.3) !important;
+  }
+  
+  .custom-swal-cancel {
+    background-color: #f8f9fa !important;
+    color: #6c757d !important;
+    border: 2px solid #dee2e6 !important;
+    border-radius: 8px !important;
+    padding: 12px 24px !important;
+    font-weight: 500 !important;
+    font-size: 1rem !important;
+    transition: all 0.3s ease !important;
+    margin: 0 8px !important;
+  }
+  
+  .custom-swal-cancel:hover {
+    background-color: #e9ecef !important;
+    border-color: #adb5bd !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.2) !important;
+  }
+  
+  .custom-swal-error-button {
+    background-color: #dc3545 !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 12px 24px !important;
+    font-weight: 500 !important;
+    font-size: 1rem !important;
+    transition: all 0.3s ease !important;
+    margin: 0 8px !important;
+  }
+  
+  .custom-swal-error-button:hover {
+    background-color: #c82333 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3) !important;
+  }
+  
+  /* Warning icon customization */
+  .swal2-icon.swal2-warning {
+    border-color: #3b5d50 !important;
+    color: #3b5d50 !important;
+  }
+  
+  .swal2-icon.swal2-warning .swal2-icon-content {
+    color: #3b5d50 !important;
+  }
+  
+  /* Success icon customization */
+  .swal2-icon.swal2-success {
+    border-color: #28a745 !important;
+  }
+  
+  .swal2-icon.swal2-success .swal2-success-ring {
+    border-color: #28a745 !important;
+  }
+  
+  .swal2-icon.swal2-success .swal2-success-fix {
+    background-color: #28a745 !important;
+  }
+  
+  .swal2-icon.swal2-success [class^='swal2-success-line'] {
+    background-color: #28a745 !important;
+  }
+  
+  /* Error icon customization */
+  .swal2-icon.swal2-error {
+    border-color: #dc3545 !important;
+  }
+  
+  .swal2-icon.swal2-error .swal2-x-mark-line-left,
+  .swal2-icon.swal2-error .swal2-x-mark-line-right {
+    background-color: #dc3545 !important;
+  }
+  
+  /* Loading spinner customization */
+  .swal2-loader {
+    border-color: #3b5d50 transparent #3b5d50 transparent !important;
+  }
+  
+  /* Animation enhancements */
+  .swal2-popup.swal2-show {
+    animation: swal2-show 0.3s ease-out !important;
+  }
+  
+  @keyframes swal2-show {
+    0% {
+      transform: scale(0.7) translateY(-20px);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+    }
+  }
+  </style>
+  
+
+<script>
+  async function showCancelConfirmation(orderId) {
+    const result = await Swal.fire({
+      title: 'Cancel Order?',
+      text: 'Are you sure you want to cancel this order? This action cannot be undone.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3b5d50',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'Yes, Cancel Order',
+      cancelButtonText: 'Keep Order',
+      reverseButtons: true,
+      background: '#ffffff',
+      color: '#333333',
+      customClass: {
+        popup: 'custom-swal-popup',
+        title: 'custom-swal-title',
+        content: 'custom-swal-content',
+        confirmButton: 'custom-swal-confirm',
+        cancelButton: 'custom-swal-cancel'
+      },
+      buttonsStyling: false,
+      focusConfirm: false,
+      focusCancel: true
+    });
+  
+    if (result.isConfirmed) {
+      // Show loading state
+      Swal.fire({
+        title: 'Cancelling Order...',
+        text: 'Please wait while we process your request.',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        background: '#ffffff',
+        color: '#333333',
+        customClass: {
+          popup: 'custom-swal-popup'
+        },
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+  
+      try {
+      
+
+      
+        const response = await fetch(`/cancelOrder/${orderId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ orderId: orderId })
+        });
+  
+        const data = await response.json();
+  
+        // Handle the response
+        if (response.ok && data.success) {
+          // Success response
+          await Swal.fire({
+            title: 'Order Cancelled!',
+            text: data.message || 'Your order has been successfully cancelled.',
+            icon: 'success',
+            confirmButtonColor: '#3b5d50',
+            confirmButtonText: 'OK',
+            background: '#ffffff',
+            color: '#333333',
+            customClass: {
+              popup: 'custom-swal-popup',
+              title: 'custom-swal-title-success',
+              content: 'custom-swal-content',
+              confirmButton: 'custom-swal-confirm'
+            },
+            buttonsStyling: false
+          });
+  
+          // Optional: Refresh the page or update the UI
+          setTimeout(() => {
+            window.location.reload();
+          }, 300);
+  
+        } else {
+          // Error response
+          await Swal.fire({
+            title: 'Cancellation Failed',
+            text: data.message || 'Unable to cancel your order. Please try again.',
+            icon: 'error',
+            confirmButtonColor: '#dc3545',
+            confirmButtonText: 'Try Again',
+            background: '#ffffff',
+            color: '#333333',
+            customClass: {
+              popup: 'custom-swal-popup',
+              title: 'custom-swal-title-error',
+              content: 'custom-swal-content',
+              confirmButton: 'custom-swal-error-button'
+            },
+            buttonsStyling: false
+          });
+        }
+    
+      } catch (error) {
+        console.error('Error cancelling order:', error);
+        
+        // Network or other error
+        await Swal.fire({
+          title: 'Connection Error',
+          text: 'Unable to connect to the server. Please check your internet connection and try again.',
+          icon: 'error',
+          confirmButtonColor: '#dc3545',
+          confirmButtonText: 'OK',
+          background: '#ffffff',
+          color: '#333333',
+          customClass: {
+            popup: 'custom-swal-popup',
+            title: 'custom-swal-title-error',
+            content: 'custom-swal-content',
+            confirmButton: 'custom-swal-error-button'
+          },
+          buttonsStyling: false
+        });
+      }
+    }
+  }
+  </script>
 
 
 
