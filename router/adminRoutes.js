@@ -14,7 +14,7 @@ const specificReturn = require('../controller/admin/sepecifc-return');
 const orderReturn = require('../controller/admin/return-order');
 const coupen = require('../controller/admin/coupneGet')
 const updateCoupenValidate = require('../validators/admin/updateCoupen')
-
+const saleReport = require('../controller/admin/sales-report');
 
 
 adminRouter.get('/adminlogin',authMiddleware.isUserLoggedOut, adminController.loadLogin);
@@ -58,6 +58,10 @@ adminRouter.put('/updateCoupen/:coupenId',updateCoupenValidate.validateCouponUpd
 adminRouter.put('/coupons/:couponCode/toggle',coupen.coupenStatus);
 adminRouter.delete('/coupons/:couponCode', coupen.deleteCoupon);
 
+
+//sales report
+adminRouter.get('/sales-report',saleReport.getSalesReport)
+adminRouter.get('/sanu',saleReport.getSalesRepor)
 module.exports= adminRouter;
 
 
