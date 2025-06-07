@@ -81,7 +81,7 @@ router.get('/checkout', userAuth.isUserSignedIn,checkout.getCheckout);
 router.post('/placeOrder',placeOrder.placeNewOrder);
 router.post('/verifyRazorpayPayment', placeOrder.verifyRazorpayPayment);
 router.get('/orderConfirmation',userAuth.isUserSignedIn,checkout.getOrderConfirmation)
-
+router.get('/paymentFailed',userAuth.isUserSignedIn,placeOrder.getPaymentFailedPage)
 
 //order Details
 router.get('/orderListPage',userAuth.isUserSignedIn,orderDetails.getOrderListPage)

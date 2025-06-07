@@ -485,6 +485,13 @@ const verifyRazorpayPayment = async (req, res) => {
 
 
 
+const getPaymentFailedPage = async (req,res) => {
+  try {
+    res.render('payment-failed')
+  } catch (error) {
+    console.log('errror during getPaymentFailed function',error)
+  }
+}
 
 
 
@@ -493,5 +500,6 @@ const verifyRazorpayPayment = async (req, res) => {
 
 module.exports = {
   placeNewOrder,
-  verifyRazorpayPayment
+  verifyRazorpayPayment,
+  getPaymentFailedPage
 }

@@ -432,14 +432,13 @@
 
                 // Simulate processing
                 setTimeout(() => {
-                    alert("Redirecting to Razorpay payment gateway...");
-                    // In real implementation: window.location.href = 'payment-url';
+                    window.location.href = '/checkout'
                 }, 2000);
             });
 
             ordersBtn.addEventListener("click", function() {
-                alert("Redirecting to My Orders page...");
-                // In real implementation: window.location.href = '/orders';
+               
+                Window.location.href = "/orderListPage"
             });
 
             // Add ripple effect to buttons

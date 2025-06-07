@@ -1116,7 +1116,13 @@
                         },
                         theme: {
                             color: "#3b5d50"
-                        }
+                        },
+                        modal: {
+                                 ondismiss: function () {
+           
+                             window.location.href = '/paymentFailed';
+                                   }
+                                      }
                     };
 
                     const razorpay = new Razorpay(options);
