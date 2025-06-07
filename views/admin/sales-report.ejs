@@ -749,6 +749,9 @@
 
 
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 
   <script>
@@ -833,6 +836,110 @@
     }
 
     fetchReport(); // Load default report on page load
+
+
+
+
+    //=========================download pdf=========================
+
+    async function exportToPDF() {
+        const startDate = startDateInput.value;
+        const endDate = endDateInput.value;
+
+        const queryParams = new URLSearchParams({
+            period: selectedPeriod,
+            ...(selectedPeriod === 'custom' && { startDate, endDate })
+        });
+
+        try {
+            const response = await fetch(`/admin/sales-report?${queryParams.toString()}`);
+            const { reportData } = await response.json();
+
+            if (!reportData || reportData.length === 0) {
+                alert('No data to export.');
+                return;
+            }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.text('Sales Report', 14, 15);
+
+            const tableData = reportData.map(item => [
+                item.orderId,
+                item.date,
+                item.customer,
+                item.products,
+                `${item.amount}`,
+                `${item.discount}`,
+                item.coupon || '-',
+                `${item.netAmount}`,
+                item.paymentMethod
+            ]);
+
+            doc.autoTable({
+                startY: 20,
+                head: [['Order ID', 'Date', 'Customer', 'Products', 'Amount', 'Discount', 'Coupon', 'Net Amount', 'Payment']],
+                body: tableData,
+                styles: { fontSize: 8 }
+            });
+
+            const fileName = `Sales_Report_${selectedPeriod}_${new Date().toISOString().split('T')[0]}.pdf`;
+            doc.save(fileName);
+        } catch (error) {
+            console.error('PDF export error:', error);
+            alert('Failed to export PDF.');
+        }
+    }
+
+    //=================download excel
+
+
+    async function exportToExcel() {
+    const startDate = startDateInput.value;
+    const endDate = endDateInput.value;
+
+    const queryParams = new URLSearchParams({
+        period: selectedPeriod,
+        ...(selectedPeriod === 'custom' && { startDate, endDate })
+    });
+
+    try {
+        const response = await fetch(`/admin/sales-report?${queryParams.toString()}`);
+        const { reportData } = await response.json();
+
+        if (!reportData || reportData.length === 0) {
+            alert('No data to export.');
+            return;
+        }
+
+        // Format data for Excel
+        const worksheetData = reportData.map(item => ({
+            'Order ID': item.orderId,
+            'Date': item.date,
+            'Customer': item.customer,
+            'Products': item.products,
+            'Amount': item.amount,
+            'Discount': item.discount,
+            'Coupon': item.coupon || '-',
+            'Net Amount': item.netAmount,
+            'Payment Method': item.paymentMethod
+        }));
+
+        const worksheet = XLSX.utils.json_to_sheet(worksheetData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Sales Report');
+
+        const fileName = `Sales_Report_${selectedPeriod}_${new Date().toISOString().split('T')[0]}.xlsx`;
+        XLSX.writeFile(workbook, fileName);
+
+    } catch (error) {
+        console.error('Excel export error:', error);
+        alert('Failed to export Excel.');
+    }
+}
+
+
 </script>
 
 </body>

@@ -36,14 +36,14 @@ const getSalesReport = async (req, res) => {
                 return res.status(400).json({ message: 'Invalid period value' });
         }
 
-        console.log('Date Range:', fromDate.toDate(), 'to', toDate.toDate());
+      
 
         const orders = await Order.find({
             createdOn: { $gte: fromDate.toDate(), $lte: toDate.toDate() },
             status: { $in: 'Delivered' }
         }).populate('userId');
 
-        console.log('Fetched Orders:', orders.length);
+    
 
         const reportData = orders.map(order => ({
             orderId: order.orderId,
@@ -57,12 +57,12 @@ const getSalesReport = async (req, res) => {
             paymentMethod: order.paymentMethod
         }));
 
-        console.log('Report Data:', reportData);
+  
 
         res.json({ reportData });
     } catch (error) {
         console.error('Error during getSalesReport:', error);
-        res.status(500).json({ message: 'Internal server error' });
+        
     }
 };
 
