@@ -621,7 +621,7 @@ body {
           Return Order
         </button>
       </div>
-    <% } else if (orderData.status !== "Returned") { %>
+    <% } else if (orderData.status !== "Returned"&&orderData.status !=="Cancelled"&&orderData.status!=="Shipped") { %>
       <div class="order-actions">
         <button
           class="btn btn-danger"

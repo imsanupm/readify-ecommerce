@@ -4,10 +4,8 @@ const Order = require('../../models/user/order-schema')
 const updateStatus = async (req,res) => {
     try {
         const {orderId} = req.params;
-        const {status} = req.body;   console.log("=============",orderId);
-        console.log(status);
-        console.log(req.params);
-        console.log(req.params);
+        const {status} = req.body;  
+       
 
         const orderData  = await Order.findById(orderId);
         if (!orderData) {
@@ -29,7 +27,7 @@ const updateStatus = async (req,res) => {
         
     } catch (error) {
         console.log('error during updateStatus',error);
-        res.updateStatus(code.HttpStatus.INTERNAL_SERVER_ERROR).json({message:"Somethign went Wrong "})
+        res.status(code.HttpStatus.INTERNAL_SERVER_ERROR).json({message:"Somethign went Wrong "})
     }
 }
 
