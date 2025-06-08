@@ -7,7 +7,7 @@ const Cart = require('../../models/admin/cart')
 const getOrderListPage = async (req,res) => {
    try {
     const userId = req.session.user_id;
-    const userOrder = await Order.find({userId}).sort({ createdAt: -1 });
+    const userOrder = await Order.find({userId}).sort({ createdOn: -1 });
    
     return res.render('order-list',{
         orders : userOrder

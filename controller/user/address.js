@@ -2,18 +2,46 @@ const User = require('../../models/user/userSchema');
 const Address = require('../../models/user/addressSchema');
 
 
-const getAdressPage = async (req,res) => {
-    try {
-        const userId = req.session.user_id;
-        const user = await User.findById(userId).populate('addresses')
+// const getAdressPage = async (req,res) => {
+//     try {
+//         const userId = req.session.user_id;
+//         const user = await User.findById(userId).populate('addresses')
        
         
-        res.render('showAddress',{addresses:user.addresses});
+//         res.render('showAddress',{addresses:user.addresses});
+//     } catch (error) {
+//         console.log('error during getAddress Fucntion',error)
+//     }
+// }
+const getAdressPage = async (req, res) => {
+    try {
+      const userId = req.session.user_id;
+      const page = parseInt(req.query.page) || 1;
+      const limit = 6; // Show 6 addresses per page
+  
+      const options = {
+        page,
+        limit,
+        sort: { isDefault: -1, _id: -1 }, // Default address first, then latest
+        lean: true,
+        leanWithId: false,
+      };
+  
+      const query = { userId };
+      const result = await Address.paginate(query, options);
+  
+      res.render('showAddress', {
+        addresses: result.docs,
+        currentPage: result.page,
+        totalPages: result.totalPages,
+      });
     } catch (error) {
-        console.log('error during getAddress Fucntion',error)
+      console.error('Error in getAdressPage:', error);
+      res.status(500).send('Something went wrong');
     }
-}
-
+  };
+  
+  
 const getAddAdressForm = async (req,res) => {
     try {
         res.render('addAddress');

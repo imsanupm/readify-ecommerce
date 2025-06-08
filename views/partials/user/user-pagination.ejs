@@ -1,0 +1,40 @@
+<div class="pagination-area mt-30 mb-50">
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-start">
+            <% if (hasPrevPage) { %>
+                <li class="page-item">
+                    <a class="page-link" href="?page=<%= prevPage %>">
+                        <i class="material-icons md-chevron_left"></i>
+                    </a>
+                </li>
+            <% } %>
+
+            <% paginationLinks.forEach(link => { %>
+                <% if (link.number <= 3 || link.number === totalPages || 
+                       (link.number > currentPage - 2 && link.number < currentPage + 2)) { %>
+                    <li class="page-item <%= link.isActive ? 'active' : '' %>">
+                        <a class="page-link" href="?page=<%= link.number %>">
+                            <%= link.number.toString().padStart(2, '0') %>
+                        </a>
+                    </li>
+                <% } %>
+
+                <% if (link.number === 3 && totalPages > 5) { %>
+                    <li class="page-item">
+                        <a class="page-link dot" href="#">...</a>
+                    </li>
+                <% } %>
+            <% }); %>
+
+            <% if (hasNextPage) { %>
+                <li class="page-item">
+                    <a class="page-link" href="?page=<%= nextPage %>">
+                        <i class="material-icons md-chevron_right"></i>
+                    </a>
+                </li>
+            <% } %>
+        </ul>
+    </nav>
+</div>
+
+

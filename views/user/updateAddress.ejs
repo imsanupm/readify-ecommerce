@@ -255,19 +255,38 @@
       color: var(--text-color);
     }
   </style>
+  <style>
+    .error-message {
+      color: red;
+      font-size: 0.85rem;
+      margin-top: 5px;
+      display: none;
+    }
+  
+    .form-control.error {
+      border: 1px solid red;
+    }
+  
+    .form-group {
+      position: relative;
+    }
+  
+    .form-group .error-message.active {
+      display: block;
+    }
+  </style>
+  
 </head>
 <body>
   <!-- Header placeholder -->
   <header>
     <%- include('partials/user/header') %>
   </header>
-
+  
   <div class="container">
     <div class="row">
-      <!-- Sidebar placeholder - will be included via EJS partial -->
-      <div class="col-lg-3">
-        <%- include('partials/user/profileSidebar') %>
-      </div>
+      
+      <%- include('partials/user/profileSidebar') %>
 
       <!-- Main content -->
       <div class="col-lg-9">
@@ -276,61 +295,68 @@
             <h1 class="form-title">Edit Address <span class="default-badge">Default</span></h1>
             <p class="form-subtitle">Update your delivery address details below</p>
           </div>
-          
           <div class="form-body">
-            <form id="editAddressForm"  novalidate>
+            <form id="editAddressForm" novalidate>
               <input type="hidden" name="addressId" value="<%= address._id %>">
-              
+      
               <div class="form-row">
                 <div class="form-group col-md-6">
                   <label for="fullName" class="form-label required">Full Name</label>
-                  <input type="text" class="form-control" id="fullName" name="fullName" value="<%= address.fullname %>" placeholder="Enter your full name" required>
+                  <input type="text" class="form-control" id="fullName" name="fullName" value="<%= address.fullname %>" required>
+                  <div class="invalid-feedback"></div>
                 </div>
-                
+      
                 <div class="form-group col-md-6">
                   <label for="mobile" class="form-label required">Mobile Number</label>
-                  <input type="tel" class="form-control" id="mobile" name="mobile" value="<%= address.mobile %>" placeholder="Enter your mobile number" required>
+                  <input type="tel" class="form-control" id="mobile" name="mobile" value="<%= address.mobile %>" required>
+                  <div class="invalid-feedback"></div>
                 </div>
               </div>
-
+      
               <div class="form-row">
                 <div class="form-group col-md-6">
                   <label for="pincode" class="form-label required">Pincode</label>
-                  <input type="text" class="form-control" id="pincode" name="pincode" value="<%= address.pincode %>" placeholder="Enter pincode" required>
+                  <input type="text" class="form-control" id="pincode" name="pincode" value="<%= address.pincode %>" required>
+                  <div class="invalid-feedback"></div>
                 </div>
               </div>
-
+      
               <div class="form-row">
                 <div class="form-group col-md-6">
                   <label for="state" class="form-label required">State</label>
-                  <input type="text" class="form-control" id="state" name="state" value="<%= address.state %>" placeholder="Enter state" required>
+                  <input type="text" class="form-control" id="state" name="state" value="<%= address.state %>" required>
+                  <div class="invalid-feedback"></div>
                 </div>
-                
+      
                 <div class="form-group col-md-6">
                   <label for="district" class="form-label required">District</label>
-                  <input type="text" class="form-control" id="district" name="district" value="<%= address.district %>" placeholder="Enter district" required>
+                  <input type="text" class="form-control" id="district" name="district" value="<%= address.district %>" required>
+                  <div class="invalid-feedback"></div>
                 </div>
               </div>
-
+      
               <div class="form-row">
                 <div class="form-group col-md-6">
                   <label for="villageCity" class="form-label">Village/City</label>
-                  <input type="text" class="form-control" id="villageCity" name="villageCity" value="<%= address.village_city %>" placeholder="Enter village or city">
+                  <input type="text" class="form-control" id="villageCity" name="villageCity" value="<%= address.village_city %>">
+                  <div class="invalid-feedback"></div>
                 </div>
               </div>
-
+      
               <div class="form-row">
                 <div class="form-group col-md-6">
                   <label for="houseFlat" class="form-label">House/Flat</label>
-                  <input type="text" class="form-control" id="houseFlat" name="houseFlat" value="<%= address.house_flat %>" placeholder="Enter house or flat number">
+                  <input type="text" class="form-control" id="houseFlat" name="houseFlat" value="<%= address.house_flat %>">
+                  <div class="invalid-feedback"></div>
                 </div>
-                
+      
                 <div class="form-group col-md-6">
                   <label for="landmark" class="form-label">Landmark</label>
-                  <input type="text" class="form-control" id="landmark" name="landmark" value="<%= address.landmark %>" placeholder="Enter nearby landmark">
+                  <input type="text" class="form-control" id="landmark" name="landmark" value="<%= address.landmark %>">
+                  <div class="invalid-feedback"></div>
                 </div>
               </div>
-
+      
               <div class="form-row">
                 <div class="form-group">
                   <label for="addressType" class="form-label">Address Type</label>
@@ -341,12 +367,12 @@
                   </select>
                 </div>
               </div>
-
+      
               <div class="checkbox-container">
                 <input type="checkbox" class="form-checkbox" id="makeDefault" name="makeDefault" <%= address.isDefault ? 'checked' : '' %>>
                 <label for="makeDefault" class="checkbox-label">Make this my default address</label>
               </div>
-
+      
               <div class="btn-container">
                 <div>
                   <a href="/myAdress" class="btn btn-outline">Cancel</a>
@@ -358,6 +384,7 @@
           </div>
         </div>
       </div>
+      
     </div>
   </div>
 
@@ -367,103 +394,139 @@
   </footer>
 
    
-  <div id="deleteModal" class="modal-overlay">
-    <div class="modal-container">
-      <div class="modal-header">
-        <h2>Confirm Deletion</h2>
-        <button class="close-button" onclick="closeDeleteModal()">&times;</button>
-      </div>
-      <div class="modal-body">
-        <p>Are you sure you want to delete this address? This action cannot be undone.</p>
-        <div class="form-actions">
-          <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
-          <form id="deleteForm" action="/deleteAddress" method="POST">
-            <input type="hidden" id="deleteAddressId" name="addressId">
-            <button type="submit" class="btn btn-danger">Delete</button>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div> 
+  
 
   <script>
-    console.log('script is loading')
-    document.getElementById('editAddressForm').addEventListener('submit',async (event) => {
-      event.preventDefault()
-      const formData = new FormData(event.target);
+    console.log('script is loading');
+  
+    const showError = (id, message) => {
+      const input = document.getElementById(id);
+      const feedback = input.nextElementSibling;
+      input.classList.add("is-invalid");
+      feedback.innerText = message;
+    }
+  
+    const clearErrors = () => {
+      document.querySelectorAll('.form-control').forEach(input => {
+        input.classList.remove("is-invalid");
+        if (input.nextElementSibling) input.nextElementSibling.innerText = "";
+      });
+    }
+  
+    document.getElementById('editAddressForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      clearErrors();
+  
+      const namePattern = /^[A-Za-z\s]+$/;
+      const form = event.target;
+      const formData = new FormData(form);
       const data = Object.fromEntries(formData.entries());
       data.addressType = document.getElementById('addressType').value;
+      data.makeDefault = document.getElementById('makeDefault').checked;
   
-  console.log('updateData', data); 
-      try {
-        const response = await fetch(`/addresses/edit/${data.addressId}`,{
-        method:"PUT",
-        headers:{"content-type":"application/json"},
-        body:JSON.stringify(data),
-      })
-        const result = await response.json()
-        if(result.success){
-          Swal.fire({
-            icon:"success",
-            title:"success",
-            text:result.message||"Your address updated Well"
-          }).then(()=>{
-            window.location.href = '/myAdress'
-          })
-        }else{
-          Swal.fire({
-            icon:"error",
-            title:"Please Try Again",
-            text:result.message
-          })
-        }
-      } catch (error) {
-        console.log('error during the edit address',error);
+      const originalData = {
+        fullName: "<%= address.fullname %>",
+        mobile: "<%= address.mobile %>",
+        pincode: "<%= address.pincode %>",
+        state: "<%= address.state %>",
+        district: "<%= address.district %>",
+        villageCity: "<%= address.village_city %>",
+        houseFlat: "<%= address.house_flat %>",
+        landmark: "<%= address.landmark %>",
+        addressType: "<%= address.addressType %>",
+        makeDefault: <%= address.isDefault %>
       }
-   
-    })
-  </script>
-
-
-    // Function to show delete confirmation modal
-    function confirmDelete(addressId) {
-      document.getElementById('deleteAddressId').value = addressId;
-      document.getElementById('deleteModal').style.display = 'flex';
-    }
-
-    // Function to close delete confirmation modal
-    function closeDeleteModal() {
-      document.getElementById('deleteModal').style.display = 'none';
-    }
-
-    // Close modal if user clicks outside of it
-    window.onclick = function(event) {
-      const modal = document.getElementById('deleteModal');
-      if (event.target === modal) {
-        closeDeleteModal();
-      }
-    }
-
-    // Form validation
-    document.getElementById('editAddressForm').addEventListener('submit', function(event) {
-      const requiredFields = this.querySelectorAll('[required]');
+  
       let isValid = true;
-
-      requiredFields.forEach(field => {
-        if (!field.value.trim()) {
-          isValid = false;
-          field.style.borderColor = '#dc3545';
-        } else {
-          field.style.borderColor = '';
+  
+      if (!data.fullName) {
+        showError("fullName", "Full Name is required");
+        isValid = false;
+      } else if (!namePattern.test(data.fullName)) {
+        showError("fullName", "Name should not contain numbers");
+        isValid = false;
+      }
+  
+      if (!data.mobile || !/^\d{10}$/.test(data.mobile)) {
+        showError("mobile", "Mobile must be 10 digits");
+        isValid = false;
+      }
+  
+      if (!data.pincode || !/^\d{6}$/.test(data.pincode)) {
+        showError("pincode", "Pincode must be 6 digits");
+        isValid = false;
+      }
+  
+      if (!data.state) {
+        showError("state", "State is required");
+        isValid = false;
+      } else if (!namePattern.test(data.state)) {
+        showError("state", "State should not contain numbers");
+        isValid = false;
+      }
+  
+      if (!data.district) {
+        showError("district", "District is required");
+        isValid = false;
+      } else if (!namePattern.test(data.district)) {
+        showError("district", "District should not contain numbers");
+        isValid = false;
+      }
+  
+      if (!data.villageCity) {
+        showError("villageCity", "Village/City is required");
+        isValid = false;
+      } else if (!namePattern.test(data.villageCity)) {
+        showError("villageCity", "Village/City should not contain numbers");
+        isValid = false;
+      }
+  
+      if (!data.houseFlat) {
+        showError("houseFlat", "House/Flat is required");
+        isValid = false;
+      }
+  
+      if (!data.landmark) {
+        showError("landmark", "Landmark is required");
+        isValid = false;
+      }
+  
+      if (isValid) {
+        const isDataChanged = Object.keys(originalData).some(key => String(originalData[key]) !== String(data[key]));
+        if (!isDataChanged) {
+          Swal.fire({
+            icon: "warning",
+            title: "No Changes Detected",
+            text: "Please update at least one field before submitting."
+          });
+          return;
         }
-      });
-
-      if (!isValid) {
-        event.preventDefault();
-        alert('Please fill in all required fields.');
+  
+        try {
+          const response = await fetch(`/addresses/edit/${data.addressId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+          });
+          const result = await response.json();
+  
+          if (result.success) {
+            Swal.fire({ icon: "success", title: "Success", text: result.message || "Address updated." })
+              .then(() => window.location.href = "/myAdress");
+          } else {
+            Swal.fire({ icon: "error", title: "Try Again", text: result.message });
+          }
+        } catch (error) {
+          console.error("Error updating address", error);
+        }
       }
     });
-  </script> -->
+  </script>
+  
+
+
+   
+  </script> 
 </body>
 </html>
 

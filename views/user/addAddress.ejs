@@ -215,6 +215,18 @@
       }
     }
   </style>
+ <style>
+  .error-message {
+    color: red;
+    font-size: 0.875rem;
+    margin-top: 4px;
+  }
+
+  .form-control.invalid {
+    border-color: red;
+  }
+</style>
+  
 </head>
 <body>
   <!-- Header placeholder -->
@@ -236,81 +248,84 @@
             <h1 class="form-title">Add New Address</h1>
             <p class="form-subtitle">Please fill in the details below to add a new delivery address</p>
           </div>
-          
+      
           <div class="form-body">
             <form id="addressForm" novalidate>
               <div class="form-row">
                 <div class="form-group col-md-6">
                   <label for="fullName" class="form-label required">Full Name</label>
                   <input type="text" class="form-control" id="fullName" name="fullName" placeholder="Enter your full name" required>
+                  <div class="error-message" id="fullNameError"></div>
                 </div>
-                
+      
                 <div class="form-group col-md-6">
                   <label for="mobile" class="form-label required">Mobile Number</label>
                   <input type="tel" class="form-control" id="mobile" name="mobile" placeholder="Enter your mobile number" required>
+                  <div class="error-message" id="mobileError"></div>
                 </div>
               </div>
-
+      
               <div class="form-row">
-                <!-- <div class="form-group col-md-6">
-                  <label for="alternatePhone" class="form-label">Alternate Phone</label>
-                  <input type="tel" class="form-control" id="alternatePhone" name="alternatePhone" placeholder="Enter alternate phone (optional)">
-                </div> -->
-                
                 <div class="form-group col-md-6">
                   <label for="pincode" class="form-label required">Pincode</label>
                   <input type="text" class="form-control" id="pincode" name="pincode" placeholder="Enter pincode" required>
+                  <div class="error-message" id="pincodeError"></div>
                 </div>
               </div>
-
+      
               <div class="form-row">
                 <div class="form-group col-md-6">
                   <label for="state" class="form-label required">State</label>
                   <input type="text" class="form-control" id="state" name="state" placeholder="Enter state" required>
+                  <div class="error-message" id="stateError"></div>
                 </div>
-                
+      
                 <div class="form-group col-md-6">
                   <label for="district" class="form-label required">District</label>
                   <input type="text" class="form-control" id="district" name="district" placeholder="Enter district" required>
+                  <div class="error-message" id="districtError"></div>
                 </div>
               </div>
-
+      
               <div class="form-row">
                 <div class="form-group col-md-6">
-                  <label for="villageCity" class="form-label">Village/City</label>
-                  <input type="text" class="form-control" id="villageCity" name="villageCity" placeholder="Enter village or city">
+                  <label for="villageCity" class="form-label required">Village/City</label>
+                  <input type="text" class="form-control" id="villageCity" name="villageCity" placeholder="Enter village or city" required>
+                  <div class="error-message" id="villageCityError"></div>
                 </div>
-                
               </div>
-
+      
               <div class="form-row">
                 <div class="form-group col-md-6">
-                  <label for="houseFlat" class="form-label">House/Flat</label>
-                  <input type="text" class="form-control" id="houseFlat" name="houseFlat" placeholder="Enter house or flat number">
+                  <label for="houseFlat" class="form-label required">House/Flat</label>
+                  <input type="text" class="form-control" id="houseFlat" name="houseFlat" placeholder="Enter house or flat number" required>
+                  <div class="error-message" id="houseFlatError"></div>
                 </div>
-                
+      
                 <div class="form-group col-md-6">
-                  <label for="landmark" class="form-label">Landmark</label>
-                  <input type="text" class="form-control" id="landmark" name="landmark" placeholder="Enter nearby landmark">
+                  <label for="landmark" class="form-label required">Landmark</label>
+                  <input type="text" class="form-control" id="landmark" name="landmark" placeholder="Enter nearby landmark" required>
+                  <div class="error-message" id="landmarkError"></div>
                 </div>
               </div>
-
+      
               <div class="form-row">
                 <div class="form-group">
-                  <label for="addressType" class="form-label">Address Type</label>
-                  <select class="form-select" id="addressType" name="addressType">
+                  <label for="addressType" class="form-label required">Address Type</label>
+                  <select class="form-select" id="addressType" name="addressType" required>
                     <option value="Home" selected>Home</option>
                     <option value="Work">Work</option>
                     <option value="Other">Other</option>
                   </select>
+                  <div class="error-message" id="addressTypeError"></div>
                 </div>
               </div>
-
+      
               <div class="checkbox-container">
                 <input type="checkbox" class="form-checkbox" id="makeDefault" name="makeDefault">
                 <label for="makeDefault" class="checkbox-label">Make this my default address</label>
               </div>
-
+      
               <div class="btn-container">
                 <a href="/myAdress" class="btn btn-outline">Cancel</a>
                 <button type="submit" class="btn btn-primary">Save Address</button>
@@ -319,6 +334,7 @@
           </div>
         </div>
       </div>
+      
     </div>
   </div>
 
@@ -328,59 +344,130 @@
   </footer>
 
   <script>
-    console.log('script loadeed');
+    document.getElementById("addressForm").addEventListener('submit', async (event) => {
+      event.preventDefault();
+  
+      // Clear previous errors
+      const fields = ["fullName", "mobile", "pincode", "state", "district", "villageCity", "houseFlat", "landmark", "addressType"];
+      let hasError = false;
+  
+      fields.forEach(field => {
+        const input = document.getElementById(field);
+        const errorDiv = document.getElementById(field + "Error");
+        input.classList.remove("invalid");
+        errorDiv.textContent = "";
+      });
+  
+      function showError(fieldId, message) {
+        const input = document.getElementById(fieldId);
+        const errorDiv = document.getElementById(fieldId + "Error");
+        input.classList.add("invalid");
+        errorDiv.textContent = message;
+        hasError = true;
+      }
+  
+      const fullName = document.getElementById('fullName').value.trim();
+      const mobile = document.getElementById('mobile').value.trim();
+      const pincode = document.getElementById('pincode').value.trim();
+      const state = document.getElementById('state').value.trim();
+      const district = document.getElementById('district').value.trim();
+      const villageCity = document.getElementById('villageCity').value.trim();
+      const houseFlat = document.getElementById('houseFlat').value.trim();
+      const landmark = document.getElementById('landmark').value.trim();
+      const addressType = document.getElementById('addressType').value;
+      const makeDefault = document.getElementById('makeDefault').checked;
+  
+      const namePattern = /^[A-Za-z\s]+$/;
+      const pinPattern = /^[0-9]{6}$/;
+      const phonePattern = /^[0-9]{10}$/;
+  
+      if (!fullName) {
+        showError("fullName", "Full name is required");
+      } else if (!namePattern.test(fullName)) {
+        showError("fullName", "Name should not contain numbers");
+      }
+  
+      if (!mobile || !phonePattern.test(mobile)) {
+        showError("mobile", "Enter a valid 10-digit mobile number");
+      }
+  
+      if (!pincode || !pinPattern.test(pincode)) {
+        showError("pincode", "Enter a valid 6-digit pincode");
+      }
+  
+      if (!state) {
+        showError("state", "State is required");
+      } else if (!namePattern.test(state)) {
+        showError("state", "State should not contain numbers");
+      }
+  
+      if (!district) {
+  showError("district", "District is required");
+} else if (!namePattern.test(district)) {
+  showError("district", "District should not contain numbers");
+}
 
-
-    
-    document.getElementById("addressForm").addEventListener('submit',async (event) => {
-        event.preventDefault();
-        const fullNameValue = document.getElementById('fullName').value;
-        const pinCodeValue = document.getElementById('pincode').value;
-        const stateValue = document.getElementById('state').value;
-        const villageOrCityValue = document.getElementById('villageCity').value;
-        const houseOrFlatValue = document.getElementById('houseFlat').value;
-        const mobileValue = document.getElementById('mobile').value;
-        const districtValue = document.getElementById('district').value;
-        const landmarkValue = document.getElementById('landmark').value;
-        const addressTypeValue = document.getElementById('addressType').value;
-        const makeDefaultValue = document.getElementById('makeDefault').checked;
-        console.log('defalult value----------',makeDefaultValue,landmarkValue,fullNameValue);
-        const response = await fetch('/addNewAddress',{
-            method:"POST",
-            headers:{"content-type":"application/json"},
-            body:JSON.stringify({
-              fullName : fullNameValue,
-               pincode: pinCodeValue,
-               state:stateValue,
-               villagecity:villageOrCityValue,
-               houseFlat : houseOrFlatValue,
-               mobile : mobileValue,
-               district : districtValue,
-               landMark : landmarkValue,
-               adressType : addressTypeValue,
-               makeDefault: makeDefaultValue, 
-            })
+  
+      if (!villageCity) {
+        showError("villageCity", "Village/City is required");
+      } else if (!namePattern.test(villageCity)) {
+        showError("villageCity", "Village/City should not contain numbers");
+      }
+  
+      if (!houseFlat) {
+        showError("houseFlat", "House/Flat is required");
+      }
+  
+      if (!landmark) {
+        showError("landmark", "Landmark is required");
+      }
+  
+      if (!addressType) {
+        showError("addressType", "Select an address type");
+      }
+  
+      if (hasError) return;
+  
+      // All validations passed
+      const response = await fetch('/addNewAddress', {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          fullName,
+          mobile,
+          pincode,
+          state,
+          district,
+          villagecity: villageCity,
+          houseFlat,
+          landMark: landmark,
+          adressType: addressType,
+          makeDefault
         })
-        const result = await response.json();
-        if(result.success){
-            Swal.fire({
-                icon:"success",
-                title:"Success",
-                text:result.message||'your datad saved successfully enjoy your shpping'
-            }).then(()=>{
-                setTimeout(()=>{
-                    window.location.reload()
-                },1000)
-            })
-        }else{
-            Swal.fire({
-                icon:"error",
-                title:"Please Try Again",
-                text:result.message,
-            })
-        }
-    })
-</script>
+      });
+  
+      const result = await response.json();
+  
+      if (result.success) {
+        Swal.fire({
+          icon: "success",
+          title: "Success",
+          text: result.message || 'Your data was saved successfully. Enjoy your shopping!'
+        }).then(() => {
+          window.location.reload();
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Please Try Again",
+          text: result.message,
+        });
+      }
+    });
+  </script>
+  
+  
+  
 
 </body>
 </html>

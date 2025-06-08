@@ -205,7 +205,12 @@ h1 {
         <% addresses.forEach(address => { %>
           <div class="address-card bg-white rounded-lg shadow-md p-5 border-l-4" style="border-left-color: #3b5d50;">
             <div class="flex justify-between items-start mb-3">
-              <div class="address-name text-xl font-semibold" style="color: #3b5d50;"><%=address.fullname%></div>
+              <div class="address-name text-xl font-semibold flex items-center gap-2" style="color: #3b5d50;">
+                <%= address.fullname %>
+                <% if (address.isDefault) { %>
+                  <span class="text-xs bg-green-600 text-white px-2 py-1 rounded-md">Default</span>
+                <% } %>
+              </div>
               <span class="address-type px-2 py-1 text-xs rounded-full text-white" style="background-color: #3b5d50;"><%=address.addressType%></span>
             </div>
             
@@ -245,11 +250,25 @@ h1 {
     <% } %>
    
     <!-- Simple Pagination -->
-    <div class="pagination">
-      <a href="/addresses?page=1" class="pagination-btn active">1</a>
-      <a href="/addresses?page=2" class="pagination-btn">2</a>
-      <a href="/addresses?page=2" class="pagination-btn">Next &raquo;</a>
-    </div>
+    <% if (totalPages > 1) { %>
+      <div class="pagination">
+        
+        <% if (currentPage > 1) { %>
+          <a href="/myAdress?page=<%= currentPage - 1 %>" class="pagination-btn">« Prev</a>
+        <% } %>
+    
+        <% for (let i = 1; i <= totalPages; i++) { %>
+          <a href="/myAdress?page=<%= i %>" class="pagination-btn <%= currentPage === i ? 'active' : '' %>"><%= i %></a>
+        <% } %>
+    
+        <% if (currentPage < totalPages) { %>
+          <a href="/myAdress?page=<%= currentPage + 1 %>" class="pagination-btn">Next »</a>
+        <% } %>
+    
+      </div>
+    <% } %>
+    
+    
   </div>
 </div>
 

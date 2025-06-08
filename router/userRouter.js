@@ -57,11 +57,12 @@ router.get('/userProfile',userAuth.isUserSignedIn,userProfile.loadUserProfile)
 router.patch('/changePassword',validateChangePassword.validateChangePassword,userProfile.changePassword)
 router.post('/changeEmail',userProfile.changeEmail);
 router.patch('/changeEmail',userProfile.verifyOtp)
+//address management
 router.get('/myAdress',userAuth.isUserSignedIn,addresManageMent.getAdressPage);
 router.get('/addNewAddress',userAuth.isUserSignedIn,addresManageMent.getAddAdressForm)
 router.post('/addNewAddress', addresManageMent.saveAddress)
 router.get('/addresses/edit/:AddressId',userAuth.isUserSignedIn,addresManageMent.getUpdateAddress);
-router.put('/addresses/edit/:addressId',validateAddressForm.updateAddress,addresManageMent.updateAddress)
+router.put('/addresses/edit/:addressId',addresManageMent.updateAddress)
 router.delete('/addresses/delete/:addressId',addresManageMent.deleteAddress)
 router.get('/profile',userAuth.isUserSignedIn,profile.getProfile)
 router.post('/apply-referral',profile.applyReferral)

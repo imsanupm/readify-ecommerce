@@ -672,7 +672,7 @@
                     <i class="bi bi-people"></i> Referrals
                   </a> -->
             
-                  <a href="#" class="sidebar-link logout">
+                  <a href="/logout" class="sidebar-link logout">
                     <i class="bi bi-box-arrow-right"></i> Logout
                   </a>
                 </div>
@@ -757,7 +757,7 @@
                                                 
                                                 <div class="item-details">
                                                     <div class="item-name"><%= item.productDetails?.name || 'Product Name' %></div>
-                                                    <div class="item-brand">Brand: <%= item.productDetails?.brand || 'N/A' %></div>
+                                                    
                                                     <div class="item-meta">
                                                         <span>Qty: <%= item.quantity %></span>
                                                         <span>Price: ₹<%= item.price.toLocaleString() %></span>
@@ -765,9 +765,9 @@
                                                     </div>
                                                 </div>
                                                 
-                                                <div class="item-status status-<%= item.status.toLowerCase().replace(/\s+/g, '-') %>">
+                                                <!-- <div class="item-status status-<%= item.status.toLowerCase().replace(/\s+/g, '-') %>">
                                                     <%= item.status %>
-                                                </div>
+                                                </div> -->
                                             </div>
                                         <% }); %>
                                     </div>

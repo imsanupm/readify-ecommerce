@@ -584,9 +584,12 @@
                     <% if (typeof cartData !== 'undefined' && cartData && cartData.items && cartData.items.length > 0) { %>
                         <% cartData.items.forEach(item => { %>
                             <div class="product-item">
-                                <div class="product-image">📚</div>
+                                <div class="product-image">
+                                    <img src="<%= item.productId.productImage[0] %>" alt="Product Image" style="max-width: 100px; max-height: 100px;">
+                                  </div>
+                                  
                                 <div class="product-info">
-                                    <div class="product-name"><%= item.productId.productName %></div>
+                                    <div class="product-name"><%= item.productId.productTitle %></div>
                                     <div class="product-price">₹<%= item.productId.regularPrice.toFixed(2) %></div>
                                     <div class="product-quantity">Quantity: <%= item.quantity %></div>
                                 </div>
@@ -631,7 +634,8 @@
                     <p style="text-align: center; color: #666; padding: 2rem;">No saved addresses found.</p>
                 <% } %>
 
-                <button class="add-address-btn">+ Add New Address</button>
+                <button class="add-address-btn" onclick="window.location.href='/addNewAddress'">+ Add New Address</button>
+
             </section>
 
             <!-- Payment Options Section -->
@@ -882,57 +886,6 @@
                 applyCoupon(button, couponCard, couponCode, discountValue, discountType, maxDiscount);
             }
         }
-
-        // function applyCoupon(button, couponCard, couponCode, discountValue, discountType, maxDiscount) {
-        //     let discount = 0;
-            
-        //     if (discountType === 'percentage') {
-        //         discount = (subTotal * discountValue) / 100;
-        //         if (maxDiscount && maxDiscount > 0 && discount > maxDiscount) {
-        //             discount = maxDiscount;
-        //         }
-        //     } else {
-        //         discount = discountValue;
-        //         // Ensure discount doesn't exceed subtotal
-        //         if (discount > subTotal) {
-        //             discount = subTotal;
-        //         }
-        //     }
-
-        //     const newTotal = originalTotal - discount;
-            
-        //     // Update UI
-        //     couponCard.classList.add('applied');
-        //     button.textContent = 'Remove';
-        //     button.classList.add('remove');
-            
-        //     // Update order summary
-        //     document.getElementById('couponDiscount').style.display = 'flex';
-        //     document.getElementById('discountAmount').textContent = discount.toFixed(2);
-        //     document.getElementById('finalTotal').textContent = '₹' + newTotal.toFixed(2);
-            
-        //     // Add savings indicator
-        //     const savingsElement = couponCard.querySelector('.coupon-savings');
-        //     if (savingsElement) {
-        //         savingsElement.remove();
-        //     }
-        //     const newSavings = document.createElement('div');
-        //     newSavings.className = 'coupon-savings';
-        //     newSavings.textContent = `You save ₹${discount.toFixed(2)}!`;
-        //     couponCard.querySelector('.coupon-action').prepend(newSavings);
-            
-        //     appliedCoupon = couponCode;
-            
-        //     // Disable other coupon buttons
-        //     document.querySelectorAll('.coupon-btn').forEach(btn => {
-        //         if (btn !== button && !btn.disabled) {
-        //             btn.disabled = true;
-        //             btn.textContent = 'Apply';
-        //         }
-        //     });
-        // }
-
-
 
 
         function applyCoupon(button, couponCard, couponCode, discountValue, discountType, maxDiscount) {
