@@ -61,7 +61,7 @@ adminRouter.delete('/coupons/:couponCode', coupen.deleteCoupon);
 
 //sales report
 adminRouter.get('/sales-report',saleReport.getSalesReport)
-adminRouter.get('/sanu',saleReport.getSalesRepor)
+adminRouter.get('/report',saleReport.getSalesRepor)
 module.exports= adminRouter;
 
 

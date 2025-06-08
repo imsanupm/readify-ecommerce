@@ -51,10 +51,11 @@ const getSalesReport = async (req, res) => {
             customer: order.userData?.name || 'Unknown',
             products: order.orderedItems.map(item => item.productDetails?.name || 'Unnamed Product').join(', '),
             amount: order.totalPrice,
-            discount: order.discount || 0,
+            discount:  Number((order.totalPrice - order.finalAmount).toFixed(2)),
             coupon: order.couponDetail?.code || null,
-            netAmount: order.totalPrice - (order.discount || 0),
-            paymentMethod: order.paymentMethod
+            netAmount: order.finalAmount|| 0,
+            paymentMethod: order.paymentMethod,
+            
         }));
 
   
@@ -68,7 +69,40 @@ const getSalesReport = async (req, res) => {
 
 const getSalesRepor = async (req,res) => {
     try {
-        res.render('sales-report');
+        const result = await Order.aggregate([
+            {
+              $match: { status: 'Delivered' } // Only delivered orders
+            },
+            {
+              $group: {
+                _id: null,
+                totalSalesCount: { $sum: 1 },
+                totalOrderAmount: { $sum: '$finalAmount' },
+                totalDiscount: { $sum: { $subtract: ['$totalPrice', '$finalAmount'] } }
+              }
+            }
+          ]);
+      
+          if (result.length === 0) {
+            return res.status(200).json({
+              totalSalesCount: 0,
+              totalOrderAmount: 0,
+              totalDiscount: 0
+            });
+          }
+      
+          const { totalSalesCount, totalOrderAmount, totalDiscount } = result[0];
+      
+          console.log('==============');
+          
+        res.render(
+            'sales-report',
+            {
+                totalSalesCount,
+                totalOrderAmount,
+                totalDiscount
+              }
+        );
     } catch (error) {
         console.log('erorr during getSalesRepor');
         
