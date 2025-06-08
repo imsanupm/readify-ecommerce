@@ -1,10 +1,11 @@
-const { changePassword } = require("../../controller/user/userProfile")
+
 
 const validateChangePassword = async (req,res,next) => {
-    console.log('body data from the middleware',req.body);
+    
+
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
 
-
+    const  {confirmPassword,oldPassword,newPassword} = req.body
     if(!confirmPassword||!oldPassword||!newPassword){
         return res.json({message:"All fields are required Please try again"})
     }

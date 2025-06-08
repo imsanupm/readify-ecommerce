@@ -266,6 +266,9 @@
       background-color: #cbd5e0;
     }
   </style>
+
+
+
   <!DOCTYPE html>
   <html lang="en">
 
@@ -321,6 +324,22 @@
                   <i class="bi bi-lock"></i> Change Password
                 </button>
               </div>
+
+              <button onclick="openModal()" style="
+              padding: 10px 20px;
+              background-color: transparent;
+              color: rgb(59, 93, 80);
+              border: 2px solid rgb(59, 93, 80);
+              border-radius: 6px;
+              cursor: pointer;
+              font-size: 16px;
+              transition: background-color 0.3s, color 0.3s;"
+              onmouseover="this.style.backgroundColor='rgb(59, 93, 80)'; this.style.color='white';"
+              onmouseout="this.style.backgroundColor='transparent'; this.style.color='rgb(59, 93, 80)';">
+              Change Phone & Username
+            </button>
+            
+            
             </div>
           </div>
           </div>
@@ -328,7 +347,12 @@
       </div>
     </div>
   </body>
- 
+       
+
+
+
+     <!--chane password-->
+
   <div id="changePasswordModal" class="modal-overlay">
     <div class="modal-container">
       <div class="modal-header">
@@ -361,6 +385,46 @@
       </div>
     </div>
   </div>
+
+    <!--change username and phone number-->
+
+  <div id="changeModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center;">
+  <div style="background-color: white; padding: 30px; border-radius: 12px; min-width: 320px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2); position: relative; position: relative;">
+    
+    <h2 style="margin-top: 0; color: rgb(59, 93, 80); text-align: center;">Update Profile</h2>
+
+    <!-- Username -->
+    <label style="display: block; margin-top: 20px; color: rgb(59, 93, 80); font-weight: 500;">Username</label>
+    <input type="text" id="usernameInput" value="<%= user.name %>" style="
+      width: 100%; padding: 10px; margin-top: 5px;
+      border-radius: 6px; border: 1px solid #ccc; outline-color: rgb(59, 93, 80);">
+    <div id="nameError" style="color: red; font-size: 13px; margin-top: 5px; display: none;"></div>
+
+    <!-- Phone -->
+    <label style="display: block; margin-top: 20px; color: rgb(59, 93, 80); font-weight: 500;">Phone Number</label>
+    <input type="tel" id="phoneInput" value="<%= user.phonenumber %>" style="
+      width: 100%; padding: 10px; margin-top: 5px;
+      border-radius: 6px; border: 1px solid #ccc; outline-color: rgb(59, 93, 80);">
+    <div id="phoneError" style="color: red; font-size: 13px; margin-top: 5px; display: none;"></div>
+
+    <!-- Buttons -->
+    <div style="margin-top: 30px; text-align: right;">
+      <button type="button" onclick="closeModal()" style="
+      padding: 8px 16px; background-color: white; color: rgb(59, 93, 80);
+      border: 1px solid rgb(59, 93, 80); border-radius: 6px;
+      margin-right: 10px; cursor: pointer;">
+      Cancel
+    </button>
+      <button onclick="submitChanges()" style="
+        padding: 8px 16px; background-color: rgb(59, 93, 80); color: white;
+        border: none; border-radius: 6px; cursor: pointer;">
+        Save Changes
+      </button>
+    </div>
+  </div>
+</div>
 
 
 
@@ -448,10 +512,123 @@
 
   </html>
 
+  <script>
+  
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<script>
 
-</script>
+  <script>
+
+    
+     const originalName = "<%= user.name %>";
+  const originalPhone = "<%= user.phonenumber %>";
+
+  function openModal() {
+    document.getElementById('changeModal').style.display = 'flex';
+  }
+
+  function closeModal() {
+    document.getElementById('changeModal').style.display = 'none';
+    clearErrors();
+  }
+
+
+
+
+  function clearErrors() {
+    document.getElementById('nameError').style.display = 'none';
+    document.getElementById('phoneError').style.display = 'none';
+  }
+
+  function submitChanges() {
+    const name = document.getElementById('usernameInput').value.trim();
+    const phone = document.getElementById('phoneInput').value.trim();
+    let hasError = false;
+    clearErrors();
+
+    // Client-side validation
+    if (!name) {
+      document.getElementById('nameError').innerText = "Username is required.";
+      document.getElementById('nameError').style.display = 'block';
+      hasError = true;
+    }
+
+    if (!/^\d{10}$/.test(phone)) {
+      document.getElementById('phoneError').innerText = "Phone number must be 10 digits.";
+      document.getElementById('phoneError').style.display = 'block';
+      hasError = true;
+    }
+
+    if (!hasError && name === originalName && phone === originalPhone) {
+      document.getElementById('phoneError').innerText = "No changes detected.";
+      document.getElementById('phoneError').style.display = 'block';
+      return;
+    }
+
+    if (!hasError) {
+      // SweetAlert loading
+      Swal.fire({
+        title: 'Updating...',
+        text: 'Please wait while we update your profile.',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        background: '#fff',
+        color: 'rgb(59, 93, 80)',
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+
+      // Fetch request
+      fetch('/update-userName-phoneNumber', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ name, phonenumber: phone })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: 'Your profile was updated successfully.',
+            confirmButtonColor: 'rgb(59, 93, 80)',
+            background: '#fff',
+            color: 'rgb(59, 93, 80)'
+          }).then(() => {
+            closeModal();
+            location.reload(); // optional
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Update Failed!',
+            text: 'Something went wrong. Please try again.',
+            confirmButtonColor: 'rgb(59, 93, 80)',
+            background: '#fff',
+            color: 'rgb(59, 93, 80)'
+          });
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        Swal.fire({
+          icon: 'error',
+          title: 'Server Error',
+          text: 'Unable to process your request at the moment.',
+          confirmButtonColor: 'rgb(59, 93, 80)',
+          background: '#fff',
+          color: 'rgb(59, 93, 80)'
+        });
+      });
+    }
+  }
+  </script>
+
 
   <script>
     let timerInterval;

@@ -52,6 +52,7 @@ router.patch('/confirmPassword',forgotPassword.updatePassword)
 router.get('/productDetailPage/:id',userAuth.isUserSignedIn ,productDetailPage.getProductDetailPage)
 router.get('/books',userAuth.isUserSignedIn,productDetailPage.getProductListPage)
 //profile
+router.patch('/update-userName-phoneNumber',userProfile.changeNamePhone)
 router.get('/userProfile',userAuth.isUserSignedIn,userProfile.loadUserProfile)
 router.patch('/changePassword',validateChangePassword.validateChangePassword,userProfile.changePassword)
 router.post('/changeEmail',userProfile.changeEmail);
