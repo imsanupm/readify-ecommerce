@@ -329,6 +329,38 @@
 
     <div class="row">
         <div class="col-3" >
+          <style>
+            .pagination {
+              display: flex;
+              justify-content: center;
+              gap: 10px;
+              margin-top: 30px;
+              flex-wrap: wrap;
+            }
+            
+            .pagination a {
+              padding: 8px 14px;
+              background-color: #f0f0f0;
+              color: #3b5d50;
+              text-decoration: none;
+              border: 1px solid #3b5d50;
+              border-radius: 6px;
+              font-weight: 500;
+              transition: background-color 0.3s, color 0.3s;
+            }
+            
+            .pagination a:hover {
+              background-color: #3b5d50;
+              color: #fff;
+            }
+            
+            .pagination a.active {
+              background-color: #3b5d50;
+              color: #fff;
+              font-weight: bold;
+            }
+            </style>
+            
             <style>
                 body {
                   background-color: #f8f9fa;
@@ -798,6 +830,26 @@
                 </a>
                 <% } %>
             </div>
+
+
+
+
+<!-- Pagination controls -->
+<% if (totalPages > 1) { %>
+  <nav class="pagination">
+    <% if (currentPage > 1) { %>
+      <a href="?page=<%= currentPage - 1 %>">Previous</a>
+    <% } %>
+
+    <% for (let i = 1; i <= totalPages; i++) { %>
+      <a href="?page=<%= i %>" class="<%= i === currentPage ? 'active' : '' %>"><%= i %></a>
+    <% } %>
+
+    <% if (currentPage < totalPages) { %>
+      <a href="?page=<%= currentPage + 1 %>">Next</a>
+    <% } %>
+  </nav>
+<% } %>
         </div>
     </div>
 

@@ -4,20 +4,50 @@ const mongoose = require('mongoose');
 const Cart = require('../../models/admin/cart')
 
 
-const getOrderListPage = async (req,res) => {
-   try {
-    const userId = req.session.user_id;
-    const userOrder = await Order.find({userId}).sort({ createdOn: -1 });
+// const getOrderListPage = async (req,res) => {
+//    try {
+//     const userId = req.session.user_id;
+//     const userOrder = await Order.find({userId}).sort({ createdOn: -1 });
    
-    return res.render('order-list',{
-        orders : userOrder
-    });
-   } catch (error) {
-    console.log('error during getOrlderListPage',error)
-    return res.status(code.HttpStatus.INTERNAL_SERVER_ERROR);
-   } 
-}
+//     return res.render('order-list',{
+//         orders : userOrder
+//     });
+//    } catch (error) {
+//     console.log('error during getOrlderListPage',error)
+//     return res.status(code.HttpStatus.INTERNAL_SERVER_ERROR);
+//    } 
+// }
 
+const getOrderListPage = async (req, res) => {
+  try {
+    const userId = req.session.user_id;
+
+    // Pagination parameters
+    const page = parseInt(req.query.page) || 1;
+    const limit = 5; // Number of orders per page
+    const skip = (page - 1) * limit;
+
+    // Count total orders for user
+    const totalOrders = await Order.countDocuments({ userId });
+
+    // Fetch paginated orders
+    const userOrder = await Order.find({ userId })
+      .sort({ createdOn: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const totalPages = Math.ceil(totalOrders / limit);
+
+    return res.render('order-list', {
+      orders: userOrder,
+      currentPage: page,
+      totalPages
+    });
+  } catch (error) {
+    console.log('Error during getOrderListPage', error);
+    return res.sendStatus(500);
+  }
+};
 
 
 

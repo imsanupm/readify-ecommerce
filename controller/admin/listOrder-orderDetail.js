@@ -1,24 +1,69 @@
 const Order = require("../../models/user/order-schema");
 const User = require('../../models/user/userSchema')
 
-const getOrderListPage = async (req,res) => {
-    try {
+// const getOrderListPage = async (req,res) => {
+//     try {
       
-        const orderData = await Order.find({}).sort({createdOn:-1})
-        if(!orderData){
-            return res.json({message:"cannot find the orderData"});
+//         const orderData = await Order.find({}).sort({createdOn:-1})
+//         if(!orderData){
+//             return res.json({message:"cannot find the orderData"});
 
-        }
+//         }
        
-         res.render('list-order',{
-            orderData:orderData
-         });
-         return
-    } catch (error) {
-        console.log('error during getOrderListPage',error);
-    }
-}
+//          res.render('list-order',{
+//             orderData:orderData
+//          });
+//          return
+//     } catch (error) {
+//         console.log('error during getOrderListPage',error);
+//     }
+// }
 
+
+
+const getOrderListPage = async (req, res) => {
+    try {
+      const page = parseInt(req.query.page) || 1;
+      const limit = 10; // orders per page
+      const skip = (page - 1) * limit;
+  
+      const totalOrders = await Order.countDocuments({});
+      const totalPages = Math.ceil(totalOrders / limit);
+  
+      const orderData = await Order.find({})
+        .sort({ createdOn: -1 })
+        .skip(skip)
+        .limit(limit);
+  
+      if (!orderData) {
+        return res.json({ message: "Cannot find the orderData" });
+      }
+  
+      // Prepare pagination links
+      const paginationLinks = [];
+      for (let i = 1; i <= totalPages; i++) {
+        paginationLinks.push({
+          number: i,
+          isActive: i === page,
+        });
+      }
+  
+      res.render('list-order', {
+        orderData,
+        currentPage: page,
+        totalPages,
+        paginationLinks,
+        hasPrevPage: page > 1,
+        hasNextPage: page < totalPages,
+        prevPage: page - 1,
+        nextPage: page + 1,
+      });
+    } catch (error) {
+      console.log('error during getOrderListPage', error);
+      res.sendStatus(500);
+    }
+  };
+  
 
 const orderDetailPage = async (req,res) => {
     try {
