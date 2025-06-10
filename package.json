@@ -6,6 +6,7 @@
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
     "body-parser": "^1.20.3",
+    "chart.js": "^4.4.9",
     "cloudinary": "^1.41.3",
     "dotenv": "^16.4.7",
     "ejs": "^3.1.10",

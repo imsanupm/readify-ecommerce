@@ -80,7 +80,7 @@ const placeNewOrder = async (req, res) => {
       totalAmount += deliveryCharge;
     }
 
-    // ✅ Coupon validation AFTER subtotal is available
+
     let coupon = null;
     let discountToApply = 0;
     let isCouponApplied = false;

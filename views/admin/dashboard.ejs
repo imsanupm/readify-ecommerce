@@ -9,478 +9,749 @@
        <%- include('partials/admin/header.ejs') %> 
 
 
-        <section class="content-main">
-            <div class="content-header">
-                <div>
-                    <h2 class="content-title card-title">Dashboard </h2>
-                    <p>Whole data about your business here</p>
-                </div>
-                <div>
-                    <a href="#" class="btn btn-primary"><i class="text-muted material-icons md-post_add"></i>Create report</a>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-3">
-                    <div class="card card-body mb-4">
-                        <article class="icontext">
-                            <span class="icon icon-sm rounded-circle bg-primary-light"><i class="text-primary material-icons md-monetization_on"></i></span>
-                            <div class="text">
-                                <h6 class="mb-1 card-title">Revenue</h6>
-                                <span>$13,456.5</span>
-                                <span class="text-sm">
-                                    Shipping fees are not included
-                                </span>
-                            </div>
-                        </article>
-                    </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="card card-body mb-4">
-                        <article class="icontext">
-                            <span class="icon icon-sm rounded-circle bg-success-light"><i class="text-success material-icons md-local_shipping"></i></span>
-                            <div class="text">
-                                <h6 class="mb-1 card-title">Orders</h6> <span>53.668</span>
-                                <span class="text-sm">
-                                    Excluding orders in transit
-                                </span>
-                            </div>
-                        </article>
-                    </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="card card-body mb-4">
-                        <article class="icontext">
-                            <span class="icon icon-sm rounded-circle bg-warning-light"><i class="text-warning material-icons md-qr_code"></i></span>
-                            <div class="text">
-                                <h6 class="mb-1 card-title">Products</h6> <span>9.856</span>
-                                <span class="text-sm">
-                                    In 19 Categories
-                                </span>
-                            </div>
-                        </article>
-                    </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="card card-body mb-4">
-                        <article class="icontext">
-                            <span class="icon icon-sm rounded-circle bg-info-light"><i class="text-info material-icons md-shopping_basket"></i></span>
-                            <div class="text">
-                                <h6 class="mb-1 card-title">Monthly Earning</h6> <span>$6,982</span>
-                                <span class="text-sm">
-                                    Based in your local time.
-                                </span>
-                            </div>
-                        </article>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xl-8 col-lg-12">
-                    <div class="card mb-4">
-                        <article class="card-body">
-                            <h5 class="card-title">Sale statistics</h5>
-                            <canvas id="myChart" height="120px"></canvas>
-                        </article>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-5">
-                            <div class="card mb-4">
-                                <article class="card-body">
-                                    <h5 class="card-title">New Members</h5>
-                                    <div class="new-member-list">
-                                        <div class="d-flex align-items-center justify-content-between mb-4">
-                                            <div class="d-flex align-items-center">
-                                                <img src="/assets/imgs/people/avatar4.jpg" alt="" class="avatar">
-                                                <div>
-                                                    <h6>Patric Adams</h6>
-                                                    <p class="text-muted font-xs">
-                                                        Sanfrancisco
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <a href="#" class="btn btn-xs"><i class="material-icons md-add"></i> Add</a>
-                                        </div>
-                                        <div class="d-flex align-items-center justify-content-between mb-4">
-                                            <div class="d-flex align-items-center">
-                                                <img src="/assets/imgs/people/avatar2.jpg" alt="" class="avatar">
-                                                <div>
-                                                    <h6>Dilan Specter</h6>
-                                                    <p class="text-muted font-xs">
-                                                        Sanfrancisco
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <a href="#" class="btn btn-xs"><i class="material-icons md-add"></i> Add</a>
-                                        </div>
-                                        <div class="d-flex align-items-center justify-content-between mb-4">
-                                            <div class="d-flex align-items-center">
-                                                <img src="/assets/imgs/people/avatar3.jpg" alt="" class="avatar">
-                                                <div>
-                                                    <h6>Tomas Baker</h6>
-                                                    <p class="text-muted font-xs">
-                                                        Sanfrancisco
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <a href="#" class="btn btn-xs"><i class="material-icons md-add"></i> Add</a>
-                                        </div>
-                                    </div>
-                                </article>
-                            </div>
-                        </div>
-                        <div class="col-lg-7">
-                            <div class="card mb-4">
-                                <article class="card-body">
-                                    <h5 class="card-title">Recent activities</h5>
-                                    <ul class="verti-timeline list-unstyled font-sm">
-                                        <li class="event-list">
-                                            <div class="event-timeline-dot">
-                                                <i class="material-icons md-play_circle_outline font-xxl"></i>
-                                            </div>
-                                            <div class="media">
-                                                <div class="me-3">
-                                                    <h6><span>Today</span> <i class="material-icons md-trending_flat text-brand ml-15 d-inline-block"></i></h6>
-                                                </div>
-                                                <div class="media-body">
-                                                    <div>
-                                                        Lorem ipsum dolor sit amet consectetur
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="event-list active">
-                                            <div class="event-timeline-dot">
-                                                <i class="material-icons md-play_circle_outline font-xxl animation-fade-right"></i>
-                                            </div>
-                                            <div class="media">
-                                                <div class="me-3">
-                                                    <h6><span>17 May</span> <i class="material-icons md-trending_flat text-brand ml-15 d-inline-block"></i></h6>
-                                                </div>
-                                                <div class="media-body">
-                                                    <div>
-                                                        Debitis nesciunt voluptatum dicta reprehenderit
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="event-list">
-                                            <div class="event-timeline-dot">
-                                                <i class="material-icons md-play_circle_outline font-xxl"></i>
-                                            </div>
-                                            <div class="media">
-                                                <div class="me-3">
-                                                    <h6><span>13 May</span> <i class="material-icons md-trending_flat text-brand ml-15 d-inline-block"></i></h6>
-                                                </div>
-                                                <div class="media-body">
-                                                    <div>
-                                                        Accusamus voluptatibus voluptas.
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="event-list">
-                                            <div class="event-timeline-dot">
-                                                <i class="material-icons md-play_circle_outline font-xxl"></i>
-                                            </div>
-                                            <div class="media">
-                                                <div class="me-3">
-                                                    <h6><span>05 April</span> <i class="material-icons md-trending_flat text-brand ml-15 d-inline-block"></i></h6>
-                                                </div>
-                                                <div class="media-body">
-                                                    <div>
-                                                        At vero eos et accusamus et iusto odio dignissi
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="event-list">
-                                            <div class="event-timeline-dot">
-                                                <i class="material-icons md-play_circle_outline font-xxl"></i>
-                                            </div>
-                                            <div class="media">
-                                                <div class="me-3">
-                                                    <h6><span>26 Mar</span> <i class="material-icons md-trending_flat text-brand ml-15 d-inline-block"></i></h6>
-                                                </div>
-                                                <div class="media-body">
-                                                    <div>
-                                                        Responded to need “Volunteer Activities
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </article>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-4 col-lg-12">
-                    <div class="card mb-4">
-                        <article class="card-body">
-                            <h5 class="card-title">Revenue Base on Area</h5>
-                            <canvas id="myChart2" height="217"></canvas>
-                        </article>
-                    </div>
-                    <div class="card mb-4">
-                        <article class="card-body">
-                            <h5 class="card-title">Marketing Chanel</h5>
-                            <span class="text-muted font-xs">Facebook</span>
-                            <div class="progress mb-3">
-                                <div class="progress-bar" role="progressbar" style="width: 15%">15%</div>
-                            </div>
-                            <span class="text-muted font-xs">Instagram</span>
-                            <div class="progress mb-3">
-                                <div class="progress-bar" role="progressbar" style="width: 65%">65% </div>
-                            </div>
-                            <span class="text-muted font-xs">Google</span>
-                            <div class="progress mb-3">
-                                <div class="progress-bar" role="progressbar" style="width: 51%"> 51% </div>
-                            </div>
-                            <span class="text-muted font-xs">Twitter</span>
-                            <div class="progress mb-3">
-                                <div class="progress-bar" role="progressbar" style="width: 80%"> 80%</div>
-                            </div>
-                            <span class="text-muted font-xs">Other</span>
-                            <div class="progress mb-3">
-                                <div class="progress-bar" role="progressbar" style="width: 80%"> 80%</div>
-                            </div>
-                        </article>
-                    </div>
-                </div>
-            </div>
-            <div class="card mb-4">
-                <header class="card-header">
-                    <h4 class="card-title">Latest orders</h4>
-                    <div class="row align-items-center">
-                        <div class="col-md-3 col-12 me-auto mb-md-0 mb-3">
-                            <div class="custom_select">
-                                <select class="form-select select-nice">
-                                    <option selected>All Categories</option>
-                                    <option>Women's Clothing</option>
-                                    <option>Men's Clothing</option>
-                                    <option>Cellphones</option>
-                                    <option>Computer & Office</option>
-                                    <option>Consumer Electronics</option>
-                                    <option>Jewelry & Accessories</option>
-                                    <option>Home & Garden</option>
-                                    <option>Luggage & Bags</option>
-                                    <option>Shoes</option>
-                                    <option>Mother & Kids</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-2 col-6">
-                            <input type="date" value="02.05.2022" class="form-control">
-                        </div>
-                        <div class="col-md-2 col-6">
-                            <div class="custom_select">
-                                <select class="form-select select-nice">
-                                    <option selected>Status</option>
-                                    <option>All</option>
-                                    <option>Paid</option>
-                                    <option>Chargeback</option>
-                                    <option>Refund</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </header>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <div class="table-responsive">
-                            <table class="table align-middle table-nowrap mb-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th scope="col" class="text-center">
-                                            <div class="form-check align-middle">
-                                                <input class="form-check-input" type="checkbox" id="transactionCheck01">
-                                                <label class="form-check-label" for="transactionCheck01"></label>
-                                            </div>
-                                        </th>
-                                        <th class="align-middle" scope="col">Order ID</th>
-                                        <th class="align-middle" scope="col">Billing Name</th>
-                                        <th class="align-middle" scope="col">Date</th>
-                                        <th class="align-middle" scope="col">Total</th>
-                                        <th class="align-middle" scope="col">Payment Status</th>
-                                        <th class="align-middle" scope="col">Payment Method</th>
-                                        <th class="align-middle" scope="col">View Details</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="transactionCheck02">
-                                                <label class="form-check-label" for="transactionCheck02"></label>
-                                            </div>
-                                        </td>
-                                        <td><a href="#" class="fw-bold">#SK2540</a> </td>
-                                        <td>Neal Matthews</td>
-                                        <td>
-                                            07 Oct, 2022
-                                        </td>
-                                        <td>
-                                            $400
-                                        </td>
-                                        <td>
-                                            <span class="badge badge-pill badge-soft-success">Paid</span>
-                                        </td>
-                                        <td>
-                                            <i class="material-icons md-payment font-xxl text-muted mr-5"></i> Mastercard
-                                        </td>
-                                        <td>
-                                            <a href="#" class="btn btn-xs"> View details</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="transactionCheck03">
-                                                <label class="form-check-label" for="transactionCheck03"></label>
-                                            </div>
-                                        </td>
-                                        <td><a href="#" class="fw-bold">#SK2541</a> </td>
-                                        <td>Jamal Burnett</td>
-                                        <td>
-                                            07 Oct, 2022
-                                        </td>
-                                        <td>
-                                            $380
-                                        </td>
-                                        <td>
-                                            <span class="badge badge-pill badge-soft-danger">Chargeback</span>
-                                        </td>
-                                        <td>
-                                            <i class="material-icons md-payment font-xxl text-muted mr-5"></i> Visa
-                                        </td>
-                                        <td>
-                                            <a href="#" class="btn btn-xs"> View details</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="transactionCheck04">
-                                                <label class="form-check-label" for="transactionCheck04"></label>
-                                            </div>
-                                        </td>
-                                        <td><a href="#" class="fw-bold">#SK2542</a> </td>
-                                        <td>Juan Mitchell</td>
-                                        <td>
-                                            06 Oct, 2022
-                                        </td>
-                                        <td>
-                                            $384
-                                        </td>
-                                        <td>
-                                            <span class="badge badge-pill badge-soft-success">Paid</span>
-                                        </td>
-                                        <td>
-                                            <i class="material-icons md-payment font-xxl text-muted mr-5"></i> Paypal
-                                        </td>
-                                        <td>
-                                            <a href="#" class="btn btn-xs"> View details</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="transactionCheck05">
-                                                <label class="form-check-label" for="transactionCheck05"></label>
-                                            </div>
-                                        </td>
-                                        <td><a href="#" class="fw-bold">#SK2543</a> </td>
-                                        <td>Barry Dick</td>
-                                        <td>
-                                            05 Oct, 2022
-                                        </td>
-                                        <td>
-                                            $412
-                                        </td>
-                                        <td>
-                                            <span class="badge badge-pill badge-soft-success">Paid</span>
-                                        </td>
-                                        <td>
-                                            <i class="material-icons md-payment font-xxl text-muted mr-5"></i> Mastercard
-                                        </td>
-                                        <td>
-                                            <a href="#" class="btn btn-xs"> View details</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="transactionCheck06">
-                                                <label class="form-check-label" for="transactionCheck06"></label>
-                                            </div>
-                                        </td>
-                                        <td><a href="#" class="fw-bold">#SK2544</a> </td>
-                                        <td>Ronald Taylor</td>
-                                        <td>
-                                            04 Oct, 2022
-                                        </td>
-                                        <td>
-                                            $404
-                                        </td>
-                                        <td>
-                                            <span class="badge badge-pill badge-soft-warning">Refund</span>
-                                        </td>
-                                        <td>
-                                            <i class="material-icons md-payment font-xxl text-muted mr-5"></i> Visa
-                                        </td>
-                                        <td>
-                                            <a href="#" class="btn btn-xs"> View details</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="transactionCheck07">
-                                                <label class="form-check-label" for="transactionCheck07"></label>
-                                            </div>
-                                        </td>
-                                        <td><a href="#" class="fw-bold">#SK2545</a> </td>
-                                        <td>Jacob Hunter</td>
-                                        <td>
-                                            04 Oct, 2022
-                                        </td>
-                                        <td>
-                                            $392
-                                        </td>
-                                        <td>
-                                            <span class="badge badge-pill badge-soft-success">Paid</span>
-                                        </td>
-                                        <td>
-                                            <i class="material-icons md-payment font-xxl text-muted mr-5"></i> Paypal
-                                        </td>
-                                        <td>
-                                            <a href="#" class="btn btn-xs"> View details</a>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div> <!-- table-responsive end// -->
-                </div>
-            </div>
-            <div class="pagination-area mt-30 mb-50">
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination justify-content-start">
-                        <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                        <li class="page-item"><a class="page-link" href="#">02</a></li>
-                        <li class="page-item"><a class="page-link" href="#">03</a></li>
-                        <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                        <li class="page-item"><a class="page-link" href="#">16</a></li>
-                        <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
-                    </ul>
-                </nav>
-            </div>
-        </section> <!-- content-main end// -->
 
+        <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Report Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8fffe;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #3b5d50;
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .filters {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid #cee6e4;
+            background: white;
+            color: #3b5d50;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: #3b5d50;
+            color: white;
+            border-color: #3b5d50;
+        }
+
+        .date-inputs {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .date-input {
+            padding: 10px;
+            border: 2px solid #cee6e4;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #3b5d50;
+        }
+
+        .date-input:focus {
+            outline: none;
+            border-color: #3b5d50;
+        }
+
+        /* Summary Cards Grid */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #3b5d50;
+            transition: transform 0.3s ease;
+        }
+
+        .summary-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .summary-card.revenue {
+            border-left-color: #3b5d50;
+        }
+
+        .summary-card.sales {
+            border-left-color: #cee6e4;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            color: #666;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .revenue .card-icon {
+            background: linear-gradient(135deg, #3b5d50, #2a4a3f);
+            color: white;
+        }
+
+        .sales .card-icon {
+            background: linear-gradient(135deg, #cee6e4, #b8ddd9);
+            color: #3b5d50;
+        }
+
+        .card-amount {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #3b5d50;
+            margin-bottom: 5px;
+        }
+
+        .card-subtitle {
+            color: #888;
+            font-size: 0.85rem;
+        }
+
+        /* Chart Section */
+        .chart-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .chart-header {
+            margin-bottom: 30px;
+        }
+
+        .chart-title {
+            color: #3b5d50;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .chart-subtitle {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin: 20px 0;
+        }
+
+        /* Y-Axis */
+        .y-axis {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px 0;
+        }
+
+        .y-axis-label {
+            font-size: 12px;
+            color: #666;
+            text-align: right;
+            padding-right: 10px;
+        }
+
+        .y-axis-title {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: rotate(-90deg) translateY(-50%);
+            transform-origin: center;
+            font-size: 14px;
+            color: #3b5d50;
+            font-weight: 600;
+        }
+
+        /* Chart Area */
+        .chart-area {
+            position: absolute;
+            left: 60px;
+            top: 0;
+            right: 0;
+            bottom: 40px;
+            background: linear-gradient(to bottom, #f8fffe 0%, #f0f9f8 100%);
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+        }
+
+        /* Grid Lines */
+        .grid-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+        }
+
+        .grid-line {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e8f4f2;
+        }
+
+        .grid-line:nth-child(1) { top: 20%; }
+        .grid-line:nth-child(2) { top: 40%; }
+        .grid-line:nth-child(3) { top: 60%; }
+        .grid-line:nth-child(4) { top: 80%; }
+
+        /* Chart Data */
+        .chart-data {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: end;
+            padding: 20px;
+            gap: 15px;
+        }
+
+        .data-point {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .data-bar {
+            width: 100%;
+            max-width: 40px;
+            background: linear-gradient(to top, #3b5d50, #4a6b5e);
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .data-point:hover .data-bar {
+            background: linear-gradient(to top, #2a4a3f, #3b5d50);
+            transform: scaleY(1.05);
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #3b5d50;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            margin-bottom: 5px;
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #3b5d50;
+        }
+
+        .data-point:hover .tooltip {
+            opacity: 1;
+        }
+
+        /* X-Axis */
+        .x-axis {
+            position: absolute;
+            bottom: 0;
+            left: 60px;
+            right: 0;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 0 20px;
+        }
+
+        .x-axis-label {
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+        }
+
+        .x-axis-title {
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            color: #3b5d50;
+            font-weight: 600;
+        }
+
+        /* Orders Table */
+        .orders-table {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .table-header {
+            background: #cee6e4;
+            padding: 20px;
+            color: #3b5d50;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        th {
+            background: #f8fffe;
+            color: #3b5d50;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            color: #555;
+        }
+
+        tr:hover {
+            background: #f8fffe;
+        }
+
+        .order-id {
+            color: #3b5d50;
+            font-weight: 600;
+        }
+
+        .amount {
+            color: #3b5d50;
+            font-weight: 600;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-group {
+                justify-content: center;
+            }
+
+            .date-inputs {
+                flex-direction: column;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-container {
+                height: 300px;
+            }
+
+            .card-amount {
+                font-size: 1.8rem;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 10px 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .orders-table {
+                overflow-x: auto;
+            }
+
+            table {
+                min-width: 600px;
+            }
+
+            .y-axis {
+                width: 50px;
+            }
+
+            .chart-area {
+                left: 50px;
+            }
+
+            .x-axis {
+                left: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Sales Report</h1>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters">
+            <form id="filterForm" method="get" action="/admin/dashboard">
+                <div class="filter-group">
+                    <button class="filter-btn" name="filterType" value="yearly">Yearly</button>
+                    <button class="filter-btn" name="filterType" value="monthly">Monthly</button>
+                    <button class="filter-btn" name="filterType" value="weekly">Weekly</button>
+                </div>
+                <div class="filter-group">
+                    <span style="color: #3b5d50; font-weight: 500;">Custom Date:</span>
+                    <div class="date-inputs">
+                        <input type="date" name="startDate" class="date-input">
+                        <span style="color: #666;">to</span>
+                        <input type="date" name="endDate" class="date-input">
+                        <!-- <button class="filter-btn" name="filterType" value="custom">Apply</button> -->
+                         <button type="button" class="filter-btn" onclick="submitCustomDate()">Apply</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="summary-grid">
+            <div class="summary-card revenue">
+                <div class="card-header">
+                    <div class="card-title">Total Revenue</div>
+                    <div class="card-icon">💰</div>
+                </div>
+                <div class="card-amount">₹<%= totalRevenue.toLocaleString() %></div>
+                <div class="card-subtitle">Based on filtered data</div>
+            </div>
+            <div class="summary-card sales">
+                <div class="card-header">
+                    <div class="card-title">Total Sales</div>
+                    <div class="card-icon">📊</div>
+                </div>
+                <div class="card-amount"><%= totalSales %></div>
+                <div class="card-subtitle">Orders Delivered</div>
+            </div>
+        </div>
+
+        <!-- Chart Section -->
+        <div class="chart-section">
+            <div class="chart-header">
+                <h3 class="chart-title">📊 Sales Overview</h3>
+                <p class="chart-subtitle">Sales performance (last 7 months)</p>
+            </div>
+            <canvas id="salesChart"></canvas>
+        </div>
+
+        <!-- Orders Table -->
+        <div class="orders-table">
+            <div class="table-header">
+                📋 Recent Orders
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Final Amount</th>
+                        <th>Order Date</th>
+                        <th>User Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% recentOrders.forEach(order => { %>
+                        <tr>
+                            <td class="order-id"><%= order.orderId %></td>
+                            <td class="amount">₹<%= order.finalAmount.toLocaleString() %></td>
+                            <td><%= new Date(order.createdOn).toLocaleDateString('en-IN') %></td>
+                            <td><%= order.userId ? order.userId.name : 'Unknown' %></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        const chartData = <%- JSON.stringify(chartData) %>;
+
+        const labels = chartData.map(item => {
+            const month = item._id.month.toString().padStart(2, '0');
+            return `${month}-${item._id.year}`;
+        });
+
+        const data = chartData.map(item => item.totalAmount);
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Total Revenue (₹)',
+                    data: data,
+                    backgroundColor: '#3b5d50'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '₹' + value.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script> -->
+
+
+// Replace the existing script section with this updated version
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Chart.js code
+    const ctx = document.getElementById('salesChart').getContext('2d');
+    const chartData = <%- JSON.stringify(chartData) %>;
+
+    const labels = chartData.map(item => {
+        const month = item._id.month.toString().padStart(2, '0');
+        return `${month}-${item._id.year}`;
+    });
+
+    const data = chartData.map(item => item.totalAmount);
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Total Revenue (₹)',
+                data: data,
+                backgroundColor: '#3b5d50'
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return '₹' + value.toLocaleString();
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Custom date submission function
+    function submitCustomDate() {
+        const startDate = document.querySelector('input[name="startDate"]').value;
+        const endDate = document.querySelector('input[name="endDate"]').value;
         
+        if (!startDate || !endDate) {
+            alert('Please select both start and end dates');
+            return;
+        }
+        
+        if (new Date(startDate) > new Date(endDate)) {
+            alert('Start date cannot be later than end date');
+            return;
+        }
+        
+        // Create URL with query parameters
+        const url = new URL(window.location.origin + '/admin/dashboard');
+        url.searchParams.set('filterType', 'custom');
+        url.searchParams.set('startDate', startDate);
+        url.searchParams.set('endDate', endDate);
+        
+        // Navigate to the URL
+        window.location.href = url.toString();
+    }
+
+    // Handle other filter buttons
+    document.querySelectorAll('.filter-btn[name="filterType"]').forEach(button => {
+        // Remove active class from all buttons
+        const allButtons = document.querySelectorAll('.filter-btn');
+        allButtons.forEach(btn => btn.classList.remove('active'));
+        
+        // Add active class to current filter if it matches URL params
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentFilter = urlParams.get('filterType');
+        if (currentFilter && button.value === currentFilter) {
+            button.classList.add('active');
+        }
+        
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Remove active class from all buttons
+            allButtons.forEach(btn => btn.classList.remove('active'));
+            
+            // Add active class to clicked button
+            this.classList.add('active');
+            
+            // Create URL with filter parameter
+            const url = new URL(window.location.origin + '/admin/dashboard');
+            url.searchParams.set('filterType', this.value);
+            
+            // Navigate to the URL
+            window.location.href = url.toString();
+        });
+    });
+
+    // Set default active button if no filter is selected
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentFilter = urlParams.get('filterType');
+    if (!currentFilter) {
+        // Default to yearly filter
+        document.querySelector('.filter-btn[value="yearly"]').classList.add('active');
+    }
+
+    // Populate date inputs if custom filter is active
+    if (currentFilter === 'custom') {
+        const startDate = urlParams.get('startDate');
+        const endDate = urlParams.get('endDate');
+        if (startDate) document.querySelector('input[name="startDate"]').value = startDate;
+        if (endDate) document.querySelector('input[name="endDate"]').value = endDate;
+    }
+</script>
+
+</body>
+
+  
+</html>
         <%- include('partials/admin/footer.ejs')  %>
     </main>
     <%- include('partials/admin/scriptTags.ejs') %>
 </body>
 
 </html>
+
+
