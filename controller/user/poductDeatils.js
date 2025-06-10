@@ -50,9 +50,7 @@ const getProductListPage = async (req, res) => {
         isBlocked:{$ne:true}
       };
   
-      await Product.updateMany({quantity:{$lt:5}},
-        {isBlocked:true}
-      ) 
+   
 
 
       if (search && search.trim()) {

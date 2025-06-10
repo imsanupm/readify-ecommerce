@@ -3,17 +3,49 @@ const code  = require('../../helpers/user/statusCode');
 const Coupen = require('../../models/admin/coupen');
 
 
+
+
 const getCoupenPage = async (req, res) => {
   try {
-    const coupenDatas = await Coupen.find({}).sort({ createdAt: -1 });
-    res.render('coupen', { 
-     datas: coupenDatas 
-    }); // pass data to the view
+    const ITEMS_PER_PAGE = 3; 
+    const page = parseInt(req.query.page) || 1;
+
+    const totalCoupons = await Coupen.countDocuments({});
+    const totalPages = Math.ceil(totalCoupons / ITEMS_PER_PAGE);
+
+    const coupenDatas = await Coupen.find({})
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * ITEMS_PER_PAGE)
+      .limit(ITEMS_PER_PAGE);
+
+   
+    const paginationLinks = [];
+    for (let i = 1; i <= totalPages; i++) {
+      paginationLinks.push({
+        number: i,
+        isActive: i === page
+      });
+    }
+
+    res.render('coupen', {
+      datas: coupenDatas,
+      currentPage: page,
+      totalPages: totalPages,
+      hasPrevPage: page > 1,
+      hasNextPage: page < totalPages,
+      prevPage: page - 1,
+      nextPage: page + 1,
+      paginationLinks: paginationLinks
+    });
+
   } catch (error) {
     console.log('Error during getCoupenPage:', error);
     res.status(400).json({ message: "Internal server error", success: false });
   }
 };
+
+
+
 
     const addCoupen = async (req, res) => {
         try {
@@ -30,6 +62,61 @@ const getCoupenPage = async (req, res) => {
             isActive,
             maxUsagePerUser,
           } = req.body;
+
+
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          const start = new Date(startDate);
+          const end = new Date(expiryDate);
+          start.setHours(0, 0, 0, 0);
+          end.setHours(0, 0, 0, 0);
+      
+          
+          if (!code || typeof code !== 'string') {
+            return res.status(400).json({ success: false, message: 'Coupon code is required.' });
+          }
+          const hasLetters = /[a-zA-Z]/.test(code);
+          const numbers = code.match(/\d/g);
+          if (!hasLetters || !numbers || numbers.length < 2) {
+            return res.status(400).json({
+              success: false,
+              message: 'Coupon code must contain letters and at least 2 numbers.',
+            });
+          }
+      
+          
+          if (discount === undefined || isNaN(discount) || parseFloat(discount) <= 0) {
+            return res.status(400).json({ success: false, message: 'Discount must be a positive number.' });
+          }
+      
+          
+          if (minPurchase !== undefined && (isNaN(minPurchase) || parseFloat(minPurchase) < 0)) {
+            return res.status(400).json({ success: false, message: 'Minimum purchase must be a non-negative number.' });
+          }
+      
+         
+          if (!startDate || isNaN(start)) {
+            return res.status(400).json({ success: false, message: 'Start date is required and must be valid.' });
+          }
+          if (start < today) {
+            return res.status(400).json({ success: false, message: 'Start date cannot be in the past.' });
+          }
+      
+         
+          if (!expiryDate || isNaN(end)) {
+            return res.status(400).json({ success: false, message: 'Expiry date is required and must be valid.' });
+          }
+          if (end < today) {
+            return res.status(400).json({ success: false, message: 'Expiry date cannot be in the past.' });
+          }
+          if (end < start) {
+            return res.status(400).json({ success: false, message: 'Expiry date must be after start date.' });
+          }
+      
+          
+          if (maxUsagePerUser !== undefined && (!Number.isInteger(Number(maxUsagePerUser)) || maxUsagePerUser <= 0)) {
+            return res.status(400).json({ success: false, message: 'Max usage per user must be a positive integer.' });
+          }
       
           const savedData = new Coupen({
             code,
@@ -71,6 +158,8 @@ const getCoupenPage = async (req, res) => {
             maxUsagePerUser,
             isActive
           } = req.body;
+
+          
       
        
           const coupenData = await Coupen.findOne({ code: coupenId });

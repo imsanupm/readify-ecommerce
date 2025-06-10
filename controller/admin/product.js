@@ -247,9 +247,12 @@ const editProduct = async (req, res) => {
       description,
       imagesToDelete,
       imagesToKeep,
-      offerPrice,
+      offer,
     } = req.body;
-
+    //  console.log('offerPrice==========',req.body);
+     const offerPrice = offer
+     console.log('offer amunt=========',offer);
+     
     const existingProduct = await productModel.findById(productId);
     if (!existingProduct) {
       console.log('Product not found');
@@ -327,7 +330,7 @@ const editProduct = async (req, res) => {
       });
     }
  
-
+//offer logic
     let productOffer = offerPrice;
 if (!offerPrice || offerPrice < 1) {
   productOffer = 0;

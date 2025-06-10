@@ -113,6 +113,9 @@ router.get('/wallet',userAuth.isUserSignedIn,wallet.getWallet);
 
 
 
+
+
+
 router.get('/auth/google',passport.authenticate('google',{scope:['profile','email']}))
 
 router.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/signup' }), (req, res) => {

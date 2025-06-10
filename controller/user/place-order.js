@@ -19,14 +19,6 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET
 });
 
-// console.log("key", {
-//   key_id: process.env.RAZORPAY_KEY_ID,
-//   key_secret: process.env.RAZORPAY_KEY_SECRET
-// })
-
-
-
-
 
 
 const placeNewOrder = async (req, res) => {
@@ -283,16 +275,16 @@ const createRazorpayOrder = async (
 ) => {
  
   try {
-    // Create Razorpay order
+   
     const order = await razorpay.orders.create({
-      amount: Math.round(totalAmount * 100), // Convert to paise
+      amount: Math.round(totalAmount * 100), 
       currency: 'INR',
       receipt: "user",
-      payment_capture: 1 // Auto-capture
+      payment_capture: 1 
     });
-    // `receipt_${userId}_${Date.now().toString().slice(3)}`,
+    
 
-    // Store order details in session
+  
     console.log('address data in create order',addressData)
     req.session.razorpayOrder = {
       userId,
@@ -369,7 +361,6 @@ const verifyRazorpayPayment = async (req, res) => {
       return res.status(401).json({ success: false, message: 'User not authenticated' });
     }
 
-    // Verify Razorpay signature
     const generatedSignature = crypto
       .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
       .update(`${razorpay_order_id}|${razorpay_payment_id}`)
@@ -379,7 +370,7 @@ const verifyRazorpayPayment = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Invalid payment signature' });
     }
 
-    // Retrieve order details from session
+   
     const orderDetails = req.session.razorpayOrder;
     if (!orderDetails) {
       return res.status(400).json({ success: false, message: 'Order details not found' });
@@ -403,9 +394,7 @@ const verifyRazorpayPayment = async (req, res) => {
     } = orderDetails;
     console.log('req-body-address',addressId)
     console.log('orderDetails address',address)
-    // if (userId !== storedUserId || paymentMethod !== storedPaymentMethod || addressId !== address._id?.toString()) {
-    //   return res.status(400).json({ success: false, message: 'Order data mismatch' });
-    // }
+   
     if (userId !== storedUserId) {
       return res.status(400).json({ success: false, message: 'User ID mismatch', debug: { userId, storedUserId } });
     }
@@ -420,7 +409,7 @@ const verifyRazorpayPayment = async (req, res) => {
     
 
 
-    // Create order (mirroring cod)
+    
     const orderData = new Order({
       userId,
       userData,
@@ -446,7 +435,7 @@ const verifyRazorpayPayment = async (req, res) => {
     console.log('order data in verify payment',orderData)
     await orderData.save();
 
-    // Update coupon usage (mirroring cod)
+    // make it reusable function after the review
     if (couponDetail && couponApplied) {
       const updatedCoupon = await Coupon.findOneAndUpdate(
         { _id: couponDetail },

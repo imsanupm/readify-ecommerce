@@ -1,1047 +1,938 @@
-<%-include('partials/user/header')%>
+<!DOCTYPE HTML>
+<html lang="en">
+
+<%-include('partials/admin/headTag.ejs') %>
+<body>
+    <div class="screen-overlay"></div>
+   <%- include('partials/admin/navBar.ejs') %>
+    <main class="main-wrap">
+       <%- include('partials/admin/header.ejs') %> 
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Order Details</title>
-<style>
-    /* Base styles and reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
-    "Helvetica Neue", sans-serif;
-  line-height: 1.6;
-  color: #333;
-  background-color: #f5f5f7;
-  /* Space for sidebar */
-  padding-left: 250px;
-}
-
-/* Container for the order details */
-.order-container {
-  max-width: 1200px;
-  margin: 2rem auto;
-  padding: 2rem;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-}
-
-/* Order header */
-.order-header {
-  margin-bottom: 2rem;
-}
-
-.order-title {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.order-title h1 {
-  font-size: 1.8rem;
-  font-weight: 600;
-  color: #1a1a1a;
-}
-
-.order-status {
-  padding: 0.4rem 1rem;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
-.order-status.delivered {
-  background-color: #e6f7e6;
-  color: #2e7d32;
-}
-
-.order-id-date {
-  display: flex;
-  gap: 2rem;
-}
-
-.order-info {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.label {
-  font-weight: 500;
-  color: #666;
-}
-
-/* Grid layout for order sections */
-.order-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-/* Order sections */
-.order-section {
-  background-color: #fff;
-  border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.order-section h2 {
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-  color: #1a1a1a;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid #eee;
-}
-
-.info-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.info-item {
-  display: flex;
-  flex-direction: column;
-}
-
-.address p {
-  margin-bottom: 0.25rem;
-}
-
-/* Status timeline */
-.status-timeline {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  position: relative;
-  padding-left: 1.5rem;
-}
-
-.status-timeline::before {
-  content: "";
-  position: absolute;
-  left: 7px;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background-color: #e0e0e0;
-}
-
-.status-item {
-  display: flex;
-  gap: 1rem;
-  position: relative;
-}
-
-.status-marker {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background-color: #e0e0e0;
-  position: absolute;
-  left: -1.5rem;
-  top: 4px;
-}
-
-.status-item.completed .status-marker {
-  background-color: #4caf50;
-}
-
-.status-content {
-  display: flex;
-  flex-direction: column;
-}
-
-.status-title {
-  font-weight: 500;
-}
-
-.status-date {
-  font-size: 0.85rem;
-  color: #666;
-}
-
-/* Order items */
-.items-table {
-  border: 1px solid #eee;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.table-header {
-  display: grid;
-  grid-template-columns: 3fr 1fr 1fr 1fr;
-  background-color: #f9f9f9;
-  padding: 1rem;
-  font-weight: 600;
-  border-bottom: 1px solid #eee;
-}
-
-.table-row {
-  display: grid;
-  grid-template-columns: 3fr 1fr 1fr 1fr;
-  padding: 1rem;
-  border-bottom: 1px solid #eee;
-  align-items: center;
-}
-
-.table-row:last-child {
-  border-bottom: none;
-}
-
-.product-info {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.product-image {
-  width: 60px;
-  height: 60px;
-  background-color: #f5f5f7;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.image-placeholder {
-  font-weight: bold;
-  color: #999;
-}
-
-.product-details {
-  display: flex;
-  flex-direction: column;
-}
-
-.product-name {
-  font-weight: 500;
-}
-
-.product-description {
-  font-size: 0.85rem;
-  color: #666;
-}
-
-/* Order summary */
-.order-summary-container {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 2rem;
-}
-
-.order-summary {
-  width: 100%;
-  max-width: 400px;
-}
-
-.summary-items {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.summary-item {
-  display: flex;
-  justify-content: space-between;
-}
-
-.summary-divider {
-  height: 1px;
-  background-color: #eee;
-  margin: 0.5rem 0;
-}
-
-.summary-item.total {
-  font-weight: 600;
-  font-size: 1.1rem;
-  margin-top: 0.5rem;
-}
-
-.summary-item.discount .value {
-  color: #4caf50;
-}
-
-/* Order actions */
-.order-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.btn {
-  padding: 0.75rem 1.5rem;
-  border-radius: 6px;
-  font-weight: 500;
-  cursor: pointer;
-  border: none;
-  transition: all 0.2s ease;
-}
-
-.btn-primary {
-  background-color: #1a73e8;
-  color: white;
-}
-
-.btn-primary:hover {
-  background-color: #1557b0;
-}
-
-.btn-secondary {
-  background-color: #f5f5f7;
-  color: #333;
-}
-
-.btn-secondary:hover {
-  background-color: #e5e5e7;
-}
-
-/* Responsive adjustments */
-@media (max-width: 1024px) {
-  body {
-    padding-left: 200px;
-  }
-}
-
-@media (max-width: 768px) {
-  body {
-    padding-left: 0;
-  }
-
-  .order-container {
-    margin: 0;
-    padding: 1rem;
-    border-radius: 0;
-    box-shadow: none;
-  }
-
-  .order-id-date {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .table-header,
-  .table-row {
-    grid-template-columns: 2fr 1fr 1fr 1fr;
-  }
-
-  .product-image {
-    width: 40px;
-    height: 40px;
-  }
-}
-
-@media (max-width: 640px) {
-  .order-title {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-  }
-
-  .table-header {
-    display: none;
-  }
-
-  .table-row {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    padding: 1rem;
-  }
-
-  .col {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-  }
-
-  .col::before {
-    content: attr(data-label);
-    font-weight: 500;
-  }
-
-  .product-col {
-    flex-direction: column;
-  }
-
-  .product-col::before {
-    margin-bottom: 0.5rem;
-  }
-
-  .order-actions {
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .btn {
-    width: 100%;
-  }
-}
-
-
-.product-thumb {
-  width: 60px;
-  height: 60px;
-  object-fit: cover;
-  border-radius: 8px;
-}
-
-
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coupon Management - Admin Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background-color: #3b5d50;
+            color: white;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-radius: 8px;
+        }
+
+        .header h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 300;
+        }
+
+        /* Action Bar */
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #3b5d50;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background-color: #3b5d50;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2d4a3f;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: white;
+            color: #3b5d50;
+            border: 2px solid #3b5d50;
+        }
+
+        .btn-secondary:hover {
+            background-color: #3b5d50;
+            color: white;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+
+        .btn-warning {
+            background-color: #ffc107;
+            color: #333;
+        }
+
+        .btn-warning:hover {
+            background-color: #e0a800;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 12px;
+        }
+
+        /* Table Styles */
+        .table-container {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .table th {
+            background-color: #3b5d50;
+            color: white;
+            font-weight: 500;
+            position: sticky;
+            top: 0;
+        }
+
+        .table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-inactive {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-expired {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            background-color: #3b5d50;
+            color: white;
+            padding: 20px;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close:hover {
+            opacity: 0.7;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3b5d50;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        /* Action Buttons in Table */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* Statistics Cards */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            color: #3b5d50;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .stat-card p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .action-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                max-width: none;
+            }
+
+            .table-container {
+                overflow-x: auto;
+            }
+
+            .table {
+                min-width: 800px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                margin: 10% auto;
+                width: 95%;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn-sm {
+                padding: 10px 16px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .modal-content {
+                margin: 5% auto;
+            }
+
+            .modal-body {
+                padding: 20px;
+            }
+        }
+
+        /* Loading and Empty States */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 10px;
+            color: #3b5d50;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .pagination button {
+            padding: 8px 12px;
+            border: 1px solid #3b5d50;
+            background: white;
+            color: #3b5d50;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .pagination button:hover,
+        .pagination button.active {
+            background: #3b5d50;
+            color: white;
+        }
+
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
 </head>
 <body>
-  
-  <div class="order-container">
-    <div class="order-header">
-      <div class="order-title">
-        <h1>Order Details</h1>
-        <span class="order-status delivered"><%=orderData.status%></span>
-      </div>
-      <div class="order-id-date">
-        <div class="order-info">
-          <span class="label">Order Number:</span>
-          <span class="value">#ORD-12345</span>
-        </div>
-        <div class="order-info">
-          <span class="label">Order Date:</span>
-          <span class="value">May 21, 2025</span>
-        </div>
-      </div>
-    </div>
+    <div class="container">
+   
 
-    <div class="order-grid">
-      <div class="order-section customer-info">
-        <h2>Customer Information</h2>
-        <div class="info-group">
-          <div class="info-item">
-            <span class="label">Name:  </span>
-            <span class="label"> <%=orderData.userData.name%></span>
-          </div>
-          <div class="info-item">
-            <span class="label">Email:</span>
-            <span class="value"><%=orderData.userData.email%></span>
-          </div>
-          <div class="info-item">
-            <span class="label">Phone:</span>
-            <span class="value"><%=orderData.userData.phone%></span>
-          </div>
-        </div>
-      </div>
-
-      <div class="order-section shipping-info">
-        <h2>Shipping Address</h2>
-        <div class="info-group">
-          <div class="address">
-            <p><%= orderData.address.house_flat %>, <%= orderData.address.street %></p>
-            <p><%= orderData.address.village_city %>, <%= orderData.address.district %> - <%= orderData.address.pincode %></p>
-            <p><%= orderData.address.state %></p>
-          </div>
-          <div class="info-item">
-            <span class="label">Shipping Method:</span>
-            <span class="value">Express Delivery</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="order-section payment-info">
-        <h2>Payment Information</h2>
-        <div class="info-group">
-          <div class="info-item">
-            <span class="label">Payment Method:</span>
-            <span class="value">COD</span>
-          </div>
-          <div class="info-item">
-            <span class="label">Billing Address:</span>
-            <span class="value">Same as shipping</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="order-section order-status-info">
-        <h2>Order Status</h2>
-        <div class="status-timeline">
-          <div class="status-item completed">
-            <div class="status-marker"></div>
-            <div class="status-content">
-              <span class="status-title">Order Placed</span>
-              <span class="status-date">May 21, 2025 - 10:30 AM</span>
+        <!-- Statistics Cards -->
+        <!-- <div class="stats-container">
+            <div class="stat-card">
+                <h3>24</h3>
+                <p>Total Coupons</p>
             </div>
-          </div>
-          <div class="status-item completed">
-            <div class="status-marker"></div>
-            <div class="status-content">
-              <span class="status-title">Processing</span>
-              <span class="status-date">May 21, 2025 - 11:45 AM</span>
+            <div class="stat-card">
+                <h3>18</h3>
+                <p>Active Coupons</p>
             </div>
-          </div>
-          <div class="status-item completed">
-            <div class="status-marker"></div>
-            <div class="status-content">
-              <span class="status-title">Shipped</span>
-              <span class="status-date">May 22, 2025 - 09:15 AM</span>
+            <div class="stat-card">
+                <h3>3</h3>
+                <p>Expired Coupons</p>
             </div>
-          </div>
-          <div class="status-item completed">
-            <div class="status-marker"></div>
-            <div class="status-content">
-              <span class="status-title">Delivered</span>
-              <span class="status-date">May 24, 2025 - 02:30 PM</span>
+            <div class="stat-card">
+                <h3>3</h3>
+                <p>Blocked Coupons</p>
             </div>
-          </div>
+        </div> -->
+
+        <!-- Action Bar -->
+        <div class="action-bar">
+            <!-- <div class="search-box">
+                <input type="text" placeholder="Search coupons by code..." id="searchInput">
+                <button class="btn btn-secondary">Search</button>
+            </div> -->
+            <button class="btn btn-primary" onclick="openModal('addCouponModal')">
+                + Add New Coupon
+            </button>
         </div>
-      </div>
+
+        <!-- Coupons Table -->
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <!-- <th>Type</th> -->
+                        <th>Discount</th>
+                        <th>Min Purchase</th>
+                        <th>Start Date</th>
+                        <th>Expiry Date</th>
+                        <th>Status</th>
+                        <th>Usage</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% datas.forEach(coupon => { %>
+                      <tr>
+                        <td><strong><%= coupon.code %></strong></td>
+                        <!-- <td>Percentage</td> -->
+                        <td><%= coupon.discount %> &#8377;
+                          </td>
+                        <td>$<%= coupon.minPurchase.toFixed(2) %></td>
+                        <td><%= coupon.startDate.toISOString().split('T')[0] %></td>
+                        <td><%= coupon.expiryDate.toISOString().split('T')[0] %></td>
+                        <td>
+                          <% if (coupon.isActive) { %>
+                            <span class="status-badge status-active">Active</span>
+                          <% } else { %>
+                            <span class="status-badge status-blocked">Blocked</span>
+                          <% } %>
+                        </td>
+                        <td>
+                            <% if (coupon.currentUsage === coupon.maxUsage) { %>
+                              <span style="color: red;">Limit Exceeded</span>
+                            <% } else { %>
+                              <%= coupon.currentUsage %>/<%= coupon.maxUsage %>
+                            <% } %>
+                          </td>
+                          
+                        <td>
+                          <div class="action-buttons">
+                            <button class="btn btn-secondary btn-sm" onclick="editCoupon('<%= coupon.code %>')">Edit</button>
+                            <button 
+                         class="btn btn-sm <%= coupon.isActive ? 'btn-warning' : 'btn-success' %>" 
+                      onclick="toggleCoupon('<%= coupon.code %>', <%= !coupon.isActive %>)">
+                                   <%= coupon.isActive ? 'Block' : 'Unblock' %>
+                                     </button>
+
+                            <button class="btn btn-danger btn-sm" onclick="deleteCoupon('<%= coupon.code %>')">Delete</button>
+                          </div>
+                        </td>
+                      </tr>
+                    <% }) %>
+                  </tbody>
+                  
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <!-- <div class="pagination">
+            <button disabled>Previous</button>
+            <button class="active">1</button>
+            <button>2</button>
+            <button>3</button>
+            <button>Next</button>
+        </div> -->
+
+        <%- include('partials/admin/pagination.ejs')  %>
     </div>
 
-    <div class="order-section order-items">
-      <h2>Order Items</h2>
-      <div class="items-table">
-        <div class="table-header">
-          <div class="col product-col">Product</div>
-          <div class="col price-col">Price</div>
-          <div class="col quantity-col">Quantity</div>
-          <div class="col total-col">Total</div>
-        </div>
-    
-        <% orderData.orderedItems.forEach(item => { %>
-          <div class="table-row">
-            <div class="col product-col">
-              <div class="product-info">
-                <div class="product-image">
-                  <% if (item.productDetails.images && item.productDetails.images.length > 0) { %>
-                    <img src="<%= item.productDetails.images[0] %>" alt="<%= item.productDetails.name %>" class="product-thumb">
-
-                  <% } else { %>
-                    <div class="image-placeholder">PH</div>
-                  <% } %>
-                </div>
-                <div class="product-details">
-                  <div class="product-name"><%= item.productDetails.name %></div>
-                  <% if (item.productDetails.category) { %>
-                    <div class="product-description"><%= item.productDetails.category %></div>
-                  <% } %>
-                </div>
-              </div>
+    <!-- Add Coupon Modal -->
+    <div id="addCouponModal" class="modal" >
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Coupon</h2>
+                <span class="close" onclick="closeModal('addCouponModal')">&times;</span>
             </div>
-            <div class="col price-col">₹<%= item.price.toFixed(2) %></div>
-            <div class="col quantity-col"><%= item.quantity %></div>
-            <div class="col total-col">₹<%= (item.price * item.quantity).toFixed(2) %></div>
-          </div>
-        <% }); %>
-      </div>
-    </div>
+            <div class="modal-body">
+                <form id="addCouponForm" novalidate>
+                    <div class="form-group">
+                        <label for="couponCode">Coupon Code *</label>
+                        <input type="text" id="couponCode" class="form-control" placeholder="Enter coupon code" required>
+                    </div>
 
-    
+                    <div class="form-row">
+                     
+                        <div class="form-group">
+                            <label for="discountValue">Enter Flat Amount *</label>
+                            <input type="number" id="discountValue" class="form-control" placeholder="Enter discount value" min="0" step="0.01" required>
+                        </div>
+                    </div>
 
-    <!-- <div class="order-summary-container">
-      <div class="order-section order-summary">
-        <h2>Order Summary</h2>
-        <div class="summary-items">
-          <div class="summary-item">
-            <span class="label">Subtotal:</span>
-            <span class="value">$129.96</span>
-          </div>
-          <div class="summary-item">
-            <span class="label">Shipping:</span>
-            <span class="value">$8.99</span>
-          </div>
-          <div class="summary-item">
-            <span class="label">Tax:</span>
-            <span class="value">$10.40</span>
-          </div>
-          <div class="summary-item discount">
-            <span class="label">Discount:</span>
-            <span class="value">-$5.00</span>
-          </div>
-          <div class="summary-divider"></div>
-          <div class="summary-item total">
-            <span class="label">Total:</span>
-            <span class="value">$144.35</span>
-          </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="minPurchase">Minimum Purchase</label>
+                            <input type="number" id="minPurchase" class="form-control" placeholder="0.00" min="0" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="maxDiscount">DUMMY YOU HAVE TO REMOVE</label>
+                            <input type="number" id="maxDiscount" class="form-control" placeholder="0.00" min="0" step="0.01">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="startDate">Start Date *</label>
+                            <input type="date" id="startDate" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="expiryDate">Expiry Date *</label>
+                            <input type="date" id="expiryDate" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="maxUsagePerUser">Max Usage Per User</label>
+                        <input type="number" id="maxUsagePerUser" class="form-control" placeholder="10" min="1" value="10">
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="isActive" checked>
+                            <label for="isActive">Active</label>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 15px; justify-content: flex-end; margin-top: 30px;">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('addCouponModal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Create Coupon</button>
+                    </div>
+                </form>
+            </div>
         </div>
-      </div>
-    </div> -->
+    </div>
 
+    <!-- Edit Coupon Modal -->
+    <div id="editCouponModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Coupon</h2>
+                <span class="close" onclick="closeModal('editCouponModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="editCouponForm" novalidate>
+                    <div class="form-group">
+                        <label for="editCouponCode">Coupon Code *</label>
+                        <input type="text" id="editCouponCode" class="form-control" readonly>
+                    </div>
 
+                    <div class="form-row">
+                        <!-- <div class="form-group">
+                            <label for="editDiscountType">Discount Type *</label>
+                            <select id="editDiscountType" class="form-control" required>
+                                <option value="percentage">Percentage</option>
+                                <option value="fixed">Fixed Amount</option>
+                            </select>
+                        </div> -->
+                        <div class="form-group">
+                            <label for="editDiscountValue">Discount Value *</label>
+                            <input type="number" id="editDiscountValue" class="form-control" min="0" step="0.01" required>
+                        </div>
+                    </div>
 
-    <div class="order-summary-container">
-      <div class="order-section order-summary">
-        <h2>Order Summary</h2>
-        <div class="summary-items">
-          <div class="summary-item">
-            <span class="label">Subtotal:</span>
-            <span class="value">₹<%= subTotal %></span>
-          </div>
-          <div class="summary-item">
-            <span class="label">Shipping:</span>
-            <span class="value">₹<%= deliveryCharge %></span>
-          </div>
-          <div class="summary-item">
-            <span class="label">Tax:</span>
-            <span class="value">₹<%= gstAmount %></span>
-          </div>
-          <% if (orderData.discount && orderData.discount > 0) { %>
-          <div class="summary-item discount">
-            <span class="label">Discount:</span>
-            <span class="value">-₹<%= orderData.discount.toFixed(2) %></span>
-          </div>
-          <% } %>
-          <div class="summary-divider"></div>
-          <div class="summary-item total">
-            <span class="label">Total:</span>
-            <span class="value">₹<%= totalPrice %></span>
-          </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editMinPurchase">Minimum Purchase</label>
+                            <input type="number" id="editMinPurchase" class="form-control" min="0" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="editMaxDiscount">DUMMY YOU HAVE TO REMOVE</label>
+                            <input type="number" id="editMaxDiscount" class="form-control" min="0" step="0.01">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editStartDate">Start Date *</label>
+                            <input type="date" id="editStartDate" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editExpiryDate">Expiry Date *</label>
+                            <input type="date" id="editExpiryDate" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editMaxUsagePerUser">Max Usage Per User</label>
+                        <input type="number" id="editMaxUsagePerUser" class="form-control" min="1">
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="editIsActive">
+                            <label for="editIsActive">Active</label>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 15px; justify-content: flex-end; margin-top: 30px;">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('editCouponModal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Update Coupon</button>
+                    </div>
+                </form>
+            </div>
         </div>
-      </div>
     </div>
+    <script>
+        const couponList = <%- JSON.stringify(datas) %>;
+    </script>
     
-    <div class="order-actions">
-      <a href="/downloadInvoice/<%= orderData.orderId %>" class="btn btn-secondary">Download Invoice</a>
+    <script>
+        // Modal Functions
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
 
-      <button class="btn btn-primary">Track Order</button>
-    </div>
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
 
-    <% if (orderData.status === "Delivered") { %>
-      <div class="order-actions">
-        <button
-          class="btn btn-danger"
-          style="background-color: #3b5d50; border-color: #3b5d50; color: white;"
-          onclick="openReturnModal('<%= orderData.orderId %>')">
-          Return Order
-        </button>
-      </div>
-    <% } else if (orderData.status !== "Returned"&&orderData.status !=="Cancelled"&&orderData.status!=="Shipped") { %>
-      <div class="order-actions">
-        <button
-          class="btn btn-danger"
-          style="background-color: #dc3545; border-color: #dc3545; color: white;"
-          onclick="showCancelConfirmation('<%= orderData.orderId %>')">
-          Cancel Order
-        </button>
-      </div>
-    <% } %>
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+
+      
+
+        function editCoupon(couponCode) {
+        const coupon = couponList.find(c => c.code === couponCode);
+        if (!coupon) {
+            alert("Coupon not found!");
+            return;
+        }
+
+        document.getElementById('editCouponCode').value = coupon.code;
+        // document.getElementById('editDiscountType').value = coupon.discountType || 'percentage'; // Uncomment if using
+        document.getElementById('editDiscountValue').value = coupon.discount;
+        document.getElementById('editMinPurchase').value = coupon.minPurchase;
+        document.getElementById('editMaxDiscount').value = coupon.maxDiscount || 0; // Add this field to schema if needed
+        document.getElementById('editStartDate').value = new Date(coupon.startDate).toISOString().split('T')[0];
+        document.getElementById('editExpiryDate').value = new Date(coupon.expiryDate).toISOString().split('T')[0];
+        document.getElementById('editMaxUsagePerUser').value = coupon.maxUsagePerUser;
+        document.getElementById('editIsActive').checked = coupon.isActive;
+
+        openModal('editCouponModal');
+    }
+
     
-    
+        function toggleCoupon(couponCode, activate) {
+    const action = activate ? 'activate' : 'block';
+
+    Swal.fire({
+        title: `Are you sure?`,
+        text: `You are about to ${action} coupon ${couponCode}`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: `Yes, ${action} it!`,
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/admin/coupons/${couponCode}/toggle`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ isActive: activate })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire('Success', data.message, 'success').then(() => location.reload());
+                } else {
+                    Swal.fire('Error', data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error toggling coupon:', error);
+                Swal.fire('Error', 'Something went wrong', 'error');
+            });
+        }
+    });
+}
+
+
+        function deleteCoupon(couponCode) {
+    Swal.fire({
+        title: `Are you sure?`,
+        text: `Delete coupon ${couponCode}? This action cannot be undone.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/admin/coupons/${couponCode}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire('Deleted!', data.message, 'success').then(() => {
+                        setTimeout(()=>{
+                            location.reload();
+                        },200)
+                       
+                    });
+                } else {
+                    Swal.fire('Error!', data.message || 'Something went wrong.', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error deleting coupon:', error);
+                Swal.fire('Error!', 'An error occurred while deleting the coupon.', 'error');
+            });
+        }
+    });
+}
+
+        // Form Submissions
+        document.getElementById('addCouponForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Controller route: POST /admin/coupons
+            
+            const formData = {
+                code: document.getElementById('couponCode').value,
+               // discountType: document.getElementById('discountType').value,
+                discount: document.getElementById('discountValue').value,
+                minPurchase: document.getElementById('minPurchase').value,
+               // maxDiscount: document.getElementById('maxDiscount').value,
+                startDate: document.getElementById('startDate').value,
+                expiryDate: document.getElementById('expiryDate').value,
+                maxUsagePerUser: document.getElementById('maxUsagePerUser').value,
+                isActive: document.getElementById('isActive').checked
+            };
+            
+            console.log('Creating coupon:', formData);
+            // Make a fetch here 
+            fetch('/admin/addCoupens', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => { throw err; });
+        }
+        return response.json();
+    })
+    .then(data => {
+       
+        Swal.fire({
+            icon: 'success',
+            title: 'Coupon Created',
+            text: 'The coupon was added successfully!',
+            confirmButtonColor: '#3b5d50'
+        }).then(() =>  {
+            closeModal('addCouponModal');
+            location.reload();
+        });
+    })
+    .catch(error => {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text:  data.message||'Failed to create coupon.',
+            confirmButtonColor: '#d33'
+        }).then(()=>{
+            location.reload()
+        })
+    });
+            
+        });
+
     
 
 
-    <!-- Modal -->  
-<div id="returnModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color: rgba(0,0,0,0.5); z-index:1000;">
-  <div style="background-color:white; margin:10% auto; padding:20px; border-radius:8px; width:90%; max-width:400px; position:relative;">
-    <h5 style="color:#3b5d50;">Return Reason</h5>
-    <textarea id="returnReason" class="form-control" placeholder="Enter reason..." style="margin-bottom: 15px;"></textarea>
-    <div style="display: flex; justify-content: flex-end;">
-      <button onclick="closeReturnModal()" style="margin-right: 10px; background:#ccc; border:none; padding: 8px 12px; border-radius: 5px;">Cancel</button>
-      <button onclick="submitReturn()" style="background-color:#3b5d50; color:white; border:none; padding: 8px 12px; border-radius: 5px;">Submit</button>
-    </div>
-  </div>
-</div>
-    
-    
-  </div>
+        document.getElementById('editCouponForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const couponCode = document.getElementById('editCouponCode').value;
+        const formData = {
+            // discountType: document.getElementById('editDiscountType').value, // Uncomment if using
+            discount: document.getElementById('editDiscountValue').value,
+            minPurchase: document.getElementById('editMinPurchase').value,
+            maxDiscount: document.getElementById('editMaxDiscount').value,
+            startDate: document.getElementById('editStartDate').value,
+            expiryDate: document.getElementById('editExpiryDate').value,
+            maxUsagePerUser: document.getElementById('editMaxUsagePerUser').value,
+            isActive: document.getElementById('editIsActive').checked
+        };
+
+        try {
+            const res = await fetch(`/admin/updateCoupen/${couponCode}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            const result = await res.json();
+
+            if (res.ok && result.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Coupon Updated',
+                    text: result.message || 'The coupon was updated successfully!',
+                    timer: 2000,
+                    showConfirmButton: false
+                }).then(() => {
+                    closeModal('editCouponModal');
+                    location.reload();
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Update Failed',
+                    text: result.message || 'Something went wrong!',
+                });
+            }
+        } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'An error occurred while updating the coupon.',
+            });
+            console.error('Fetch error:', error);
+        }
+    });
+
+        // Search Functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            // Controller route: GET /admin/coupons?search={query}
+            const query = e.target.value;
+            console.log('Searching for:', query);
+            // Make AJAX call to filter coupons
+        });
+
+        // Set default dates
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('startDate').value = today;
+            
+            const nextYear = new Date();
+            nextYear.setFullYear(nextYear.getFullYear() + 1);
+            document.getElementById('expiryDate').value = nextYear.toISOString().split('T')[0];
+        });
+    </script>
+
+
+
+
+
+
 </body>
 </html>
 
 
-<%-include('partials/user/footer')%>
-
-
-
-<!-- <script>
-  let currentOrderId = null;
-
-  function openReturnModal(orderId) {
-    currentOrderId = orderId;
-    document.getElementById('returnModal').style.display = 'block';
-  }
-
-  function closeReturnModal() {
-    document.getElementById('returnModal').style.display = 'none';
-    document.getElementById('returnReason').value = '';
-  }
-
-  async function submitReturn() {
-    const reason = document.getElementById('returnReason').value.trim();
-
-    if (!reason) {
-      alert("Please enter a reason.");
-      return;
-    }
-     console.log("order id ==========",currentOrderId)
-    try {
-      const response = await fetch(`/returnOrder/${currentOrderId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ reason })
-      });
-
-      if (response.ok) {
-        alert("Return request submitted.");
-        closeReturnModal();
-        location.reload();
-      } else {
-        alert("Failed to submit return.");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Error submitting return.");
-    }
-  }
-</script> -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-
-
-<style>
-  /* Custom SweetAlert Styles */
-  .custom-swal-popup {
-    border-radius: 12px !important;
-    box-shadow: 0 10px 30px rgba(59, 93, 80, 0.2) !important;
-    border: 2px solid #f8f9fa !important;
-  }
-  
-  .custom-swal-title {
-    font-size: 1.5rem !important;
-    font-weight: 600 !important;
-    color: #3b5d50 !important;
-    margin-bottom: 0.5rem !important;
-  }
-  
-  .custom-swal-title-success {
-    font-size: 1.5rem !important;
-    font-weight: 600 !important;
-    color: #28a745 !important;
-    margin-bottom: 0.5rem !important;
-  }
-  
-  .custom-swal-title-error {
-    font-size: 1.5rem !important;
-    font-weight: 600 !important;
-    color: #dc3545 !important;
-    margin-bottom: 0.5rem !important;
-  }
-  
-  .custom-swal-content {
-    font-size: 1rem !important;
-    color: #6c757d !important;
-    line-height: 1.5 !important;
-  }
-  
-  .custom-swal-confirm {
-    background-color: #3b5d50 !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 8px !important;
-    padding: 12px 24px !important;
-    font-weight: 500 !important;
-    font-size: 1rem !important;
-    transition: all 0.3s ease !important;
-    margin: 0 8px !important;
-  }
-  
-  .custom-swal-confirm:hover {
-    background-color: #2d4a40 !important;
-    transform: translateY(-1px) !important;
-    box-shadow: 0 4px 12px rgba(59, 93, 80, 0.3) !important;
-  }
-  
-  .custom-swal-cancel {
-    background-color: #f8f9fa !important;
-    color: #6c757d !important;
-    border: 2px solid #dee2e6 !important;
-    border-radius: 8px !important;
-    padding: 12px 24px !important;
-    font-weight: 500 !important;
-    font-size: 1rem !important;
-    transition: all 0.3s ease !important;
-    margin: 0 8px !important;
-  }
-  
-  .custom-swal-cancel:hover {
-    background-color: #e9ecef !important;
-    border-color: #adb5bd !important;
-    transform: translateY(-1px) !important;
-    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.2) !important;
-  }
-  
-  .custom-swal-error-button {
-    background-color: #dc3545 !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 8px !important;
-    padding: 12px 24px !important;
-    font-weight: 500 !important;
-    font-size: 1rem !important;
-    transition: all 0.3s ease !important;
-    margin: 0 8px !important;
-  }
-  
-  .custom-swal-error-button:hover {
-    background-color: #c82333 !important;
-    transform: translateY(-1px) !important;
-    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3) !important;
-  }
-  
-  /* Warning icon customization */
-  .swal2-icon.swal2-warning {
-    border-color: #3b5d50 !important;
-    color: #3b5d50 !important;
-  }
-  
-  .swal2-icon.swal2-warning .swal2-icon-content {
-    color: #3b5d50 !important;
-  }
-  
-  /* Success icon customization */
-  .swal2-icon.swal2-success {
-    border-color: #28a745 !important;
-  }
-  
-  .swal2-icon.swal2-success .swal2-success-ring {
-    border-color: #28a745 !important;
-  }
-  
-  .swal2-icon.swal2-success .swal2-success-fix {
-    background-color: #28a745 !important;
-  }
-  
-  .swal2-icon.swal2-success [class^='swal2-success-line'] {
-    background-color: #28a745 !important;
-  }
-  
-  /* Error icon customization */
-  .swal2-icon.swal2-error {
-    border-color: #dc3545 !important;
-  }
-  
-  .swal2-icon.swal2-error .swal2-x-mark-line-left,
-  .swal2-icon.swal2-error .swal2-x-mark-line-right {
-    background-color: #dc3545 !important;
-  }
-  
-  /* Loading spinner customization */
-  .swal2-loader {
-    border-color: #3b5d50 transparent #3b5d50 transparent !important;
-  }
-  
-  /* Animation enhancements */
-  .swal2-popup.swal2-show {
-    animation: swal2-show 0.3s ease-out !important;
-  }
-  
-  @keyframes swal2-show {
-    0% {
-      transform: scale(0.7) translateY(-20px);
-      opacity: 0;
-    }
-    100% {
-      transform: scale(1) translateY(0);
-      opacity: 1;
-    }
-  }
-  </style>
-  
-
-<script>
-  async function showCancelConfirmation(orderId) {
-    const result = await Swal.fire({
-      title: 'Cancel Order?',
-      text: 'Are you sure you want to cancel this order? This action cannot be undone.',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3b5d50',
-      cancelButtonColor: '#6c757d',
-      confirmButtonText: 'Yes, Cancel Order',
-      cancelButtonText: 'Keep Order',
-      reverseButtons: true,
-      background: '#ffffff',
-      color: '#333333',
-      customClass: {
-        popup: 'custom-swal-popup',
-        title: 'custom-swal-title',
-        content: 'custom-swal-content',
-        confirmButton: 'custom-swal-confirm',
-        cancelButton: 'custom-swal-cancel'
-      },
-      buttonsStyling: false,
-      focusConfirm: false,
-      focusCancel: true
-    });
-  
-    if (result.isConfirmed) {
-      // Show loading state
-      Swal.fire({
-        title: 'Cancelling Order...',
-        text: 'Please wait while we process your request.',
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        showConfirmButton: false,
-        background: '#ffffff',
-        color: '#333333',
-        customClass: {
-          popup: 'custom-swal-popup'
-        },
-        didOpen: () => {
-          Swal.showLoading();
-        }
-      });
-  
-      try {
-      
-
-      
-        const response = await fetch(`/cancelOrder/${orderId}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ orderId: orderId })
-        });
-  
-        const data = await response.json();
-  
-        // Handle the response
-        if (response.ok && data.success) {
-          // Success response
-          await Swal.fire({
-            title: 'Order Cancelled!',
-            text: data.message || 'Your order has been successfully cancelled.',
-            icon: 'success',
-            confirmButtonColor: '#3b5d50',
-            confirmButtonText: 'OK',
-            background: '#ffffff',
-            color: '#333333',
-            customClass: {
-              popup: 'custom-swal-popup',
-              title: 'custom-swal-title-success',
-              content: 'custom-swal-content',
-              confirmButton: 'custom-swal-confirm'
-            },
-            buttonsStyling: false
-          });
-  
-          // Optional: Refresh the page or update the UI
-          setTimeout(() => {
-            window.location.reload();
-          }, 300);
-  
-        } else {
-          // Error response
-          await Swal.fire({
-            title: 'Cancellation Failed',
-            text: data.message || 'Unable to cancel your order. Please try again.',
-            icon: 'error',
-            confirmButtonColor: '#dc3545',
-            confirmButtonText: 'Try Again',
-            background: '#ffffff',
-            color: '#333333',
-            customClass: {
-              popup: 'custom-swal-popup',
-              title: 'custom-swal-title-error',
-              content: 'custom-swal-content',
-              confirmButton: 'custom-swal-error-button'
-            },
-            buttonsStyling: false
-          });
-        }
-    
-      } catch (error) {
-        console.error('Error cancelling order:', error);
         
-        // Network or other error
-        await Swal.fire({
-          title: 'Connection Error',
-          text: 'Unable to connect to the server. Please check your internet connection and try again.',
-          icon: 'error',
-          confirmButtonColor: '#dc3545',
-          confirmButtonText: 'OK',
-          background: '#ffffff',
-          color: '#333333',
-          customClass: {
-            popup: 'custom-swal-popup',
-            title: 'custom-swal-title-error',
-            content: 'custom-swal-content',
-            confirmButton: 'custom-swal-error-button'
-          },
-          buttonsStyling: false
-        });
-      }
-    }
-  }
-  </script>
+        <%- include('partials/admin/footer.ejs')  %>
+    </main>
+    <%- include('partials/admin/scriptTags.ejs') %>
+</body>
+
+</html>
 
 
-
-<script>
-  let currentOrderId = null;
-
-  function openReturnModal(orderId) {
-    currentOrderId = orderId;
-    document.getElementById('returnModal').style.display = 'block';
-  }
-
-  function closeReturnModal() {
-    document.getElementById('returnModal').style.display = 'none';
-    document.getElementById('returnReason').value = '';
-  }
-
-  async function submitReturn() {
-    const reason = document.getElementById('returnReason').value.trim();
-
-    if (!reason) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Missing Reason',
-        text: 'Please enter a reason for return.',
-      });
-      return;
-    }
-
-    try {
-      const response = await fetch(`/returnOrder/${currentOrderId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ reason })
-      });
-
-      if (response.ok) {
-        await Swal.fire({
-          icon: 'success',
-          title: 'Return Submitted',
-          text: 'Your return request has been submitted successfully.',
-        });
-        closeReturnModal();
-        location.reload();
-      } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Failed',
-          text:'Failed to submit return. Please try again later.',
-        });
-      }
-    } catch (err) {
-      console.error(err);
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Something went wrong while submitting the return.',
-      });
-    }
-  }
-</script>

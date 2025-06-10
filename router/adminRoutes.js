@@ -39,7 +39,7 @@ adminRouter.get('/searchProduct',productController.searchUser)
 adminRouter.get('/editProduct/:id',productController.getProductEdit);
 adminRouter.post('/edit-product/:id', uploads.array('productImages', 10) ,updateValidation.validateProductEdit, productController.editProduct);
 adminRouter.delete('/remove-image/:id',productController.removeProductImage)
-// adminRouter.put('/updateImg',uploads.array("productImages",10),productController.updateImg)
+
 
 //order management
 adminRouter.get('/listOrder',listPage.getOrderListPage)
@@ -52,7 +52,7 @@ adminRouter.patch('/return-order/:orderId',specificReturn.returnOrder);
 adminRouter.patch('/returns/approve/:id', orderReturn.approveReturn);
 
 //coupen management
-adminRouter.get('/coupenManagement',coupen.getCoupenPage)
+adminRouter.get('/admin/coupenManagement',coupen.getCoupenPage)
 adminRouter.post('/addCoupens',coupen.addCoupen);
 adminRouter.put('/updateCoupen/:coupenId',updateCoupenValidate.validateCouponUpdate,coupen.updateCoupen)
 adminRouter.put('/coupons/:couponCode/toggle',coupen.coupenStatus);

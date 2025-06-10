@@ -389,6 +389,7 @@
                       <button class="btn btn-cart" onclick="addToCart('<%= product._id %>')">
                         <i class="fas fa-shopping-cart"></i> Add to Cart
                       </button>
+                      
                     </div>
                     <button class="btn btn-remove" onclick="removeFromWishlist('<%= item._id %>')">
                       <i class="fas fa-heart-broken"></i> Remove from Wishlist
@@ -604,8 +605,7 @@ function removeFromWishlist(itemId) {
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'same-origin' // Include cookies if using sessions
-      })
+        credentials: 'same-origin' 
       .then(response => {
         if (!response.ok) {
           return response.json().then(err => Promise.reject(err));
@@ -656,5 +656,56 @@ function removeFromWishlist(itemId) {
 }
 
   </script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+async function addToCart(productId) {
+  try {
+    const response = await fetch('/addToCart', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ productId })
+    });
+
+    const data = await response.json();
+
+    if (response.ok && data.success) {
+      Swal.fire({
+        title: 'Added to Cart!',
+        text: 'Do you want to view your cart?',
+        icon: 'success',
+        showCancelButton: true,
+        confirmButtonText: 'Go to Cart',
+        cancelButtonText: 'Continue Shopping'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = '/cart';
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          window.location.reload();
+        }
+      });
+    } else {
+      Swal.fire({
+        title: 'Error!',
+        text: data.message || 'Something went wrong.',
+        icon: 'error'
+      });
+    }
+  } catch (error) {
+    console.error('Add to cart error:', error);
+    Swal.fire({
+      title: 'Error!',
+      text: 'Could not add product to cart.',
+      icon: 'error'
+    });
+  }
+}
+
+</script>
+
 </body>
 </html>
