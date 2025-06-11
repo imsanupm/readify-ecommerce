@@ -20,7 +20,10 @@ const saleReport = require('../controller/admin/sales-report');
 adminRouter.get('/adminlogin',authMiddleware.isUserLoggedOut, adminController.loadLogin);
 adminRouter.post('/adminlogin',adminController.verifyAdmin);
 adminRouter.get('/logout',adminController.logout)
-adminRouter.get('/dashboard',authMiddleware.adminAuth,adminDashBoard.loadDashBoard);
+
+
+adminRouter.get('/dashboard',authMiddleware.adminAuth,adminDashBoard.adminController.getDashboard);
+adminRouter.get('/api/dashboard-data',adminDashBoard.adminController.getDashboardData)
 //user management
 adminRouter.get('/userList',authMiddleware.adminAuth,adminUserList.loadUserList);
 adminRouter.post("/toggle-status", adminUserList.toggleUserStatus);
