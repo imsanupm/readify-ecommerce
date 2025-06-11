@@ -627,7 +627,7 @@
 
 // Replace the existing script section with this updated version
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     // Chart.js code
     const ctx = document.getElementById('salesChart').getContext('2d');
@@ -735,6 +735,131 @@
     }
 
     // Populate date inputs if custom filter is active
+    if (currentFilter === 'custom') {
+        const startDate = urlParams.get('startDate');
+        const endDate = urlParams.get('endDate');
+        if (startDate) document.querySelector('input[name="startDate"]').value = startDate;
+        if (endDate) document.querySelector('input[name="endDate"]').value = endDate;
+    }
+</script> -->
+
+
+
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('salesChart').getContext('2d');
+    const chartData = <%- JSON.stringify(chartData) %>;
+    const filterType = '<%= filterType %>';
+
+    const labels = chartData.map(item => {
+        if (filterType === 'weekly' || (filterType === 'custom' && chartData.length <= 31)) {
+            const date = new Date(item._id.year, item._id.month - 1, item._id.day);
+            return date.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' });
+        } else if (filterType === 'monthly') {
+            return `Week ${item._id.week}`;
+        } else {
+            return `${item._id.month.toString().padStart(2, '0')}-${item._id.year}`;
+        }
+    });
+
+    const revenueData = chartData.map(item => item.totalAmount);
+    const salesCountData = chartData.map(item => item.totalOrders);
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Total Revenue (₹)',
+                    data: revenueData,
+                    backgroundColor: '#3b5d50'
+                },
+                {
+                    label: 'Total Sales',
+                    data: salesCountData,
+                    backgroundColor: '#9bb3ac'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return value;
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+<script>
+    function submitCustomDate() {
+        const startDate = document.querySelector('input[name="startDate"]').value;
+        const endDate = document.querySelector('input[name="endDate"]').value;
+
+        if (!startDate || !endDate) {
+            alert('Please select both start and end dates');
+            return;
+        }
+
+        if (new Date(startDate) > new Date(endDate)) {
+            alert('Start date cannot be later than end date');
+            return;
+        }
+
+        const url = new URL(window.location.origin + '/admin/dashboard');
+        url.searchParams.set('filterType', 'custom');
+        url.searchParams.set('startDate', startDate);
+        url.searchParams.set('endDate', endDate);
+
+        window.location.href = url.toString();
+    }
+
+    document.querySelectorAll('.filter-btn[name="filterType"]').forEach(button => {
+        const allButtons = document.querySelectorAll('.filter-btn');
+        allButtons.forEach(btn => btn.classList.remove('active'));
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentFilter = urlParams.get('filterType');
+        if (currentFilter && button.value === currentFilter) {
+            button.classList.add('active');
+        }
+
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            allButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+
+            const url = new URL(window.location.origin + '/admin/dashboard');
+            url.searchParams.set('filterType', this.value);
+
+            window.location.href = url.toString();
+        });
+    });
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentFilter = urlParams.get('filterType');
+    if (!currentFilter) {
+        document.querySelector('.filter-btn[value="yearly"]').classList.add('active');
+    }
+
     if (currentFilter === 'custom') {
         const startDate = urlParams.get('startDate');
         const endDate = urlParams.get('endDate');
