@@ -1,10 +1,19 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
+<html lang="en">
+
+<%-include('partials/admin/headTag.ejs') %>
+<body>
+    <div class="screen-overlay"></div>
+   <%- include('partials/admin/navBar.ejs') %>
+    <main class="main-wrap">
+       <%- include('partials/admin/header.ejs') %> 
+             <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title || 'Admin Dashboard' %></title>
-    <style>
+    <!-- <style>
         /* Keep all the existing CSS styles from the previous version */
         * {
             margin: 0;
@@ -466,7 +475,490 @@
                 min-width: 100px;
             }
         }
-    </style>
+    </style> -->
+
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: rgb(206, 230, 228);
+        color: #333;
+        line-height: 1.6;
+    }
+
+    .dashboard-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+        min-height: 100vh;
+    }
+
+    /* Header Styles */
+    .dashboard-header {
+        background: linear-gradient(135deg, rgb(176, 210, 208) 0%, rgb(206, 230, 228) 100%);
+        color: #333;
+        padding: 40px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    .dashboard-header h1 {
+        font-size: 2.8rem;
+        margin-bottom: 10px;
+        font-weight: 700;
+        text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+    }
+
+    .dashboard-header p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        font-weight: 300;
+    }
+
+    /* Filter Section */
+    .filter-section {
+        background: white;
+        padding: 25px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(206, 230, 228, 0.5);
+    }
+
+    .filter-section h3 {
+        margin-bottom: 20px;
+        color: #333;
+        font-size: 1.3rem;
+        text-align: center;
+    }
+
+    .filter-buttons {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .filter-btn {
+        padding: 12px 25px;
+        border: 2px solid rgb(176, 210, 208);
+        background: white;
+        color: #333;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 600;
+        font-size: 1rem;
+        min-width: 120px;
+        text-align: center;
+    }
+
+    .filter-btn:hover {
+        background: rgb(206, 230, 228);
+        color: #333;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(176, 210, 208, 0.4);
+    }
+
+    .filter-btn.active {
+        background: rgb(176, 210, 208);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(176, 210, 208, 0.4);
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+        margin-bottom: 40px;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        text-align: center;
+        transition: all 0.3s ease;
+        border-left: 5px solid rgb(176, 210, 208);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-card:nth-child(2) { border-left-color: rgb(156, 190, 188); }
+    .stat-card:nth-child(3) { border-left-color: rgb(186, 220, 218); }
+    .stat-card:nth-child(4) { border-left-color: rgb(166, 200, 198); }
+    .stat-card:nth-child(5) { border-left-color: rgb(196, 225, 223); }
+    .stat-card:nth-child(6) { border-left-color: rgb(176, 210, 208); }
+
+    .stat-value {
+        font-size: 2.8rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 10px;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .stat-label {
+        font-size: 1.1rem;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 500;
+    }
+
+    /* Charts Section */
+    .charts-section {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 30px;
+        margin-bottom: 40px;
+    }
+
+    .chart-container {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(206, 230, 228, 0.3);
+    }
+
+    .chart-title {
+        font-size: 1.8rem;
+        margin-bottom: 25px;
+        color: #333;
+        border-bottom: 3px solid rgb(176, 210, 208);
+        padding-bottom: 15px;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    .chart-canvas {
+        width: 100%;
+        height: 450px;
+        position: relative;
+    }
+
+    .chart-canvas canvas {
+        width: 100% !important;
+        height: 100% !important;
+        display: block;
+    }
+
+    /* Top Items Section */
+    .top-items-section {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+    }
+
+    .top-items-container {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(206, 230, 228, 0.3);
+    }
+
+    .top-items-title {
+        font-size: 1.8rem;
+        margin-bottom: 25px;
+        color: #333;
+        border-bottom: 3px solid rgb(176, 210, 208);
+        padding-bottom: 15px;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    /* Product Item Styles */
+    .top-item {
+        display: flex;
+        align-items: center;
+        padding: 20px 0;
+        border-bottom: 1px solid #eee;
+        transition: all 0.3s ease;
+    }
+
+    .top-item:hover {
+        background: rgba(206, 230, 228, 0.2);
+        padding-left: 15px;
+        border-radius: 10px;
+        transform: translateX(5px);
+    }
+
+    .top-item:last-child {
+        border-bottom: none;
+    }
+
+    .item-rank {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: rgb(156, 190, 188);
+        margin-right: 20px;
+        min-width: 30px;
+        text-align: center;
+    }
+
+    .item-image {
+        width: 60px;
+        height: 60px;
+        border-radius: 10px;
+        object-fit: cover;
+        margin-right: 20px;
+        border: 2px solid rgb(206, 230, 228);
+        transition: all 0.3s ease;
+    }
+
+    .item-image:hover {
+        transform: scale(1.1);
+        border-color: rgb(176, 210, 208);
+    }
+
+    .item-info {
+        flex: 1;
+        padding-right: 15px;
+    }
+
+    .item-name {
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 8px;
+        font-size: 1.1rem;
+    }
+
+    .item-details {
+        font-size: 0.9rem;
+        color: #666;
+        margin-bottom: 5px;
+    }
+
+    .item-brand {
+        font-size: 0.85rem;
+        color: #888;
+        font-style: italic;
+    }
+
+    .item-stats {
+        text-align: right;
+        min-width: 120px;
+    }
+
+    .item-quantity {
+        font-size: 1.4rem;
+        font-weight: bold;
+        color: rgb(156, 190, 188);
+        margin-bottom: 5px;
+    }
+
+    .item-revenue {
+        font-size: 1rem;
+        color: #666;
+        font-weight: 500;
+    }
+
+    .item-orders {
+        font-size: 0.85rem;
+        color: #888;
+    }
+
+    /* Category Item Styles */
+    .category-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 0;
+        border-bottom: 1px solid #eee;
+        transition: all 0.3s ease;
+    }
+
+    .category-item:hover {
+        background: rgba(206, 230, 228, 0.2);
+        padding-left: 15px;
+        border-radius: 10px;
+        transform: translateX(5px);
+    }
+
+    .category-item:last-child {
+        border-bottom: none;
+    }
+
+    .category-info {
+        flex: 1;
+        display: flex;
+        align-items: center;
+    }
+
+    .category-rank {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: rgb(156, 190, 188);
+        margin-right: 20px;
+        min-width: 30px;
+        text-align: center;
+    }
+
+    .category-details {
+        flex: 1;
+        padding-right: 15px;
+    }
+
+    .category-name {
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 8px;
+        font-size: 1.1rem;
+    }
+
+    .category-description {
+        font-size: 0.9rem;
+        color: #666;
+        margin-bottom: 5px;
+    }
+
+    .category-products {
+        font-size: 0.85rem;
+        color: #888;
+    }
+
+    .category-stats {
+        text-align: right;
+        min-width: 120px;
+    }
+
+    /* Loading and Error States */
+    .loading {
+        text-align: center;
+        padding: 60px;
+        font-size: 1.3rem;
+        color: #666;
+    }
+
+    .loading::after {
+        content: '';
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid rgb(176, 210, 208);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-left: 10px;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .error {
+        background: rgba(255, 235, 235, 0.8);
+        color: #c33;
+        padding: 25px;
+        border-radius: 10px;
+        margin: 20px 0;
+        border: 1px solid #fcc;
+        text-align: center;
+        font-weight: 500;
+    }
+
+    .no-data {
+        text-align: center;
+        padding: 60px;
+        color: #666;
+        font-style: italic;
+        font-size: 1.1rem;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+        .charts-section {
+            grid-template-columns: 1fr;
+        }
+        
+        .top-items-section {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-container {
+            padding: 15px;
+        }
+
+        .dashboard-header {
+            padding: 30px 20px;
+        }
+
+        .dashboard-header h1 {
+            font-size: 2.2rem;
+        }
+
+        .filter-buttons {
+            justify-content: center;
+        }
+
+        .filter-btn {
+            min-width: 100px;
+            padding: 10px 20px;
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+        }
+
+        .chart-canvas {
+            height: 350px;
+        }
+
+        .item-image {
+            width: 50px;
+            height: 50px;
+        }
+
+        .item-rank, .category-rank {
+            font-size: 1.2rem;
+            margin-right: 15px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .dashboard-header h1 {
+            font-size: 1.8rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+        }
+
+        .chart-title, .top-items-title {
+            font-size: 1.4rem;
+        }
+
+        .item-stats, .category-stats {
+            min-width: 100px;
+        }
+    }
+</style>
+
 </head>
 <body>
     <div class="dashboard-container">
@@ -1357,3 +1849,12 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
+
+        <%- include('partials/admin/footer.ejs')  %>
+    </main>
+    <%- include('partials/admin/scriptTags.ejs') %>
+</body>
+
+</html>
+
+
