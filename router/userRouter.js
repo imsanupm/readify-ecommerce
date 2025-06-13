@@ -22,6 +22,21 @@ const returnCancel = require('../controller/user/return-request');
 const wallet = require('../controller/user/wallet');
 const profile = require('../controller/user/referral');
 const cancelOrder = require('../controller/user/cancel-order')
+const {specificCancel} = require('../controller/user/specific-cancel')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 router.get('/', userController.loadHomepage);
@@ -97,6 +112,9 @@ router.patch('/returnOrder/:orderId', returnCancel.returnRequest);
 //wallet management
 router.get('/wallet',userAuth.isUserSignedIn,wallet.getWallet);
 
+
+//specific cancel
+router.post('/specif/order/cancel', specificCancel)
 
 
 

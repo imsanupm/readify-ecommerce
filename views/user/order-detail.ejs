@@ -543,6 +543,27 @@ body {
   }
 }
 </style>
+<style>
+  .table-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #ccc;
+}
+
+.col {
+  padding: 8px;
+}
+
+/* Ensure .action-col is aligned right and not squished */
+.action-col {
+  min-width: 100px;
+  text-align: right;
+}
+
+</style>
+
 
 </head>
 
@@ -659,31 +680,48 @@ body {
           <div class="col total-col">Total</div>
         </div>
     
-        <% orderData.orderedItems.forEach(item => { %>
-          <div class="table-row">
-            <div class="col product-col">
-              <div class="product-info">
-                <div class="product-image">
-                  <% if (item.productDetails.images && item.productDetails.images.length > 0) { %>
-                    <img src="<%= item.productDetails.images[0] %>" alt="<%= item.productDetails.name %>" class="product-thumb">
+     <% orderData.orderedItems.forEach((item, index) => { %>
+  <div class="table-row" id="product-<%= item.product %>">
+    <div class="col product-col">
+      <div class="product-info">
+        <div class="product-image">
+          <% if (item.productDetails.images && item.productDetails.images.length > 0) { %>
+            <img src="<%= item.productDetails.images[0] %>" alt="<%= item.productDetails.name %>" class="product-thumb">
+          <% } else { %>
+            <div class="image-placeholder">PH</div>
+          <% } %>
+        </div>
+        <div class="product-details">
+          <div class="product-name"><%= item.productDetails.name %></div>
+          <% if (item.productDetails.category) { %>
+            <div class="product-description"><%= item.productDetails.category %></div>
+          <% } %>
+        </div>
+      </div>
+    </div>
 
-                  <% } else { %>
-                    <div class="image-placeholder">PH</div>
-                  <% } %>
-                </div>
-                <div class="product-details">
-                  <div class="product-name"><%= item.productDetails.name %></div>
-                  <% if (item.productDetails.category) { %>
-                    <div class="product-description"><%= item.productDetails.category %></div>
-                  <% } %>
-                </div>
-              </div>
-            </div>
-            <div class="col price-col">₹<%= item.price.toFixed(2) %></div>
-            <div class="col quantity-col"><%= item.quantity %></div>
-            <div class="col total-col">₹<%= (item.price * item.quantity).toFixed(2) %></div>
-          </div>
-        <% }); %>
+    <div class="col price-col">₹<%= item.price.toFixed(2) %></div>
+    <div class="col quantity-col"><%= item.quantity %></div>
+    <div class="col total-col">₹<%= (item.price * item.quantity).toFixed(2) %></div>
+
+    <!-- Action column on the right -->
+    <div class="col action-col">
+      <% if (item.status === 'Processing') { %>
+        <button 
+  class="cancel-btn" 
+  data-product-id="<%= item.product %>" 
+  data-order-id="<%= orderData._id %>" 
+  style="background-color: #dc3545; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer;">
+  Cancel
+</button>
+
+      <% } else { %>
+        <%= item.status %>
+      <% } %>
+    </div>
+  </div>
+<% }); %>
+
       </div>
     </div>
 
@@ -934,6 +972,43 @@ body {
       }
     }
   </script>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.cancel-btn').forEach(button => {
+      button.addEventListener('click', async (e) => {
+        const productId = button.getAttribute('data-product-id');
+        const orderId = button.getAttribute('data-order-id');
+
+        const confirmed = confirm("Are you sure you want to cancel this item?");
+        if (!confirmed) return;
+
+        try {
+          const res = await fetch(`/specif/order/cancel`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ orderId, productId })
+          });
+
+          const data = await res.json();
+          if (data.success) {
+            alert("Item cancelled successfully.");
+            location.reload();
+          } else {
+            alert(data.message || "Cancellation failed.");
+          }
+        } catch (err) {
+          console.error(err);
+          alert("An error occurred while cancelling the item.");
+        }
+      });
+    });
+  });
+</script>
+
 </body>
 </html>
 
