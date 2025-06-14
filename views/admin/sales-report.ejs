@@ -1143,7 +1143,7 @@
     const startDateInput = document.getElementById('startDate');
     const endDateInput = document.getElementById('endDate');
 
-    let selectedPeriod = 'year';
+    let selectedPeriod = 'today';
 
     periodButtons.forEach(button => {
         button.addEventListener('click', () => {
@@ -1177,7 +1177,7 @@
             ...(selectedPeriod === 'custom' && { startDate, endDate })
         });
 
-        fetch(`/admin/sales-report?${queryParams.toString()}`)
+        fetch(`/admin/sales-summary?${queryParams.toString()}`)
             .then(res => res.json())
             .then(response => {
                 updateReportTable(response.reportData);
@@ -1232,7 +1232,7 @@
         });
 
         try {
-            const response = await fetch(`/admin/sales-report?${queryParams.toString()}`);
+            const response = await fetch(`/admin/sales-summary?${queryParams.toString()}`);
             const { reportData } = await response.json();
 
             if (!reportData || reportData.length === 0) {
@@ -1283,7 +1283,7 @@
         });
 
         try {
-            const response = await fetch(`/admin/sales-report?${queryParams.toString()}`);
+            const response = await fetch(`/admin/sales-summary?${queryParams.toString()}`);
             const { reportData } = await response.json();
 
             if (!reportData || reportData.length === 0) {

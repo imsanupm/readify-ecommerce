@@ -1,8 +1,14 @@
+
+
+
+
 const moment = require('moment');
 const Order = require('../../models/user/order-schema');
 
-const getSalesReport = async (req, res) => {
+const salesSummary = async (req, res) => {
     try {
+        console.log('you are getting call from the getSales report===============');
+        
         const { period, startDate, endDate } = req.query;
         let fromDate, toDate;
 
@@ -69,6 +75,9 @@ const getSalesReport = async (req, res) => {
 
 const getSalesRepor = async (req,res) => {
     try {
+
+        console.log('your data for rendering from sales report================');
+        
         const result = await Order.aggregate([
             {
               $match: { status: 'Delivered' } // Only delivered orders
@@ -120,6 +129,6 @@ const getSalesRepor = async (req,res) => {
 
 
 module.exports = {
-    getSalesReport,
+    salesSummary,
     getSalesRepor
 }

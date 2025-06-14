@@ -194,74 +194,74 @@ const specificCancel = async (req, res) => {
 
 
 
-const specifCancelCOD = async (req, res, order, productId) => {
-  try {
-    const product = await Product.findById(productId);
-    if (!product) {
-      return res.status(code.HttpStatus.NOT_FOUND).json({ message: "Product not found", success: false });
-    }
+// const specifCancelCOD = async (req, res, order, productId) => {
+//   try {
+//     const product = await Product.findById(productId);
+//     if (!product) {
+//       return res.status(code.HttpStatus.NOT_FOUND).json({ message: "Product not found", success: false });
+//     }
 
-    const cancelItem = order.orderedItems.find((item) => item.product.toString() === productId);
-    if (!cancelItem) {
-      return res.status(code.HttpStatus.NOT_FOUND).json({ message: "Item not found in order", success: false });
-    }
+//     const cancelItem = order.orderedItems.find((item) => item.product.toString() === productId);
+//     if (!cancelItem) {
+//       return res.status(code.HttpStatus.NOT_FOUND).json({ message: "Item not found in order", success: false });
+//     }
 
-    if (cancelItem.status === 'Cancelled') {
-      return res.status(code.HttpStatus.BAD_REQUEST).json({ message: "Item already cancelled", success: false });
-    }
+//     if (cancelItem.status === 'Cancelled') {
+//       return res.status(code.HttpStatus.BAD_REQUEST).json({ message: "Item already cancelled", success: false });
+//     }
 
-    if (cancelItem.status === 'Delivered') {
-      return res.status(code.HttpStatus.BAD_REQUEST).json({ message: "Cannot cancel delivered item", success: false });
-    }
+//     if (cancelItem.status === 'Delivered') {
+//       return res.status(code.HttpStatus.BAD_REQUEST).json({ message: "Cannot cancel delivered item", success: false });
+//     }
 
-    if (order.status === 'Cancelled') {
-      return res.status(code.HttpStatus.BAD_REQUEST).json({ message: "Order already cancelled", success: false });
-    }
+//     if (order.status === 'Cancelled') {
+//       return res.status(code.HttpStatus.BAD_REQUEST).json({ message: "Order already cancelled", success: false });
+//     }
 
-    const productQuantity = cancelItem.quantity;
-    const itemPrice = cancelItem.price;
+//     const productQuantity = cancelItem.quantity;
+//     const itemPrice = cancelItem.price;
 
-    const itemTotal = itemPrice * productQuantity; // only base amount, no tax/coupon
-    const totalQuantity = order.totalQuantity || 1;
+//     const itemTotal = itemPrice * productQuantity; // only base amount, no tax/coupon
+//     const totalQuantity = order.totalQuantity || 1;
 
-    // Per-product coupon share (if any)
-    let couponPerProduct = 0;
-    if (order.couponApplied && order.couponAmount > 0) {
-      couponPerProduct = order.couponAmount / totalQuantity;
-    }
+//     // Per-product coupon share (if any)
+//     let couponPerProduct = 0;
+//     if (order.couponApplied && order.couponAmount > 0) {
+//       couponPerProduct = order.couponAmount / totalQuantity;
+//     }
 
-    const refundAmount = itemTotal + (couponPerProduct * productQuantity); // full deduction for finalAmount
+//     const refundAmount = itemTotal + (couponPerProduct * productQuantity); // full deduction for finalAmount
 
-    // 1. Update item status
-    cancelItem.status = 'Cancelled';
-    cancelItem.cancelledAt = new Date();
+//     // 1. Update item status
+//     cancelItem.status = 'Cancelled';
+//     cancelItem.cancelledAt = new Date();
 
-    // 2. Update order fields
-    order.finalAmount = Math.max(0, order.finalAmount - refundAmount); // with coupon
-    order.totalPrice = Math.max(0, order.totalPrice - itemTotal); // only base value
-    order.totalQuantity = Math.max(0, order.totalQuantity - productQuantity);
+//     // 2. Update order fields
+//     order.finalAmount = Math.max(0, order.finalAmount - refundAmount); // with coupon
+//     order.totalPrice = Math.max(0, order.totalPrice - itemTotal); // only base value
+//     order.totalQuantity = Math.max(0, order.totalQuantity - productQuantity);
 
-    // 3. Restore stock
-    product.quantity += productQuantity;
-    await product.save();
+//     // 3. Restore stock
+//     product.quantity += productQuantity;
+//     await product.save();
 
-    // 4. Cancel order if all items are cancelled
-    const allItemsCancelled = order.orderedItems.every(item => item.status === 'Cancelled');
-    if (allItemsCancelled) {
-      order.status = 'Cancelled';
-      order.cancellationDate = new Date();
-      order.cancellationReason = 'All items cancelled by user';
-    }
+//     // 4. Cancel order if all items are cancelled
+//     const allItemsCancelled = order.orderedItems.every(item => item.status === 'Cancelled');
+//     if (allItemsCancelled) {
+//       order.status = 'Cancelled';
+//       order.cancellationDate = new Date();
+//       order.cancellationReason = 'All items cancelled by user';
+//     }
 
-    await order.save();
+//     await order.save();
 
-    return res.status(code.HttpStatus.OK).json({ message: "Item cancelled successfully", success: true });
+//     return res.status(code.HttpStatus.OK).json({ message: "Item cancelled successfully", success: true });
 
-  } catch (error) {
-    console.log('error during specifCancelCOD', error);
-    res.status(code.HttpStatus.INTERNAL_SERVER_ERROR).json({ message: "Internal Server error. Please try again.", success: false });
-  }
-};
+//   } catch (error) {
+//     console.log('error during specifCancelCOD', error);
+//     res.status(code.HttpStatus.INTERNAL_SERVER_ERROR).json({ message: "Internal Server error. Please try again.", success: false });
+//   }
+// };
 
 
 
@@ -340,6 +340,79 @@ const specifCancelCOD = async (req, res, order, productId) => {
 //     return res.status(code.HttpStatus.INTERNAL_SERVER_ERROR).json({ message: "Internal Server error. Please try again.", success: false });
 //   }
 // };
+
+
+
+const specifCancelCOD = async (req, res, order, productId) => {
+  try {
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found", success: false });
+    }
+
+    const cancelItem = order.orderedItems.find((item) => item.product.toString() === productId);
+    if (!cancelItem) {
+      return res.status(404).json({ message: "Item not found in order", success: false });
+    }
+
+    if (cancelItem.status === 'Cancelled') {
+      return res.status(400).json({ message: "Item already cancelled", success: false });
+    }
+
+    if (cancelItem.status === 'Delivered') {
+      return res.status(400).json({ message: "Cannot cancel delivered item", success: false });
+    }
+
+    if (order.status === 'Cancelled') {
+      return res.status(400).json({ message: "Order already cancelled", success: false });
+    }
+
+    const productQuantity = cancelItem.quantity;
+    const itemPrice = cancelItem.price;
+    const itemTotal = itemPrice * productQuantity;
+
+    // Remove from totalPrice (basic amount only)
+    order.totalPrice = Math.max(0, order.totalPrice - itemTotal);
+
+    // Adjust quantity
+    order.totalQuantity = Math.max(0, order.totalQuantity - productQuantity);
+
+    // Restore product stock
+    product.quantity += productQuantity;
+    await product.save();
+
+    // Cancel item
+    cancelItem.status = 'Cancelled';
+    cancelItem.cancelledAt = new Date();
+
+    // Recalculate finalAmount
+    const gstPercentage = 14;
+    const gst = (order.totalPrice * gstPercentage) / 100;
+    const shipping = order.totalPrice < 1000 && order.totalPrice > 0 ? 49 : 0;
+    const finalAmount = order.totalPrice + gst + shipping - (order.couponAmount || 0);
+     console.log('final Amount===============',finalAmount);
+     
+    
+    order.shippingCharge = shipping;
+    order.finalAmount = Math.max(0, finalAmount);
+
+    // Cancel whole order if needed
+    const allItemsCancelled = order.orderedItems.every(item => item.status === 'Cancelled');
+    if (allItemsCancelled) {
+      order.status = 'Cancelled';
+      order.cancellationDate = new Date();
+      order.cancellationReason = 'All items cancelled by user';
+    }
+
+    await order.save();
+
+    return res.status(200).json({ message: "Item cancelled successfully", success: true });
+
+  } catch (error) {
+    console.log('error during specifCancelCOD', error);
+    return res.status(500).json({ message: "Internal Server error. Please try again.", success: false });
+  }
+};
 
 module.exports = {
     specificCancel
