@@ -52,27 +52,30 @@
                                 <label for="productCategory" class="form-label">Category <span
                                     class="text-danger">*</span></label>
                                 <select class="form-select" id="productCategory" name="category_id" required>
-                                  <% if (categories && categories.length > 0) { %>
-                                    <% categories.forEach(category => { %>
-                                      <option value="<%= category._id %>"
-                                        <%= (category._id && product.category_id && category._id.toString() === product.category_id.toString()) ? 'selected' : '' %>>
-                                        <%= category.name %>
-                                      </option>
-                                    <% }) %>
-                                  <% } else { %>
-                                    <option value="">Categories not fetched</option>
-                                  <% } %>
-                                </select>
+  <% if (categories && categories.length > 0) { %>
+    <% categories.forEach(category => { %>
+      <option value="<%= category._id %>"
+        <%= (product.category && category._id.toString() === product.category._id.toString()) ? 'selected' : '' %>>
+        <%= category.name %>
+      </option>
+    <% }) %>
+  <% } else { %>
+    <option value="">Categories not fetched</option>
+  <% } %>
+</select>
                               </div>
 
                               <div class="mb-3">
                                 <label for="language" class="form-label">Language <span
                                     class="text-danger">*</span></label>
                                 <select class="form-select" id="language" name="language" required>
-                                  <option value="English" <%= product.language === "English" ? "selected" : "" %>>English</option>
-                                  <option value="Malayalam" <%= product.language === "Malayalam" ? "selected" : "" %>>Malayalam</option>
-                                  <option value="Hindi" <%= product.language === "Hindi" ? "selected" : "" %>>Hindi</option>
-                                </select>
+  <option value="English" <%= product.language === "English" ? "selected" : "" %>>English</option>
+  <option value="Malayalam" <%= product.language === "Malayalam" ? "selected" : "" %>>Malayalam</option>
+  <option value="Hindi" <%= product.language === "Hindi" ? "selected" : "" %>>Hindi</option>
+  <option value="" <%= !["English", "Malayalam", "Hindi"].includes(product.language) ? "selected" : "" %> disabled>
+    Select a language
+  </option>
+</select>
                               </div>
 
                               <div class="row">
@@ -85,7 +88,7 @@
                                 <div class="col-md-6 mb-3">
                                   <label for="salePrice" class="form-label">Offer (₹) </label>
                                   <input type="number" step="0.01" min="0" class="form-control" id="salePrice"
-                                    name="offer" placeholder= <%=product.productOffer%> >
+                                    name="offer" value= <%=product.productOffer%> >
                                 </div>
                               </div>
 

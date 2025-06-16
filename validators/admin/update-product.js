@@ -6,6 +6,8 @@ const validateProductEdit = async (req, res, next) => {
   try {
     
     const productId = req.params.id;
+    console.log('reqest body',req.body);
+    
     const {
       name,
       writer,
@@ -15,7 +17,8 @@ const validateProductEdit = async (req, res, next) => {
       availableQuantity,
       description,
       imagesToDelete,
-      imagesToKeep
+      imagesToKeep,
+      offer
     } = req.body;
    
     const product = await productModel.findById(productId);
@@ -31,10 +34,16 @@ const validateProductEdit = async (req, res, next) => {
       category_id==product.category&&
       description==product.description&&
       regularPrice==product.regularPrice&&
-      availableQuantity==product.quantity){
+      availableQuantity==product.quantity&&
+      offer==product.productOffer
+    ){
         return res.status(400).json({message:"No Changes Decteted",
           success:false
         })
+      }else if (offer<0||availableQuantity<0){
+        return res.status(400).json({message:"Value should not negative please try again",success:false})
+      }else if (regularPrice<199){
+        return res.status(400).json({message:"Regular price should be greaterthan or equal to 199 ",success:false});
       }
     
 

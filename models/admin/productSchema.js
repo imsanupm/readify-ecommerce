@@ -54,7 +54,8 @@
         },
         language:{
             type:String,
-            required:true
+            required:true,
+            enum: ["English", "Malayalam", "Hindi"],
         }
     },{timestamps:true});
 
