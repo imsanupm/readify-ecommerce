@@ -110,104 +110,104 @@
                                             <div class="col-lg-7">
                                                 <div class="table-responsive">
                                                     <table class="table">
-                                                        <thead>
-                                                            <tr>
-                                                                <th width="40%">Title</th>
-                                                                <th width="20%">Unit Price</th>
-                                                                <th width="20%">Quantity</th>
-                                                                <th width="20%" class="text-end">Total</th>
+  <thead>
+    <tr>
+      <th width="40%">Title</th>
+      <th width="20%">Unit Price</th>
+      <th width="20%">Quantity</th>
+      <th width="10%" class="text-end">Total</th>
+      <th width="10%" class="text-end">Action</th>
+    </tr>
+  </thead>
 
-                                                            </tr>
-                                                        </thead>
+  <tbody>
+    <% order.orderedItems.forEach(item => { %>
+      <tr>
+        <td>
+          <a class="itemside" href="#">
+            <div class="left">
+              <img src="<%= item.productDetails.images[0] %>" width="40" height="40" class="img-xs" alt="Item">
+            </div>
+            <div class="info">
+              <%= item.productDetails.name %>
+            </div>
+          </a>
+        </td>
+        <td>₹<%= item.price.toFixed(2) %></td>
+        <td><%= item.quantity %></td>
+        <td class="text-end">₹<%= (item.price * item.quantity).toFixed(2) %></td>
+        <td class="text-end">
+          <% if (order.status === 'Delivered') { %>
+            <button class="btn btn-sm btn-outline-warning" onclick="openReturnModal('<%= order._id %>')">Return</button>
+          <% } else { %>
+            <button class="btn btn-sm btn-outline-danger">Cancel</button>
+          <% } %>
+        </td>
+      </tr>
+    <% }); %>
+  </tbody>
 
-                                                        <tbody>
+  <tfoot>
+    <tr>
+      <td colspan="5">
+        <article class="float-end">
 
+          <dl class="dlist">
+            <dt>Subtotal:</dt>
+            <dd>₹ <%= subTotal %></dd>
+          </dl>
 
+          <dl class="dlist">
+            <dt>Shipping cost:</dt>
+            <dd>₹ <%= deliveryCharge%></dd>
+          </dl>
 
+          <dl class="dlist">
+            <dt>GST:</dt>
+            <dd>₹ <%= gstAmount%></dd>
+          </dl>
 
+          <% if (order.couponApplied) { %>
+            <dl class="dlist">
+              <dt>Coupon Discount:</dt>
+              <dd>- ₹ <%= order.couponAmount.toFixed(2) %></dd>
+            </dl>
+          <% } %>
 
-                                                        <tbody>
-                                                            <% order.orderedItems.forEach(item=> { %>
-                                                                <tr>
-                                                                    <td>
-                                                                        <a class="itemside" href="#">
-                                                                            <div class="left">
-                                                                                <img src="<%= item.productDetails.images[0] %>"
-                                                                                    width="40" height="40"
-                                                                                    class="img-xs" alt="Item">
-                                                                            </div>
-                                                                            <div class="info">
-                                                                                <%= item.productDetails.name %>
-                                                                            </div>
-                                                                        </a>
-                                                                    </td>
-                                                                    <td> $<%= item.price.toFixed(2) %>
-                                                                    </td>
-                                                                    <td>
-                                                                        <%= item.quantity %>
-                                                                    </td>
-                                                                    <td class="text-end"> $<%= (item.price *
-                                                                            item.quantity).toFixed(2) %>
-                                                                    </td>
-                                                                    <td class="text-end">
-                                                                        <!-- <% if (order.status === 'Delivered') { %>
-                                        <button class="btn btn-sm btn-outline-warning">Return</button>
-                                      <% } else { %>
-                                        <button class="btn btn-sm btn-outline-danger">Cancel</button>
-                                      <% } %>
-                                    </td>
-                                  </tr>
-                                <% }) %> -->
-                                                                        <% if (order.status==='Delivered' ) { %>
-                                                                            <button
-                                                                                class="btn btn-sm btn-outline-warning"
-                                                                                onclick="openReturnModal('<%= order._id %>')">
-                                                                                Return
-                                                                            </button>
-                                                                            <% } else { %>
-                                                                                <button
-                                                                                    class="btn btn-sm btn-outline-danger">Cancel</button>
-                                                                                <% } %>
-                                                        </tbody>
+          <dl class="dlist">
+            <dt><strong>Grand Total:</strong></dt>
+            <dd><b class="h5">₹ <%= totalPrice%></b></dd>
+          </dl>
 
+          <% 
+            let statusClassMap = {
+              'Pending': 'badge bg-secondary',
+              'Processing': 'badge bg-info text-dark',
+              'Shipped': 'badge bg-primary',
+              'Delivered': 'badge bg-success',
+              'Cancelled': 'badge bg-danger',
+              'Return Requested': 'badge bg-warning text-dark',
+              'Returned': 'badge bg-success',
+              'Return Cancelled': 'badge bg-dark'
+            };
+            let badgeClass = statusClassMap[order.status] || 'badge bg-secondary';
+          %>
 
-                                                        <tr>
-                                                            <td colspan="4">
-                                                                <article class="float-end">
-                                                                    <dl class="dlist">
-                                                                        <dt>Subtotal:</dt>
-                                                                        <dd>&#8377; <%=subTotal%>
-                                                                        </dd>
-                                                                    </dl>
-                                                                    <dl class="dlist">
-                                                                        <dt>Shipping cost:</dt>
-                                                                        <dd>&#8377; <%=deliveryCharge%>
-                                                                        </dd>
-                                                                    </dl>
-                                                                    <dl class="dlist">
-                                                                        <dt>GST:</dt>
-                                                                        <dd>&#8377; <%=gstAmount%>
-                                                                        </dd>
-                                                                    </dl>
-                                                                    <dl class="dlist">
-                                                                        <dt>Grand total:</dt>
-                                                                        <dd> <b class="h5">&#8377; <%=totalPrice%></b>
-                                                                        </dd>
-                                                                    </dl>
-                                                                    <dl class="dlist">
-                                                                        <dt class="text-muted">Status:</dt>
-                                                                        <dd>
-                                                                            <span
-                                                                                class="badge rounded-pill alert-success text-success">
-                                                                                <%=order.status%>
-                                                                            </span>
-                                                                        </dd>
-                                                                    </dl>
-                                                                </article>
-                                                            </td>
-                                                        </tr>
-                                                        </tbody>
-                                                    </table>
+          <dl class="dlist">
+            <dt class="text-muted">Status:</dt>
+            <dd>
+              <span class="<%= badgeClass %>">
+                <%= order.status %>
+              </span>
+            </dd>
+          </dl>
+
+        </article>
+      </td>
+    </tr>
+  </tfoot>
+</table>
+
                                                 </div>
 
                                                 <!-- <%
@@ -265,7 +265,7 @@
                   <%}%>
                                 
 
-                                            </div> col// -->
+                                            </div> 
                                             <div class="col-lg-1"></div>
                          
                                         </div>
@@ -287,9 +287,6 @@
                                 </div>
                             </footer>
                         </main>
-
-
-                        
 
                         <div class="modal fade" id="returnReasonModal" tabindex="-1"
                             aria-labelledby="returnReasonModalLabel" aria-hidden="true">

@@ -15,6 +15,11 @@ const updateStatus = async (req,res) => {
             return res.status(400).json({
               message: 'Status cannot be changed. Order is already delivered.',
             });
+          }else if(orderData.status=="Cancelled"){
+            return status(code.HttpStatus.BAD_REQUEST).json({message:"Status cannot be changed. Order is already Canceled"})
+          
+          }else if (orderData.status=="Return Requested"){
+            return res.status(code.HttpStatus.BAD_REQUEST).json({message:"Status cannnot be changed. User requested for return do approve or deny to change the status"})
           }
         
           orderData.status = status;
