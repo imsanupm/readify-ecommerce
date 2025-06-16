@@ -1,6 +1,7 @@
 const Cart = require('../../models/admin/cart');
 const status = require('../../helpers/user/statusCode');
-
+const Product = require('../../models/admin/productSchema');
+const code = require('../../helpers/user/statusCode');
 const updateQuantity = async (req,res) => {
     try {
         const userId = req.session.user_id;
@@ -11,6 +12,10 @@ const updateQuantity = async (req,res) => {
                 message:"Missing Data",
                 success:false
             })
+        }
+        const product = await Product.findById(productId);
+        if(product.quantity<1){
+            return res.status(code.HttpStatus.BAD_REQUEST).json({message:"Product is out of stock. stock will arrive soon thank you for understanding",success:false})
         }
         const cart = await Cart.findOne({userId})
         if(!cart){

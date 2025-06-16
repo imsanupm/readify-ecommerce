@@ -8,9 +8,9 @@ const Product = require('../../models/admin/productSchema');
 const Razorpay = require('razorpay');
 require('dotenv').config();
 const crypto = require('crypto');
-
-
-
+const calculation = require('../user/cart')
+const Wallet = require('../../models/user/wallet');
+const { nanoid } = require('nanoid');
 
 
 
@@ -23,10 +23,11 @@ const razorpay = new Razorpay({
 
 const placeNewOrder = async (req, res) => {
   try {
-    console.log("ree",req.body)
+    console.log("ree", req.body);
     const userId = req.session.user_id;
     const { addressId, paymentMethod, couponCode } = req.body;
-
+     console.log('paymentmethod=========',req.body);
+     
     const address = await User.findById(userId).populate('addresses');
     const cartData = await Cart.findOne({ userId }).populate({
       path: 'items.productId',
@@ -35,27 +36,21 @@ const placeNewOrder = async (req, res) => {
     const user = await User.findById(userId);
     const addressData = address.addresses.filter((val) => val._id.toString() == addressId);
 
-    let subTotal = 0;
-    let totalAmount = 0;
-    let gstAmount = null;
-    const deliveryCharge = 49;
-    const gstpercentage = 14;
-    const cutOfMoneyForDeleveryCharge = 1000;
     const orderedItems = [];
+
+    // ✅ Reuse the calculation function
+    const {
+      subTotal,
+      totalAmount: calculatedTotalAmount,
+      deliveryCharge,
+      gstAmount
+    } = await calculation.calculateCartAmounts(cartData);
+
+    let totalAmount = calculatedTotalAmount;
 
     for (const item of cartData.items) {
       const product = item.productId;
-      const price = product.regularPrice;
       const quantity = item.quantity;
-
-      subTotal += price * quantity;
-
-      const offerPrice =
-        product.offerType && product.offerType !== 'null' && product.finalAmount > 0
-          ? product.finalAmount
-          : product.regularPrice;
-
-      totalAmount += offerPrice * quantity;
 
       orderedItems.push({
         product: product._id,
@@ -65,22 +60,17 @@ const placeNewOrder = async (req, res) => {
           category: product.category
         },
         quantity: quantity,
-        price: price,
+        price: product.regularPrice,
         status: 'Processing'
       });
 
       await Product.findByIdAndUpdate(product._id, { $inc: { quantity: -quantity } });
     }
 
-    // GST and delivery charges
-    gstAmount = (totalAmount * gstpercentage) / 100;
-    totalAmount += gstAmount;
+    console.log('final amount============', totalAmount);
+    console.log('subTotal ==============', subTotal);
 
-    if (totalAmount < cutOfMoneyForDeleveryCharge) {
-      totalAmount += deliveryCharge;
-    }
-
-
+    // ✅ Coupon handling (unchanged)
     let coupon = null;
     let discountToApply = 0;
     let isCouponApplied = false;
@@ -115,15 +105,11 @@ const placeNewOrder = async (req, res) => {
         discountToApply = Math.min(Number(coupon.discount), Number(coupon.maxDiscount));
       }
 
-
       totalAmount -= discountToApply;
       if (totalAmount < 0) totalAmount = 0;
 
       isCouponApplied = true;
     }
-
-
-
 
     if (paymentMethod == "cod") {
       return await cod(
@@ -138,12 +124,29 @@ const placeNewOrder = async (req, res) => {
         subTotal,
         totalAmount,
         deliveryCharge,
-        discountToApply,  
+        discountToApply,
         isCouponApplied,
         coupon
       );
     } else if (paymentMethod == "razorpay") {
       return await createRazorpayOrder(
+        req,
+        res,
+        cartData,
+        addressData,
+        user,
+        userId,
+        paymentMethod,
+        orderedItems,
+        subTotal,
+        totalAmount,
+        deliveryCharge,
+        discountToApply,
+        isCouponApplied,
+        coupon
+      );
+    }else if(paymentMethod=="wallet"){
+          return await walletPayment(
         req,
         res,
         cartData,
@@ -166,6 +169,7 @@ const placeNewOrder = async (req, res) => {
     return res.status(500).json({ success: false, message: 'Something went wrong' });
   }
 };
+
 
 
 const cod = async (req, res, cartData, addressData, user, userId, paymentMethod, orderedItems, subTotal, totalAmount, deliveryCharge, discountToApply, isCouponApplied, coupon) => {
@@ -251,6 +255,114 @@ const cod = async (req, res, cartData, addressData, user, userId, paymentMethod,
 
 
 
+const walletPayment = async (
+  req,
+  res,
+  cartData,
+  addressData,
+  user,
+  userId,
+  paymentMethod,
+  orderedItems,
+  subTotal,
+  totalAmount,
+  deliveryCharge,
+  discountToApply,
+  isCouponApplied,
+  coupon
+) => {
+  try {
+    // 🟠 1. Check wallet balance
+    const wallet = await Wallet.findOne({ user: userId });
+
+    if (!wallet || wallet.balance < totalAmount) {
+      return res.status(400).json({ success: false, message: 'Insufficient wallet balance' });
+    }
+
+    // 🟢 2. Create Order
+    const orderData = new Order({
+      userId,
+      userData: {
+        name: user.name,
+        email: user.email,
+        phone: user.phonenumber
+      },
+      orderedItems,
+      totalPrice: subTotal,
+      discount: 0,
+      finalAmount: Number(totalAmount.toFixed(2)),
+      shippingCharge: totalAmount > 1000 ? deliveryCharge : 0,
+      totalQuantity: orderedItems.reduce((sum, item) => sum + item.quantity, 0),
+      address: {
+        fullname: addressData[0].fullname,
+        state: addressData[0].state,
+        district: addressData[0].district,
+        house_flat: addressData[0].house_flat,
+        pincode: addressData[0].pincode,
+        landmark: addressData[0].landmark,
+        mobile: addressData[0].mobile,
+        alt_phone: addressData[0].alt_phone,
+        village_city: addressData[0].village_city,
+        street: addressData[0].street,
+        addressType: addressData[0].addressType
+      },
+      couponAmount: coupon && isCouponApplied ? coupon.discount : 0,
+      couponApplied: isCouponApplied ? true : false,
+      invoiceDate: new Date(),
+      status: 'Pending',
+      paymentMethod,
+      createdOn: new Date()
+    });
+
+    await orderData.save();
+
+    // 🔵 3. Wallet Transaction
+    const transactionId = nanoid(10);
+    wallet.balance -= totalAmount;
+    wallet.transactions.push({
+      transactionId,
+      type: "debit",
+      amount: totalAmount,
+      description: `Wallet purchase for order ${orderData.orderId}`,
+      orderId: orderData.orderId,
+      status: "completed"
+    });
+    await wallet.save();
+
+    // 🟣 4. Coupon Update Logic (same as COD)
+    if (coupon && isCouponApplied) {
+      const updatedCoupon = await Coupon.findOneAndUpdate(
+        { code: coupon.code },
+        {
+          $push: {
+            usage: { userId: userId }
+          },
+          $inc: {
+            currentUsage: 1
+          }
+        },
+        { new: true }
+      );
+
+      if (updatedCoupon.currentUsage >= updatedCoupon.maxUsage) {
+        await Coupon.updateOne(
+          { code: coupon.code },
+          { $set: { isActive: false } }
+        );
+      }
+    }
+
+    // 🟢 5. Clear Cart
+    cartData.items = [];
+    await cartData.save();
+
+    return res.status(200).json({ success: true });
+
+  } catch (error) {
+    console.log("Error during wallet payment", error);
+    return res.status(500).json({ success: false, message: 'Wallet payment failed' });
+  }
+};
 
 
 

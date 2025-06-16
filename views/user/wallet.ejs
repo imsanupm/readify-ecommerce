@@ -339,30 +339,53 @@
             <div class="balance-card">
                 <p class="balance-text">Your current wallet balance is</p>
                 <div class="balance-amount">
-                    <span class="currency-symbol">₹</span> <%=walletData.balance%>
+<span class="currency-symbol">₹</span> <%= walletData.balance.toFixed(2) %>
+
                 </div>
             </div>
 
-            <!-- Wallet Transactions -->
+            
 
-            <div style="background-color: #3b5d50; color: white; padding: 16px 24px; border-radius: 10px; margin-bottom: 20px; text-align: center; animation: fadeIn 0.8s ease-in-out;">
-                <h2 style="margin: 0; font-size: 24px;">Transactions</h2>
-                <p style="margin: 4px 0 0; font-size: 14px;">A history of your wallet activity</p>
-            </div>
-            <% if (transactions && transactions.length > 0) { %>
-                <% transactions.forEach(val => { %>
-                    <div class="transaction-item" style="margin-bottom: 10px; padding: 10px; border: 1px solid #ccc; border-radius: 8px; animation: fadeIn 0.5s ease-in-out;">
-                        <span class="transaction-description" style="color: #3b5d50; font-weight: 500;">
-                            <%= val.description.replace(/[0-9]/g, '') %> - <%= val.transactionId %>
-                        </span><br/>
-                        <span class="transaction-amount" style="color: <%= val.type === 'credit' ? '#28a745' : '#d9534f' %>; font-size: 16px; font-weight: bold;">
+
+<% if (transactions && transactions.length > 0) { %>
+    <div style="margin-bottom: 10px; color: #d23333; font-size: 16px; font-weight: 500;">
+        Total Transactions: <%= totalTransactions %>
+    </div>
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #333; background-color: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <thead>
+                <tr style="background-color: #3b5d50; color: white;">
+                    <th style="padding: 12px; text-align: left; font-weight: 500;">Description</th>
+                    <th style="padding: 12px; text-align: left; font-weight: 500;">Transaction ID</th>
+                    <th style="padding: 12px; text-align: right; font-weight: 500;">Amount</th>
+                    <th style="padding: 12px; text-align: left; font-weight: 500;">Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% transactions.forEach((val, index) => { %>
+                    <tr style="background-color: <%= index % 2 === 0 ? '#f9f9f9' : '#fff' %>; transition: background-color 0.2s;">
+                        <td style="padding: 12px; border-top: 1px solid #eee;"><%= val.description.replace(/[0-9]/g, '') %></td>
+                        <td style="padding: 12px; border-top: 1px solid #eee;"><%= val.transactionId %></td>
+                        <td style="padding: 12px; border-top: 1px solid #eee; text-align: right; color: <%= val.type === 'credit' ? '#28a745' : '#d9534f' %>; font-weight: bold;">
                             <%= val.type === 'credit' ? '+' : '-' %>₹ <%= val.amount.toFixed(2) %>
-                        </span>
-                    </div>
+                        </td>
+                        <td style="padding: 12px; border-top: 1px solid #eee; color: #666; font-size: 12px;">
+                            <% if (val.createdAt && !isNaN(new Date(val.createdAt).getTime())) { %>
+                                <%= new Date(val.createdAt).toISOString().split('T')[0] %>
+                            <% } else { %>
+                                Date not available
+                            <% } %>
+                        </td>
+                    </tr>
                 <% }) %>
-            <% } else { %>
-                <p style="color: #3b5d50;">No transactions available.</p>
-            <% } %>
+            </tbody>
+        </table>
+    </div>
+
+ 
+<% } else { %>
+    <p style="color: #3b5d50; text-align: center; font-size: 16px;">No transactions available.</p>
+<% } %>
             
             
             <div class="pagination" style="margin-top: 20px; text-align: center;">

@@ -183,6 +183,8 @@ const getOrderDetailPage = async (req, res) => {
         subTotal += item.price * item.quantity;
       }
     });
+    console.log('subTotal========',subTotal);
+    
 
     // ✅ Extract 14% GST from subtotal (which already includes GST)
     const gst = subTotal * (gstPercentage / (100 + gstPercentage));
