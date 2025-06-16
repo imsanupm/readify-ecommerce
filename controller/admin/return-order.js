@@ -9,7 +9,8 @@ const Product = require('../../models/admin/productSchema');
 const approveReturn = async (req,res) => {
     try {
         const orderId = req.params.id;
-    
+        
+         
         const orderData = await Order.findOne({_id:orderId});
         if(!orderData){
             return res.status(code.HttpStatus.BAD_REQUEST).json({message:"Canonot Find The Data",success:false})
@@ -69,6 +70,47 @@ const approveReturn = async (req,res) => {
     }
 }
 
+
+
+
+const denyReturn = async (req, res) => {
+    try {
+        const { orderId } = req.body;
+
+        const orderData = await Order.findById(orderId);
+        if (!orderData) {
+            return res.status(code.HttpStatus.BAD_REQUEST).json({ message: "Order not found", success: false });
+        }
+
+      
+        if (orderData.status !== "Return Requested") {
+            return res.status(code.HttpStatus.BAD_REQUEST).json({ message: "Return not requested for this order", success: false });
+        }
+
+     
+        orderData.status = "Return Cancelled";
+
+     
+        for (const item of orderData.orderedItems) {
+            if (item.status === "Return Requested") {
+                item.status = "Return Cancelled";
+                item.isReturnRequested = false;
+            }
+        }
+
+        await orderData.save();
+
+        return res.status(code.HttpStatus.OK).json({
+            message: "Return request denied successfully",
+            success: true
+        });
+    } catch (error) {
+        console.error("Error in denyReturn:", error);
+        res.status(code.HttpStatus.INTERNAL_SERVER_ERROR).json({ message: "Internal Server Error", success: false });
+    }
+};
+
 module.exports = {
-    approveReturn
+    approveReturn,
+    denyReturn
 }

@@ -26,7 +26,7 @@ const placeNewOrder = async (req, res) => {
     console.log("ree", req.body);
     const userId = req.session.user_id;
     const { addressId, paymentMethod, couponCode } = req.body;
-     console.log('paymentmethod=========',req.body);
+   
      
     const address = await User.findById(userId).populate('addresses');
     const cartData = await Cart.findOne({ userId }).populate({
@@ -38,7 +38,7 @@ const placeNewOrder = async (req, res) => {
 
     const orderedItems = [];
 
-    // ✅ Reuse the calculation function
+    
     const {
       subTotal,
       totalAmount: calculatedTotalAmount,
@@ -67,10 +67,9 @@ const placeNewOrder = async (req, res) => {
       await Product.findByIdAndUpdate(product._id, { $inc: { quantity: -quantity } });
     }
 
-    console.log('final amount============', totalAmount);
-    console.log('subTotal ==============', subTotal);
+    
 
-    // ✅ Coupon handling (unchanged)
+
     let coupon = null;
     let discountToApply = 0;
     let isCouponApplied = false;
@@ -174,8 +173,11 @@ const placeNewOrder = async (req, res) => {
 
 const cod = async (req, res, cartData, addressData, user, userId, paymentMethod, orderedItems, subTotal, totalAmount, deliveryCharge, discountToApply, isCouponApplied, coupon) => {
   try {
+      
+      if(totalAmount>1000){
+        return res.status(code.HttpStatus.BAD_REQUEST).json({ message: "You cannot make a Cash on Delivery purchase over ₹1000. insted of cod you can use online payment or wallet payment", success: false })
 
-
+      }
     const orderData = new Order({
       userId: userId,
       userData: {
@@ -212,7 +214,7 @@ const cod = async (req, res, cartData, addressData, user, userId, paymentMethod,
 
     await orderData.save();
 
-    //when you use razorpay make this condition as reusable
+   
 
     if (coupon && isCouponApplied) {
 
@@ -272,14 +274,14 @@ const walletPayment = async (
   coupon
 ) => {
   try {
-    // 🟠 1. Check wallet balance
+   
     const wallet = await Wallet.findOne({ user: userId });
 
     if (!wallet || wallet.balance < totalAmount) {
       return res.status(400).json({ success: false, message: 'Insufficient wallet balance' });
     }
 
-    // 🟢 2. Create Order
+   
     const orderData = new Order({
       userId,
       userData: {
@@ -316,7 +318,7 @@ const walletPayment = async (
 
     await orderData.save();
 
-    // 🔵 3. Wallet Transaction
+   
     const transactionId = nanoid(10);
     wallet.balance -= totalAmount;
     wallet.transactions.push({
@@ -329,7 +331,7 @@ const walletPayment = async (
     });
     await wallet.save();
 
-    // 🟣 4. Coupon Update Logic (same as COD)
+  
     if (coupon && isCouponApplied) {
       const updatedCoupon = await Coupon.findOneAndUpdate(
         { code: coupon.code },
@@ -352,7 +354,7 @@ const walletPayment = async (
       }
     }
 
-    // 🟢 5. Clear Cart
+ 
     cartData.items = [];
     await cartData.save();
 

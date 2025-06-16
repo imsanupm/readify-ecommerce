@@ -670,7 +670,7 @@ async function getSalesData(filter, dateRange) {
                         $gte: dateRange.startDate,
                         $lte: dateRange.endDate
                     },
-                    status: { $ne: 'Cancelled' } // Fixed: Use $ne instead of $nin for single value
+                    status: { $ne: 'Cancelled' }
                 }
             },
             {
@@ -700,7 +700,7 @@ async function getSalesData(filter, dateRange) {
     }
 }
 
-// Format sales data for chart display
+
 function formatSalesData(data, format) {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     
@@ -733,7 +733,7 @@ function formatSalesData(data, format) {
     });
 }
 
-// Get top 5 best selling products with product details
+
 async function getTopProducts() {
     try {
         console.log('Fetching top 5 products');
@@ -742,7 +742,7 @@ async function getTopProducts() {
             { $unwind: '$orderedItems' },
             {
                 $match: {
-                    'orderedItems.status': { $ne: 'Cancelled' } // Fixed: Use $ne instead of $nin
+                    'orderedItems.status': { $ne: 'Cancelled' } 
                 }
             },
             {
@@ -762,7 +762,7 @@ async function getTopProducts() {
             { $limit: 5 }
         ]);
 
-        // Get additional product details from Product collection
+     
         const enrichedProducts = await Promise.all(
             topProducts.map(async (product) => {
                 try {
@@ -792,7 +792,7 @@ async function getTopProducts() {
             })
         );
         
-        console.log('Top products fetched:', enrichedProducts.length);
+
         return enrichedProducts;
     } catch (error) {
         console.error('Error getting top products:', error);
@@ -800,7 +800,7 @@ async function getTopProducts() {
     }
 }
 
-// Get top 5 best selling categories with category details
+
 async function getTopCategories() {
     try {
         console.log('Fetching top 5 categories');

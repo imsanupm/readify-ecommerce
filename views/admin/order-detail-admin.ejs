@@ -450,9 +450,13 @@
       cancelButtonText: 'Cancel'
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch(url, {
+        // If the action is "deny", call /admin/deny-return first
+        const fetchUrl = action === 'deny' ? '/admin/deny-return' : url;
+
+        fetch(fetchUrl, {
           method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' }
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ orderId }) // send orderId in body for /admin/deny-return
         })
         .then(res => {
           if (res.ok) {
@@ -467,5 +471,6 @@
     });
   }
 </script>
+
 
   

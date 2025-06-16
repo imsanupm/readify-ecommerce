@@ -53,7 +53,7 @@ adminRouter.patch('/return-order/:orderId',specificReturn.returnOrder);
 
 //return approvel
 adminRouter.patch('/returns/approve/:id', orderReturn.approveReturn);
-
+adminRouter.patch('/deny-return', orderReturn.denyReturn);
 //coupen management
 adminRouter.get('/admin/coupenManagement',coupen.getCoupenPage)
 adminRouter.post('/addCoupens',coupen.addCoupen);

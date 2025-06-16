@@ -562,6 +562,48 @@ body {
   text-align: right;
 }
 
+
+
+
+
+
+.order-status {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: white;
+  display: inline-block;
+}
+
+.order-status.pending {
+  background-color: #FFA500;
+}
+
+.order-status.processing {
+  background-color: #007BFF;
+}
+
+.order-status.shipped {
+  background-color: #6F42C1;
+}
+
+.order-status.delivered {
+  background-color: #28A745;
+}
+
+.order-status.cancelled {
+  background-color: #DC3545;
+}
+
+.order-status.return-requested {
+  background-color: #20C997;
+}
+
+.order-status.returned {
+  background-color: #6C757D;
+}
+
 </style>
 
 
@@ -572,9 +614,12 @@ body {
   <div class="order-container">
     <div class="order-header">
       <div class="order-title">
-        <h1>Order Details</h1>
-        <span class="order-status delivered"><%=orderData.status%></span>
-      </div>
+  <h1>Order Details</h1>
+  <span class="order-status <%= orderData.status.toLowerCase().replace(/\s/g, '-') %>">
+    <%= orderData.status %>
+  </span>
+</div>
+
       <div class="order-id-date">
         <div class="order-info">
           <span class="label">Order Number:</span>
@@ -626,7 +671,7 @@ body {
         <div class="info-group">
           <div class="info-item">
             <span class="label">Payment Method:</span>
-            <span class="value">COD</span>
+            <span class="value"><%=orderData.paymentMethod%></span>
           </div>
           <div class="info-item">
             <span class="label">Billing Address:</span>
@@ -770,7 +815,7 @@ body {
           Return Order
         </button>
       </div>
-    <% } else if (orderData.status !== "Returned"&&orderData.status !=="Cancelled"&&orderData.status!=="Shipped") { %>
+    <% } else if (orderData.status !== "Returned"&&orderData.status !=="Cancelled"&&orderData.status!=="Shipped"&&orderData.status!=="Return Requested") { %>
       <div class="order-actions">
         <button
           class="btn btn-danger"
