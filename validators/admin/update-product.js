@@ -6,7 +6,7 @@ const validateProductEdit = async (req, res, next) => {
   try {
     
     const productId = req.params.id;
-    console.log('reqest body',req.body);
+   
     
     const {
       name,
@@ -44,6 +44,11 @@ const validateProductEdit = async (req, res, next) => {
         return res.status(400).json({message:"Value should not negative please try again",success:false})
       }else if (regularPrice<199){
         return res.status(400).json({message:"Regular price should be greaterthan or equal to 199 ",success:false});
+      }else if (offer>60){
+       return res.status(400).json({
+  message: "Discounts exceeding 60% are not allowed as they may cause financial liability.",
+  success: false
+});
       }
     
 
