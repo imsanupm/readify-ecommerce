@@ -49,11 +49,13 @@ adminRouter.get('/listOrder',listPage.getOrderListPage)
 adminRouter.get('/orderDetail/:IdOrder',listPage.orderDetailPage);
 //update order
 adminRouter.patch('/update-status/:orderId', updateStatus.updateStatus);
-adminRouter.patch('/return-order/:orderId',specificReturn.returnOrder);
+//adminRouter.patch('/return-order/:orderId',specificReturn.returnOrder);
 
 //return approvel
 adminRouter.patch('/returns/approve/:id', orderReturn.approveReturn);
 adminRouter.patch('/deny-return', orderReturn.denyReturn);
+//specific return
+
 //coupen management
 adminRouter.get('/admin/coupenManagement',coupen.getCoupenPage)
 adminRouter.post('/addCoupens',coupen.addCoupen);
@@ -65,6 +67,17 @@ adminRouter.delete('/coupons/:couponCode', coupen.deleteCoupon);
 //sales report
 adminRouter.get('/sales-summary',saleReport.salesSummary)
 adminRouter.get('/report',saleReport.getSalesRepor)
+
+
+
+
+
+adminRouter.post('/individual-return-action' , specificReturn.specificReturnHandler  )
+
+
+
+
+
 module.exports= adminRouter;
 
                                                           

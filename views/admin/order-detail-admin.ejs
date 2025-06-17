@@ -120,32 +120,55 @@
     </tr>
   </thead>
 
-  <tbody>
-    <% order.orderedItems.forEach(item => { %>
-      <tr>
+ <% 
+  const totalItems = order.orderedItems.length;
+  const returnRequestedCount = order.orderedItems.filter(i => i.status === 'Return Requested').length;
+%>
+
+<tbody>
+  <% order.orderedItems.forEach(item => { %>
+    <tr>
+      <td>
+        <a class="itemside" href="#">
+          <div class="left">
+            <img src="<%= item.productDetails.images[0] %>" width="40" height="40" class="img-xs" alt="Item">
+          </div>
+          <div class="info">
+            <%= item.productDetails.name %>
+          </div>
+        </a>
+      </td>
+      <td>₹<%= item.price.toFixed(2) %></td>
+      <td><%= item.quantity %></td>
+      <td class="text-end">₹<%= (item.price * item.quantity).toFixed(2) %></td>
+
+      <% if (item.status === 'Return Requested' && returnRequestedCount !== totalItems) { %>
         <td>
-          <a class="itemside" href="#">
-            <div class="left">
-              <img src="<%= item.productDetails.images[0] %>" width="40" height="40" class="img-xs" alt="Item">
-            </div>
-            <div class="info">
-              <%= item.productDetails.name %>
-            </div>
-          </a>
+          <button 
+            class="approve-return-btn" 
+            data-product-id="<%= item.product %>" 
+            data-order-id="<%= order._id %>" 
+            style="background-color:#28a745; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">
+            Approve
+          </button>
         </td>
-        <td>₹<%= item.price.toFixed(2) %></td>
-        <td><%= item.quantity %></td>
-        <td class="text-end">₹<%= (item.price * item.quantity).toFixed(2) %></td>
-        <td class="text-end">
-          <% if (order.status === 'Delivered') { %>
-            <button class="btn btn-sm btn-outline-warning" onclick="openReturnModal('<%= order._id %>')">Return</button>
-          <% } else { %>
-            <button class="btn btn-sm btn-outline-danger">Cancel</button>
-          <% } %>
+        <td>
+          <button 
+            class="deny-return-btn" 
+            data-product-id="<%= item.product %>" 
+            data-order-id="<%= order._id %>" 
+            style="background-color:#dc3545; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">
+            Deny
+          </button>
         </td>
-      </tr>
-    <% }); %>
-  </tbody>
+      <% } else { %>
+        <td colspan="2"></td>
+      <% } %>
+    </tr>
+  <% }); %>
+</tbody>
+
+
 
   <tfoot>
     <tr>
@@ -470,4 +493,61 @@
 </script>
 
 
-  
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".approve-return-btn, .deny-return-btn").forEach(button => {
+      button.addEventListener("click", async (e) => {
+        const productId = button.getAttribute("data-product-id");
+        const orderId = button.getAttribute("data-order-id");
+        const action = button.classList.contains("approve-return-btn") ? "approve" : "deny";
+
+        const confirmText = action === "approve" ? "Yes, approve it!" : "Yes, deny it!";
+        const confirmTitle = action === "approve" ? "Approve Return?" : "Deny Return?";
+        const successText = action === "approve" ? "Return approved!" : "Return denied!";
+        const failedText = action === "approve" ? "Approval failed!" : "Denial failed!";
+
+        const result = await Swal.fire({
+          title: confirmTitle,
+          text: "Are you sure?",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonColor: action === "approve" ? "#28a745" : "#dc3545",
+          cancelButtonColor: "#6c757d",
+          confirmButtonText: confirmText
+        });
+
+        if (result.isConfirmed) {
+          try {
+            const res = await fetch("/admin/individual-return-action", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({ productId, orderId, action })
+            });
+
+            const data = await res.json();
+
+            if (data.success) {
+              await Swal.fire({
+                title: "Success",
+                text: successText,
+                icon: "success",
+                timer: 1500,
+                showConfirmButton: false
+              });
+              location.reload();
+            } else {
+              Swal.fire("Failed", data.message || failedText, "error");
+            }
+          } catch (err) {
+            console.error("Fetch error:", err);
+            Swal.fire("Error", "Something went wrong!", "error");
+          }
+        }
+      });
+    });
+  });
+</script>

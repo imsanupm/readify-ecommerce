@@ -23,8 +23,8 @@ const wallet = require('../controller/user/wallet');
 const profile = require('../controller/user/referral');
 const cancelOrder = require('../controller/user/cancel-order')
 const {specificCancel} = require('../controller/user/specific-cancel')
-
-
+// const specificReturn = require('../controller/user/')
+const {handleReturnRequest} = require('../controller/user/specific-return');
 
 
 
@@ -105,7 +105,7 @@ router.get('/orderListPage',userAuth.isUserSignedIn,orderDetails.getOrderListPag
 router.get('/orderDetailPage/:id',userAuth.isUserSignedIn,orderDetails.getOrderDetailPage)
 router.get('/downloadInvoice/:orderId',invoicePdf.downloadInvoice)
 
-//return cancel
+// whole return&&cancel
 router.post('/cancelOrder/:orderId', cancelOrder.cancelRequest);
 router.patch('/returnOrder/:orderId', returnCancel.returnRequest);
 
@@ -116,6 +116,8 @@ router.get('/wallet',userAuth.isUserSignedIn,wallet.getWallet);
 //specific cancel
 router.post('/specif/order/cancel', specificCancel)
 
+//specific return
+ router.post('/specific/order-return',handleReturnRequest)
 
 
 

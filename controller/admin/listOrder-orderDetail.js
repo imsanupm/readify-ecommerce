@@ -90,10 +90,10 @@ const orderDetailPage = async (req,res) => {
         
         res.render('order-detail-admin',{
             order:orderData,
-            subTotal: subTotal.toFixed(2),
-            gstAmount: gst.toFixed(2),
-            deliveryCharge: deliveryChargeAmount.toFixed(2),
-            totalPrice: totalAmount.toFixed(2)
+            subTotal: orderData.totalPrice<0?0:orderData.totalPrice,
+            gstAmount: orderData.totalPrice<0?0:gst.toFixed(2),
+            deliveryCharge: orderData.totalPrice<0?0:deliveryChargeAmount.toFixed(2),
+            totalPrice: orderData.finalAmount<0?0:orderData.finalAmount
         });
 
         return

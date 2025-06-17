@@ -623,7 +623,7 @@ body {
       <div class="order-id-date">
         <div class="order-info">
           <span class="label">Order Number:</span>
-          <span class="value">#ORD-12345</span>
+          <span class="value"><%=orderData.orderId%></span>
         </div>
         <div class="order-info">
           <span class="label">Order Date:</span>
@@ -751,19 +751,26 @@ body {
 
     <!-- Action column on the right -->
     <div class="col action-col">
-      <% if (item.status === 'Processing') { %>
-        <button 
-  class="cancel-btn" 
-  data-product-id="<%= item.product %>" 
-  data-order-id="<%= orderData._id %>" 
-  style="background-color: #dc3545; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer;">
-  Cancel
-</button>
-
-      <% } else { %>
-        <%= item.status %>
-      <% } %>
-    </div>
+  <% if (item.status === 'Processing') { %>
+    <button 
+      class="cancel-btn" 
+      data-product-id="<%= item.product %>" 
+      data-order-id="<%= orderData._id %>" 
+      style="background-color: #dc3545; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer;">
+      Cancel
+    </button>
+  <% } else if (item.status === 'Delivered') { %>
+    <button 
+      class="return-btn" 
+      data-product-id="<%= item.product %>" 
+      data-order-id="<%= orderData._id %>" 
+      style="background-color: #3b5d50; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer;">
+      Return
+    </button>
+  <% } else { %>
+    <%= item.status %>
+  <% } %>
+</div>
   </div>
 <% }); %>
 
@@ -838,6 +845,34 @@ body {
       </div>
     </div>
   </div>
+
+
+  <!-- Return Reason Modal -->
+<!-- Return Reason Modal -->
+<div class="modal fade" id="returnReasonModal" tabindex="-1" aria-labelledby="returnReasonModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form id="returnForm" novalidate>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Return Reason</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="returnOrderId">
+          <input type="hidden" id="returnProductId">
+          <div class="mb-3">
+            <label for="returnReasonText" class="form-label">Reason</label>
+            <textarea class="form-control" id="returnReasonText" rows="3" required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Submit Reason</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -1019,6 +1054,9 @@ body {
   </script>
 
 
+<!-- SweetAlert2 CDN (Include this in your HTML head or before the script) -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.cancel-btn').forEach(button => {
@@ -1026,8 +1064,18 @@ body {
         const productId = button.getAttribute('data-product-id');
         const orderId = button.getAttribute('data-order-id');
 
-        const confirmed = confirm("Are you sure you want to cancel this item?");
-        if (!confirmed) return;
+        const result = await Swal.fire({
+          title: 'Are you sure?',
+          text: "Do you really want to cancel this item?",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Yes, cancel it!',
+          cancelButtonText: 'No'
+        });
+
+        if (!result.isConfirmed) return;
 
         try {
           const res = await fetch(`/specif/order/cancel`, {
@@ -1040,19 +1088,85 @@ body {
 
           const data = await res.json();
           if (data.success) {
-            alert("Item cancelled successfully.");
+            await Swal.fire({
+              title: 'Cancelled!',
+              text: 'Item cancelled successfully.',
+              icon: 'success',
+              timer: 1500,
+              showConfirmButton: false
+            });
             location.reload();
           } else {
-            alert(data.message || "Cancellation failed.");
+            Swal.fire({
+              title: 'Failed',
+              text: data.message || "Cancellation failed.",
+              icon: 'error'
+            });
           }
         } catch (err) {
           console.error(err);
-          alert("An error occurred while cancelling the item.");
+          Swal.fire({
+            title: 'Error',
+            text: 'An error occurred while cancelling the item.',
+            icon: 'error'
+          });
         }
       });
     });
   });
 </script>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-VzQ0pZLqIkP08Yv2om3eIqTEn7OXLJ5H7J7Wy+PfsFbip6pvn7hxhv3ZV8PoB+YF" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<script>
+  // When return button is clicked
+  document.querySelectorAll('.return-btn').forEach(button => {
+    button.addEventListener('click', (e) => {
+      const orderId = button.getAttribute('data-order-id');
+      const productId = button.getAttribute('data-product-id');
+
+      document.getElementById('returnOrderId').value = orderId;
+      document.getElementById('returnProductId').value = productId;
+      document.getElementById('returnReasonText').value = '';
+
+      const modal = new bootstrap.Modal(document.getElementById('returnReasonModal'));
+      modal.show();
+    });
+  });
+
+  // Handle form submission
+  document.getElementById('returnForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const orderId = document.getElementById('returnOrderId').value;
+    const productId = document.getElementById('returnProductId').value;
+    const reason = document.getElementById('returnReasonText').value;
+
+    try {
+      const res = await fetch('/specific/order-return', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId, productId, reason })
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        alert('Return request submitted successfully.');
+        window.location.reload();
+      } else {
+        alert(data.message || 'Something went wrong.');
+      }
+    } catch (err) {
+      alert('Error submitting return request.');
+      console.error(err);
+    }
+  });
+</script>
+
+
 
 </body>
 </html>

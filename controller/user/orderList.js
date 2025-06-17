@@ -52,103 +52,6 @@ const getOrderListPage = async (req, res) => {
 
 
 
-// const getOrderDetailPage = async (req, res) => {
-//     try {
-//       const userId = req.session.user_id;
-//       const orderId = req.params.id;
-  
-//       let filter = { userId };
-  
-//       if (mongoose.Types.ObjectId.isValid(orderId)) {
-//         filter._id = orderId;
-//       } else {
-//         filter.orderId = orderId;
-//       }
-  
-//       const order = await Order.findOne(filter);
-  
-//       if (!order) {
-//         return res.status(404).send('Order not found');
-//       }
-  
-//       const gstPercentage = 14;
-//       const deliveryThreshold = 1000;
-//       const deliveryChargeAmount = 49;
-  
-//       let subTotal = 0;
-//       order.orderedItems.forEach(item => {
-//         subTotal += item.price * item.quantity;
-//       });
-  
-//       const gst = (subTotal * gstPercentage) / 100;
-//       const deliveryCharge = subTotal < deliveryThreshold ? deliveryChargeAmount : 0;
-//       const totalPrice = subTotal + gst + deliveryCharge - (order.discount || 0); 
-  
-//       return res.render('order-detail', {
-//         orderData: order,
-//         subTotal: subTotal.toFixed(2),
-//         gstAmount: gst.toFixed(2),
-//         deliveryCharge: deliveryCharge.toFixed(2),
-//         totalPrice: totalPrice.toFixed(2)
-//       });
-  
-//     } catch (error) {
-//       console.log('error during orderDetail Page', error);
-//       return res.status(500).send('Internal Server Error');
-//     }
-//   };
-  
-
-
-// const getOrderDetailPage = async (req, res) => {
-//   try {
-//     const userId = req.session.user_id;
-//     const orderId = req.params.id;
-
-//     let filter = { userId };
-
-//     if (mongoose.Types.ObjectId.isValid(orderId)) {
-//       filter._id = orderId;
-//     } else {
-//       filter.orderId = orderId;
-//     }
-
-//     const order = await Order.findOne(filter);
-
-//     if (!order) {
-//       return res.status(404).send('Order not found');
-//     }
-
-//     const gstPercentage = 14;
-//     const deliveryThreshold = 1000;
-//     const deliveryChargeAmount = 49;
-
-//     let subTotal = 0;
-
-//     // ✅ Only include non-cancelled items in price calculation
-//     order.orderedItems.forEach(item => {
-//       if (item.status !== 'Cancelled') {
-//         subTotal += item.price * item.quantity;
-//       }
-//     });
-
-//     const gst = (subTotal * gstPercentage) / 100;
-//     const deliveryCharge = subTotal < deliveryThreshold ? deliveryChargeAmount : 0;
-//     const totalPrice = subTotal + gst + deliveryCharge - (order.discount || 0);
-
-//     return res.render('order-detail', {
-//       orderData: order,
-//       subTotal: subTotal.toFixed(2),
-//       gstAmount: gst.toFixed(2),
-//       deliveryCharge: deliveryCharge.toFixed(2),
-//       totalPrice: totalPrice.toFixed(2)
-//     });
-
-//   } catch (error) {
-//     console.log('error during orderDetail Page', error);
-//     return res.status(500).send('Internal Server Error');
-//   }
-// };
 
 
 
@@ -177,7 +80,7 @@ const getOrderDetailPage = async (req, res) => {
 
     let subTotal = 0;
 
-    // ✅ Only include non-cancelled items in price calculation
+ 
     order.orderedItems.forEach(item => {
       if (item.status !== 'Cancelled') {
         subTotal += item.price * item.quantity;
@@ -186,7 +89,7 @@ const getOrderDetailPage = async (req, res) => {
     console.log('subTotal========',subTotal);
     
 
-    // ✅ Extract 14% GST from subtotal (which already includes GST)
+
     const gst = subTotal * (gstPercentage / (100 + gstPercentage));
 
     const deliveryCharge = subTotal < deliveryThreshold ? deliveryChargeAmount : 0;
@@ -194,11 +97,11 @@ const getOrderDetailPage = async (req, res) => {
 
     return res.render('order-detail', {
       orderData: order,
-      subTotal: subTotal.toFixed(2),
-      gstAmount: gst.toFixed(2),
-      deliveryCharge: deliveryCharge.toFixed(2),
+      subTotal:order.totalPrice<0?0: subTotal.toFixed(2),
+      gstAmount: order.totalPrice<0?0:gst.toFixed(2),
+      deliveryCharge: order.totalPrice<0?0:deliveryCharge.toFixed(2),
       // totalPrice: totalPrice.toFixed(2)
-      totalPrice:order.finalAmount
+      totalPrice:order.finalAmount<0?0:order.finalAmount
     });
 
   } catch (error) {
