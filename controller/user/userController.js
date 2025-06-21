@@ -63,6 +63,7 @@ const signin = async(req,res)=>{
             const passwordMatch = await bcrypt.compare(password,userData.password)
             if(passwordMatch){
                   req.session.user_id = userData._id;
+                  req.session.user_name = userData.name;
                 //   res.redirect('/home');
               return  res.status(200).json({success:true,message:"login successfully"})
             }else {

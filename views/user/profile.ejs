@@ -854,16 +854,19 @@
             <div class="col-lg-9 col-md-8">
                 <!-- Animated Profile Card -->
                 <section class="profile-card" aria-labelledby="profile-heading">
-                    <div class="profile-image-container">
-                        <img src="/placeholder.svg?height=100&width=100" 
-                             alt="Profile picture of Sarah Johnson" 
-                             class="profile-image">
-                        <button class="camera-icon" 
-                                aria-label="Change profile picture"
-                                title="Change profile picture">
-                            <i class="bi bi-camera" aria-hidden="true"></i>
-                        </button>
-                    </div>
+                 <form id="profileForm" enctype="multipart/form-data">
+  <input type="file" name="profileImage" id="profileImage" accept="image/*" hidden />
+
+  <div class="profile-image-container" onclick="document.getElementById('profileImage').click(); return false;">
+    <img id="previewImage" src="<%=user.photo%>" alt="Profile" class="profile-image">
+
+    <!-- FIX: type="button" so it won't trigger form submit -->
+    <button type="button" class="camera-icon" title="Change profile picture">
+      <i class="bi bi-camera"></i>
+    </button>
+  </div>
+</form>
+
                     
                     <div class="profile-details">
                         <h1 id="profile-heading" class="profile-name"><%=user.name%></h1>
@@ -892,7 +895,8 @@
                                     <i class="bi bi-wallet2"></i>
                                 </div>
                                 <% if (wallet && wallet.balance !== undefined) { %>
-                                    <div class="stat-value currency">₹ <%= wallet.balance %></div>
+                               <div class="stat-value currency">₹ <%= Math.floor(wallet.balance) %></div>
+
                                   <% } else { %>
                                     <div class="stat-value text-red-500">
                                         ₹ 0
@@ -903,7 +907,7 @@
                             </div>
                         </div>
                         
-                        <div class="col-lg-3 col-md-6">
+                        <!-- <div class="col-lg-3 col-md-6">
                             <div class="stat-card" role="region" aria-labelledby="completed-label">
                                 <div class="stat-icon orders" aria-hidden="true">
                                     <i class="bi bi-bag-check"></i>
@@ -911,7 +915,7 @@
                                 <div class="stat-value">142</div>
                                 <div id="completed-label" class="stat-label">Completed</div>
                             </div>
-                        </div>
+                        </div> -->
                         
                         <div class="col-lg-3 col-md-6">
                             <div class="stat-card" role="region" aria-labelledby="canceled-label">
@@ -1522,5 +1526,65 @@
             observer.observe(el);
         });
     </script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+  const input = document.getElementById("profileImage");
+  const preview = document.getElementById("previewImage");
+
+  input.addEventListener("change", async () => {
+    const file = input.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("profileImage", file);
+
+    // Show loading alert
+    Swal.fire({
+      title: 'Uploading...',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
+    try {
+      const res = await fetch("/upload-profile", {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.imageUrl) {
+        preview.src = data.imageUrl;
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Profile picture updated!',
+          showConfirmButton: false,
+          timer: 1500
+        });
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Upload failed',
+          text: data.message || 'Something went wrong',
+        });
+      }
+    } catch (err) {
+      console.error("Upload error", err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Network or server error occurred',
+      });
+    }
+  });
+</script>
+
+
 </body>
 </html>

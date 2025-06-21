@@ -25,8 +25,9 @@ const cancelOrder = require('../controller/user/cancel-order')
 const {specificCancel} = require('../controller/user/specific-cancel')
 // const specificReturn = require('../controller/user/')
 const {handleReturnRequest} = require('../controller/user/specific-return');
-
-
+const {uploadedProfilePic} = require('../controller/user/add-profile-image');
+//const {storage}= require('../config/cloudinary');
+const uploads = require('../helpers/multer')
 
 
 
@@ -72,6 +73,8 @@ router.get('/userProfile',userAuth.isUserSignedIn,userProfile.loadUserProfile)
 router.patch('/changePassword',validateChangePassword.validateChangePassword,userProfile.changePassword)
 router.post('/changeEmail',userProfile.changeEmail);
 router.patch('/changeEmail',userProfile.verifyOtp)
+// router.post('/upload-profile',upload,uploadedProfilePic)
+router.post('/upload-profile', uploads.single('profileImage'), uploadedProfilePic);
 //address management
 router.get('/myAdress',userAuth.isUserSignedIn,addresManageMent.getAdressPage);
 router.get('/addNewAddress',userAuth.isUserSignedIn,addresManageMent.getAddAdressForm)

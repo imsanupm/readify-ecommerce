@@ -62,7 +62,7 @@ const getCart = async (req, res) => {
   try {
     const userId = req.session.user_id;
     const cartData = await Cart.findOne({ userId }).populate('items.productId');
-
+     const userData = await User.findById(userId)
     const {
       subTotal,
       totalAmount,
@@ -87,7 +87,8 @@ const getCart = async (req, res) => {
       totalAmount: 0,
       deliveryCharge: 0,
       gstAmount: 0,
-      offerTypes: []
+      offerTypes: [],
+      user:userData
     });
   }
 };
