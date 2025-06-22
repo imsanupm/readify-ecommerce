@@ -41,7 +41,7 @@
 		
 				<div class="collapse navbar-collapse" id="navbarsFurni">
 					<ul class="navbar-nav ms-auto mb-2 mb-md-0" style="align-items: center;">
-						<% if (user) { %>
+						<% if (user_name) { %>
 							<li class="nav-item active" style="margin: 0 10px;">
 								<a class="nav-link" href="/" style="color: #ffffff; font-weight: 500; transition: color 0.3s ease;">
 									<i class="fas fa-home" style="margin-right: 5px;"></i> Home
@@ -67,7 +67,7 @@
 								<a href="#" class="nav-link dropdown-toggle" id="userDropdown" role="button" 
 								   data-bs-toggle="dropdown" aria-expanded="false" 
 								   style="color: #ffffff; font-weight: 500; transition: color 0.3s ease;">
-									<i class="fas fa-user-circle" style="margin-right: 5px;"><%=user.name%></i>
+									<i class="fas fa-user-circle" style="margin-right: 5px;"><%=user_name%></i>
 								</a>
 								<ul class="dropdown-menu" aria-labelledby="userDropdown" style="background-color: #2c3136; border: none; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); padding: 10px 0; margin-top: 10px;">
 									<li>

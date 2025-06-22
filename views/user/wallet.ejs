@@ -338,10 +338,13 @@
             <!-- Wallet Balance -->
             <div class="balance-card">
                 <p class="balance-text">Your current wallet balance is</p>
-                <div class="balance-amount">
-<span class="currency-symbol">₹</span> <%= walletData.balance.toFixed(2) %>
-
-                </div>
+               <div class="balance-amount">
+    <% if (walletData && walletData.balance != null) { %>
+        <span class="currency-symbol">₹</span> <%= walletData.balance.toFixed(2) %>
+    <% } else { %>
+        <span style="color: #d9534f;">You don't have wallet start transaction's </span>
+    <% } %>
+</div>
             </div>
 
             
@@ -435,39 +438,7 @@
     </div>
 
     <!-- Footer -->
-    <!-- <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>bookly</h3>
-                <p>Your destination for discovering great books at amazing prices.</p>
-            </div>
-            
-            <div class="footer-section">
-                <h3>Quick Links</h3>
-                <ul>
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#shop">Shop</a></li>
-                    <li><a href="#categories">Categories</a></li>
-                </ul>
-            </div>
-            
-            <div class="footer-section">
-                <h3>Customer Service</h3>
-                <ul>
-                    <li><a href="#account">My Account</a></li>
-                    <li><a href="#track">Track Order</a></li>
-                    <li><a href="#shipping">Shipping Policy</a></li>
-                </ul>
-            </div>
-            
-            <div class="footer-section">
-                <h3>Contact Us</h3>
-                <div class="contact-info">Dalal street, Mumbai India</div>
-                <div class="contact-info phone">(+91) 8547-98608</div>
-                <div class="contact-info email">bookly@gmail.com</div>
-            </div>
-        </div>
-    </footer> -->
+   
 
 <footer>
     <%- include('partials/user/footer') %>
