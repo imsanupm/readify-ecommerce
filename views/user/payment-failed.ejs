@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment Failed - Retry</title>
+   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
     <style>
         :root {
@@ -389,100 +390,130 @@
         </div>
     </div>
 
+
+  
+
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // Function to update the current time
-            function updateTime() {
-                const now = new Date();
-                const formattedTime = now.toLocaleDateString('en-US', { 
-                    year: 'numeric', 
-                    month: 'short', 
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit'
-                });
-                document.getElementById("current-time").textContent = formattedTime;
-            }
-            
-            // Update time immediately and then every second
-            updateTime();
-            setInterval(updateTime, 1000);
+document.addEventListener("DOMContentLoaded", function () {
+  function updateTime() {
+    const now = new Date();
+    const formattedTime = now.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+    document.getElementById("current-time").textContent = formattedTime;
+  }
 
-            // Button event listeners
-            const retryBtn = document.getElementById("retry-payment");
-            const ordersBtn = document.getElementById("my-orders");
+  updateTime();
+  setInterval(updateTime, 1000);
 
-            retryBtn.addEventListener("click", function() {
-                // Add loading state
-                this.classList.add("loading");
-                this.innerHTML = `
-                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="12" y1="2" x2="12" y2="6"></line>
-                        <line x1="12" y1="18" x2="12" y2="22"></line>
-                        <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line>
-                        <line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line>
-                        <line x1="2" y1="12" x2="6" y2="12"></line>
-                        <line x1="18" y1="12" x2="22" y2="12"></line>
-                        <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line>
-                        <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line>
-                    </svg>
-                    Processing...
-                `;
+  const retryBtn = document.getElementById("retry-payment");
+  const ordersBtn = document.getElementById("my-orders");
 
-                // Simulate processing
-                setTimeout(() => {
-                    window.location.href = '/checkout'
-                }, 2000);
-            });
+  retryBtn.addEventListener("click", async function () {
+    const orderId = "<%= razorpayOrderId %>"; // Full ID including "order_"
 
-            ordersBtn.addEventListener("click", function() {
-               
-                Window.location.href = "/orderListPage"
-            });
+    const res = await fetch('/api/retryPaymentWithExistingOrder', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ orderId })
+    });
 
-            // Add ripple effect to buttons
-            document.querySelectorAll('.btn').forEach(button => {
-                button.addEventListener('click', function(e) {
-                    const ripple = document.createElement('span');
-                    const rect = this.getBoundingClientRect();
-                    const size = Math.max(rect.width, rect.height);
-                    const x = e.clientX - rect.left - size / 2;
-                    const y = e.clientY - rect.top - size / 2;
-                    
-                    ripple.style.cssText = `
-                        position: absolute;
-                        width: ${size}px;
-                        height: ${size}px;
-                        left: ${x}px;
-                        top: ${y}px;
-                        background: rgba(255, 255, 255, 0.3);
-                        border-radius: 50%;
-                        transform: scale(0);
-                        animation: ripple 0.6s linear;
-                        pointer-events: none;
-                    `;
-                    
-                    this.appendChild(ripple);
-                    
-                    setTimeout(() => {
-                        ripple.remove();
-                    }, 600);
-                });
-            });
+    const data = await res.json();
 
-            // Add ripple animation
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes ripple {
-                    to {
-                        transform: scale(4);
-                        opacity: 0;
-                    }
-                }
-            `;
-            document.head.appendChild(style);
+    if (!data.success) {
+      return Swal.fire("Error", data.message, "error");
+    }
+
+    const razorpay = new Razorpay({
+      key: data.key,
+      amount: data.amount,
+      currency: "INR",
+      name: "Readify",
+      description: "Retry Payment",
+      order_id: data.razorpayOrderId,
+      handler: async function (response) {
+        const verifyRes = await fetch("/verifyRazorpayPayment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature,
+            originalOrderId: orderId
+          })
         });
-    </script>
+
+        const result = await verifyRes.json();
+        if (result.success) {
+          window.location.href = "/orderConfirmation";
+        } else {
+          Swal.fire("Payment Failed", result.message, "error");
+        }
+      },
+      prefill: {
+        name: data.user.name,
+        email: data.user.email,
+        contact: data.user.phone
+      },
+      theme: {
+        color: "#3b5d50"
+      }
+    });
+
+    razorpay.open();
+  });
+
+  ordersBtn.addEventListener("click", function () {
+    window.location.href = "/orderListPage";
+  });
+
+  // Ripple effect (optional styling)
+  document.querySelectorAll('.btn').forEach(button => {
+    button.addEventListener('click', function (e) {
+      const ripple = document.createElement('span');
+      const rect = this.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      const x = e.clientX - rect.left - size / 2;
+      const y = e.clientY - rect.top - size / 2;
+
+      ripple.style.cssText = `
+        position: absolute;
+        width: ${size}px;
+        height: ${size}px;
+        left: ${x}px;
+        top: ${y}px;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        transform: scale(0);
+        animation: ripple 0.6s linear;
+        pointer-events: none;
+      `;
+
+      this.appendChild(ripple);
+
+      setTimeout(() => ripple.remove(), 600);
+    });
+  });
+
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes ripple {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+});
+</script>
+
 </body>
 </html>

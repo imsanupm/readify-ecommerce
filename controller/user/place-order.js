@@ -572,7 +572,7 @@ const verifyRazorpayPayment = async (req, res) => {
     await Cart.findOneAndUpdate({ userId }, { items: [] });
 
     // Clear session
-    delete req.session.razorpayOrder;
+    //delete req.session.razorpayOrder;
 
     return res.status(200).json({ success: true, message: 'Payment verified and order placed' });
   } catch (error) {
@@ -585,16 +585,126 @@ const verifyRazorpayPayment = async (req, res) => {
 };
 
 
-
-
-
-const getPaymentFailedPage = async (req,res) => {
+const saveFailedOrder = async (req, res) => {
   try {
-    res.render('payment-failed')
+
+    
+    
+    const { razorpayOrderId } = req.body;
+    const orderSession = req.session.razorpayOrder;
+
+    if (!orderSession || !orderSession.razorpayOrderId || orderSession.razorpayOrderId !== razorpayOrderId) {
+      return res.status(400).json({ success: false, message: 'No matching session data for failed order' });
+    }
+
+    // Check if already saved (avoid duplicates)
+    const existing = await Order.findOne({ "paymentDetails.orderId": razorpayOrderId });
+    if (existing) {
+      return res.status(200).json({ success: true, message: 'Order already exists' });
+    }
+
+    const {
+      userId,
+      userData,
+      orderedItems,
+      totalPrice,
+      discount,
+      finalAmount,
+      shippingCharge,
+      totalQuantity,
+      address,
+      couponAmount,
+      couponApplied,
+      couponDetail,
+      paymentMethod
+    } = orderSession;
+
+    const failedOrder = new Order({
+      userId,
+      userData,
+      orderedItems,
+      totalPrice,
+      discount,
+      finalAmount,
+      shippingCharge,
+      totalQuantity,
+      address,
+      couponAmount,
+      couponApplied,
+      couponDetail,
+      invoiceDate: new Date(),
+      status: 'Payment Failed',
+      paymentMethod,
+      paymentDetails: {
+        paymentId: null,
+        orderId: razorpayOrderId
+      },
+      createdOn: new Date()
+    });
+
+    await failedOrder.save();
+    console.log("Saved failed order:", failedOrder);
+
+    return res.status(200).json({ success: true, message: "Failed order saved" });
   } catch (error) {
-    console.log('errror during getPaymentFailed function',error)
+    console.error("Error saving failed order:", error);
+    return res.status(500).json({ success: false, message: "Failed to save order" });
   }
-}
+};
+
+
+
+
+
+const retryWithExistingRazorpayOrder = async (req, res) => {
+  try {
+    console.log('Retry request received');
+    
+    const { orderId } = req.body; // should include "order_"
+    const userId = req.session.user_id;
+
+    const order = await Order.findOne({ "paymentDetails.orderId": orderId });
+
+    console.log('Found order for retry:', order);
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: "Order not found or not in failed state" });
+    }
+
+    if (!order.paymentDetails?.orderId) {
+      return res.status(400).json({ success: false, message: "Razorpay order ID missing in DB" });
+    }
+
+    return res.status(200).json({
+      success: true,
+      key: process.env.RAZORPAY_KEY_ID,
+      amount: Math.round(order.finalAmount * 100),
+      currency: "INR",
+      razorpayOrderId: order.paymentDetails.orderId, // Already full format
+      user: order.userData
+    });
+
+  } catch (error) {
+    console.error("Error during retry with existing Razorpay order:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+
+
+const getPaymentFailedPage = async (req, res) => {
+  try {
+    const razorpayOrderId = req.session?.razorpayOrder?.razorpayOrderId;
+    console.log('razorpayOrderId for failed page:', razorpayOrderId);
+    
+    res.render('payment-failed', { razorpayOrderId });
+  } catch (error) {
+    console.log('Error rendering payment failed page:', error);
+    res.status(500).send("Something went wrong");
+  }
+};
+
+
 
 
 
@@ -604,5 +714,7 @@ const getPaymentFailedPage = async (req,res) => {
 module.exports = {
   placeNewOrder,
   verifyRazorpayPayment,
-  getPaymentFailedPage
+  getPaymentFailedPage,
+  retryWithExistingRazorpayOrder,
+  saveFailedOrder
 }

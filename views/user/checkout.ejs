@@ -1101,10 +1101,18 @@ if (paymentMethod === "razorpay") {
                 color: "#3b5d50"
             },
             modal: {
-                ondismiss: function () {
-                    window.location.href = '/paymentFailed';
-                }
-            }
+  ondismiss: async function () {
+    await fetch('/api/paymentFailed', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ razorpayOrderId: data.orderId })
+    });
+
+    window.location.href = '/paymentFailed';
+  }
+}
         };
 
         const razorpay = new Razorpay(options);
