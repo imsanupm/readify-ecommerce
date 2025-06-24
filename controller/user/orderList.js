@@ -38,11 +38,6 @@ const getOrderListPage = async (req, res) => {
 };
 
 
-
-
-
-
-
 const getOrderDetailPage = async (req, res) => {
   try {
     const userId = req.session.user_id;

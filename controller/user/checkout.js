@@ -6,7 +6,7 @@ const message = require('../../helpers/user/jsonRespose');
 const helpers = require('../../helpers/user/getUser');
 const Product = require('../../models/admin/productSchema');
 const Wishlist = require('../../models/admin/wishList')
-
+const findUser = require('../../helpers/user/getUser');
 
 
 
@@ -17,7 +17,7 @@ const getCheckout = async (req, res) => {
     try {
   
        const userId = req.session.user_id;
-            
+       const userData = await findUser.getUserById(req.session.user_id);
        const addresss = await User.findById(userId).populate('addresses');
      
       const coupen = await Coupen.find({
@@ -80,7 +80,8 @@ const getCheckout = async (req, res) => {
            appliedOffers ,
            coupenData:coupen,
            orgTotal ,
-           cartData
+           cartData,
+           user_name:userData.name
        });
        
     } catch (error) {
