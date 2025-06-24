@@ -28,25 +28,25 @@ adminRouter.get('/api/dashboard-data',adminDashBoard.adminController.getDashboar
 adminRouter.get('/userList',authMiddleware.adminAuth,adminUserList.loadUserList);
 adminRouter.post("/toggle-status", adminUserList.toggleUserStatus);
 //category management
-adminRouter.get('/category',adminCategory.categoryInfo);
+adminRouter.get('/category',authMiddleware.adminAuth,adminCategory.categoryInfo);
 adminRouter.post('/addCategory',adminCategory.addCategory);
 adminRouter.post('/updateCategory/:categoryId',adminCategory.updateCategory)
 adminRouter.put('/category/toggle/:id',adminCategory.catagoryStatus)
-adminRouter.get('/search-category',adminCategory.searchCategory);
+adminRouter.get('/search-category',authMiddleware.adminAuth,adminCategory.searchCategory);
 //Product management
-adminRouter.get('/addProducts',productController.getProductaddPage);
+adminRouter.get('/addProducts',authMiddleware.adminAuth,productController.getProductaddPage);
 adminRouter.post('/addProducts',uploads.array('productImages',10),productController.addProduct);
-adminRouter.get('/listProducts',productController.listProduct)
+adminRouter.get('/listProducts',authMiddleware.adminAuth,productController.listProduct)
 adminRouter.patch('/blockUnblockProduct/toggle-block/:id',productController.blockUnblockProduct)
-adminRouter.get('/searchProduct',productController.searchUser)
-adminRouter.get('/editProduct/:id',productController.getProductEdit);
+adminRouter.get('/searchProduct',authMiddleware.adminAuth,productController.searchUser)
+adminRouter.get('/editProduct/:id',authMiddleware.adminAuth,productController.getProductEdit);
 adminRouter.post('/edit-product/:id', uploads.array('productImages', 10) ,updateValidation.validateProductEdit, productController.editProduct);
 adminRouter.delete('/remove-image/:id',productController.removeProductImage)
 
 
 //order management
-adminRouter.get('/listOrder',listPage.getOrderListPage)
-adminRouter.get('/orderDetail/:IdOrder',listPage.orderDetailPage);
+adminRouter.get('/listOrder',authMiddleware.adminAuth,listPage.getOrderListPage)
+adminRouter.get('/orderDetail/:IdOrder',authMiddleware.adminAuth,listPage.orderDetailPage);
 //update order
 adminRouter.patch('/update-status/:orderId', updateStatus.updateStatus);
 //adminRouter.patch('/return-order/:orderId',specificReturn.returnOrder);
@@ -57,7 +57,7 @@ adminRouter.patch('/deny-return', orderReturn.denyReturn);
 //specific return
 
 //coupen management
-adminRouter.get('/admin/coupenManagement',coupen.getCoupenPage)
+adminRouter.get('/admin/coupenManagement',authMiddleware.adminAuth,coupen.getCoupenPage)
 adminRouter.post('/addCoupens',coupen.addCoupen);
 adminRouter.put('/updateCoupen/:coupenId',updateCoupenValidate.validateCouponUpdate,coupen.updateCoupen)
 adminRouter.put('/coupons/:couponCode/toggle',coupen.coupenStatus);
@@ -65,8 +65,8 @@ adminRouter.delete('/coupons/:couponCode', coupen.deleteCoupon);
 
 
 //sales report
-adminRouter.get('/sales-summary',saleReport.salesSummary)
-adminRouter.get('/report',saleReport.getSalesRepor)
+adminRouter.get('/sales-summary',authMiddleware.adminAuth,saleReport.salesSummary)
+adminRouter.get('/report',authMiddleware.adminAuth,saleReport.getSalesRepor)
 
 
 

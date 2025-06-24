@@ -15,6 +15,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <title>Sales Report Dashboard</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -584,16 +585,7 @@
                 </div>
             </div>
 
-            <!-- <div class="metric-card">
-                <div class="metric-header">
-                    <div class="metric-title">Total Orders</div>
-                    <div class="metric-icon orders">📦</div>
-                </div>
-                <div class="metric-value" id="totalOrders"></div>
-                <div class="metric-change positive" id="ordersChange">
-                    <span>↗</span> +0% from last period
-                </div>
-            </div>  -->
+           
 
             <div class="metric-card">
                 <div class="metric-header">
@@ -606,16 +598,7 @@
                 </div>
             </div>
 
-            <!-- <div class="metric-card">
-                <div class="metric-header">
-                    <div class="metric-title">Total Discounts</div>
-                    <div class="metric-icon discount">🏷️</div>
-                </div>
-                <div class="metric-value" id="totalDiscounts">₹</div>
-                <div class="metric-change negative" id="discountsChange">
-                    <span>↘</span> -0% from last period
-                </div>
-            </div> -->
+          
         </div> 
 
         <!-- Report Table -->
@@ -655,97 +638,6 @@
 
   
 
-<!-- <script>
- 
-    const periodButtons = document.querySelectorAll('.period-btn');
-    const startDateInput = document.getElementById('startDate');
-    const endDateInput = document.getElementById('endDate');
-
-    let selectedPeriod = 'today';
-
-    periodButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            periodButtons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
-
-            selectedPeriod = button.dataset.period;
-
-            const custom = selectedPeriod === 'custom';
-            startDateInput.disabled = !custom;
-            endDateInput.disabled = !custom;
-
-            fetchReport();
-        });
-    });
-
-    startDateInput.addEventListener('change', () => {
-        if (selectedPeriod === 'custom') fetchReport();
-    });
-
-    endDateInput.addEventListener('change', () => {
-        if (selectedPeriod === 'custom') fetchReport();
-    });
-
-    function fetchReport() {
-        const startDate = startDateInput.value;
-        const endDate = endDateInput.value;
-
-        const data = {
-            period: selectedPeriod,
-            ...(selectedPeriod === 'custom' && { startDate, endDate })
-        };
-
-        fetch('/admin/sales-report', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
-        .then(res => res.json())
-        .then(response => {
-            updateReportTable(response.reportData);
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-    }
-
-    function updateReportTable(data) {
-        const tbody = document.getElementById('reportTableBody');
-        tbody.innerHTML = '';
-
-        if (!data || data.length === 0) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="9" class="no-data">
-                        <div class="no-data-icon">📊</div>
-                        <div>No sales data available for the selected period</div>
-                    </td>
-                </tr>`;
-            return;
-        }
-
-        data.forEach(item => {
-            const row = `
-                <tr>
-                    <td>${item.orderId}</td>
-                    <td>${item.date}</td>
-                    <td>${item.customer}</td>
-                    <td>${item.products}</td>
-                    <td>₹${item.amount}</td>
-                    <td>₹${item.discount}</td>
-                    <td>${item.coupon || '-'}</td>
-                    <td>₹${item.netAmount}</td>
-                    <td>${item.paymentMethod}</td>
-                </tr>`;
-            tbody.innerHTML += row;
-        });
-    }
-
-    fetchReport(); // Load default report on page load
-</script>
-  -->
 
 
 
@@ -754,385 +646,12 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 
-  <!-- <script>
-    const periodButtons = document.querySelectorAll('.period-btn');
-    const startDateInput = document.getElementById('startDate');
-    const endDateInput = document.getElementById('endDate');
+  
 
-    let selectedPeriod = 'today';
 
-    periodButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            periodButtons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
 
-            selectedPeriod = button.dataset.period;
 
-            const custom = selectedPeriod === 'custom';
-            startDateInput.disabled = !custom;
-            endDateInput.disabled = !custom;
 
-            fetchReport();
-        });
-    });
-
-    startDateInput.addEventListener('change', () => {
-        if (selectedPeriod === 'custom') fetchReport();
-    });
-
-    endDateInput.addEventListener('change', () => {
-        if (selectedPeriod === 'custom') fetchReport();
-    });
-
-    function fetchReport() {
-        const startDate = startDateInput.value;
-        const endDate = endDateInput.value;
-
-        const queryParams = new URLSearchParams({
-            period: selectedPeriod,
-            ...(selectedPeriod === 'custom' && { startDate, endDate })
-        });
-
-        fetch(`/admin/sales-report?${queryParams.toString()}`)
-            .then(res => res.json())
-            .then(response => {
-                updateReportTable(response.reportData);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-    }
-
-    function updateReportTable(data) {
-        const tbody = document.getElementById('reportTableBody');
-        tbody.innerHTML = '';
-
-        if (!data || data.length === 0) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="9" class="no-data">
-                        <div class="no-data-icon">📊</div>
-                        <div>No sales data available for the selected period</div>
-                    </td>
-                </tr>`;
-            return;
-        }
-
-        data.forEach(item => {
-            const row = `
-                <tr>
-                    <td>${item.orderId}</td>
-                    <td>${item.date}</td>
-                    <td>${item.customer}</td>
-                    <td>${item.products}</td>
-                    <td>₹${item.amount}</td>
-                    <td>₹${item.discount}</td>
-                    <td>${item.coupon || '-'}</td>
-                    <td>₹${item.netAmount}</td>
-                    <td>${item.offerAmount}</td> 
-                    <td>${item.paymentMethod}</td>
-                </tr>`;
-            tbody.innerHTML += row;
-        });
-    }
-
-    fetchReport(); // Load default report on page load
-
-
-
-
-    //=========================download pdf=========================
-
-    async function exportToPDF() {
-        const startDate = startDateInput.value;
-        const endDate = endDateInput.value;
-
-        const queryParams = new URLSearchParams({
-            period: selectedPeriod,
-            ...(selectedPeriod === 'custom' && { startDate, endDate })
-        });
-
-        try {
-            const response = await fetch(`/admin/sales-report?${queryParams.toString()}`);
-            const { reportData } = await response.json();
-
-            if (!reportData || reportData.length === 0) {
-                alert('No data to export.');
-                return;
-            }
-
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-
-            doc.text('Sales Report', 14, 15);
-
-            const tableData = reportData.map(item => [
-                item.orderId,
-                item.date,
-                item.customer,
-                item.products,
-                `${item.amount}`,
-                `${item.discount}`,
-                item.coupon || '-',
-                `${item.netAmount}`,
-                item.paymentMethod
-            ]);
-
-            doc.autoTable({
-                startY: 20,
-                head: [['Order ID', 'Date', 'Customer', 'Products', 'Amount', 'Discount', 'Coupon', 'Net Amount', 'Payment']],
-                body: tableData,
-                styles: { fontSize: 8 }
-            });
-
-            const fileName = `Sales_Report_${selectedPeriod}_${new Date().toISOString().split('T')[0]}.pdf`;
-            doc.save(fileName);
-        } catch (error) {
-            console.error('PDF export error:', error);
-            alert('Failed to export PDF.');
-        }
-    }
-
-    //=================download excel
-
-
-    async function exportToExcel() {
-    const startDate = startDateInput.value;
-    const endDate = endDateInput.value;
-
-    const queryParams = new URLSearchParams({
-        period: selectedPeriod,
-        ...(selectedPeriod === 'custom' && { startDate, endDate })
-    });
-
-    try {
-        const response = await fetch(`/admin/sales-report?${queryParams.toString()}`);
-        const { reportData } = await response.json();
-
-        if (!reportData || reportData.length === 0) {
-            alert('No data to export.');
-            return;
-        }
-
-        // Format data for Excel
-        const worksheetData = reportData.map(item => ({
-            'Order ID': item.orderId,
-            'Date': item.date,
-            'Customer': item.customer,
-            'Products': item.products,
-            'Amount': item.amount,
-            'Discount': item.discount,
-            'Coupon': item.coupon || '-',
-            'Net Amount': item.netAmount,
-            'Payment Method': item.paymentMethod
-        }));
-
-        const worksheet = XLSX.utils.json_to_sheet(worksheetData);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, 'Sales Report');
-
-        const fileName = `Sales_Report_${selectedPeriod}_${new Date().toISOString().split('T')[0]}.xlsx`;
-        XLSX.writeFile(workbook, fileName);
-
-    } catch (error) {
-        console.error('Excel export error:', error);
-        alert('Failed to export Excel.');
-    }
-}
-
-
-</script> -->
-
-
-
-
-
-
-<!-- <script>
-    const periodButtons = document.querySelectorAll('.period-btn');
-    const startDateInput = document.getElementById('startDate');
-    const endDateInput = document.getElementById('endDate');
-
-    let selectedPeriod = 'today';
-
-    periodButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            periodButtons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
-
-            selectedPeriod = button.dataset.period;
-
-            const custom = selectedPeriod === 'custom';
-            startDateInput.disabled = !custom;
-            endDateInput.disabled = !custom;
-
-            fetchReport();
-        });
-    });
-
-    startDateInput.addEventListener('change', () => {
-        if (selectedPeriod === 'custom') fetchReport();
-    });
-
-    endDateInput.addEventListener('change', () => {
-        if (selectedPeriod === 'custom') fetchReport();
-    });
-
-    function fetchReport() {
-        const startDate = startDateInput.value;
-        const endDate = endDateInput.value;
-
-        const queryParams = new URLSearchParams({
-            period: selectedPeriod,
-            ...(selectedPeriod === 'custom' && { startDate, endDate })
-        });
-
-        fetch(`/admin/sales-report?${queryParams.toString()}`)
-            .then(res => res.json())
-            .then(response => {
-                updateReportTable(response.reportData);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-    }
-
-    function updateReportTable(data) {
-        const tbody = document.getElementById('reportTableBody');
-        tbody.innerHTML = '';
-
-        if (!data || data.length === 0) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="10" class="no-data">
-                        <div class="no-data-icon">📊</div>
-                        <div>No sales data available for the selected period</div>
-                    </td>
-                </tr>`;
-            return;
-        }
-
-        data.forEach(item => {
-            const row = `
-                <tr>
-                    <td>${item.orderId}</td>
-                    <td>${item.date}</td>
-                    <td>${item.customer}</td>
-                    <td>${item.products}</td>
-                    <td>₹${item.amount}</td>
-                   
-                    <td>₹${item.discount>=1?item.discount:0}</td>
-                    <td>${item.coupon || '-'}</td>
-                    <td>₹${item.netAmount}</td>
-                  
-                    <td>${item.paymentMethod}</td>
-                </tr>`;
-            tbody.innerHTML += row;
-        });
-    }
-
-    fetchReport(); // Load default report on page load
-
-    //=========================download pdf=========================
-
-    async function exportToPDF() {
-        const startDate = startDateInput.value;
-        const endDate = endDateInput.value;
-
-        const queryParams = new URLSearchParams({
-            period: selectedPeriod,
-            ...(selectedPeriod === 'custom' && { startDate, endDate })
-        });
-
-        try {
-            const response = await fetch(`/admin/sales-report?${queryParams.toString()}`);
-            const { reportData } = await response.json();
-
-            if (!reportData || reportData.length === 0) {
-                alert('No data to export.');
-                return;
-            }
-
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-
-            doc.text('Sales Report', 14, 15);
-
-            const tableData = reportData.map(item => [
-                item.orderId,
-                item.date,
-                item.customer,
-                item.products,
-                `${item.amount}`,
-                `${item.discount>=1?item.discount:0}`,
-                item.coupon || '-',
-                `${item.netAmount}`,
-                `${item.offerAmount}`,
-                item.paymentMethod
-            ]);
-
-            doc.autoTable({
-                startY: 20,
-                head: [['Order ID', 'Date', 'Customer', 'Products', 'Amount', 'Discount', 'Coupon', 'Net Amount', 'Offer Amount', 'Payment']],
-                body: tableData,
-                styles: { fontSize: 8 }
-            });
-
-            const fileName = `Sales_Report_${selectedPeriod}_${new Date().toISOString().split('T')[0]}.pdf`;
-            doc.save(fileName);
-        } catch (error) {
-            console.error('PDF export error:', error);
-            alert('Failed to export PDF.');
-        }
-    }
-
-    //=================download excel=========================
-
-    async function exportToExcel() {
-        const startDate = startDateInput.value;
-        const endDate = endDateInput.value;
-
-        const queryParams = new URLSearchParams({
-            period: selectedPeriod,
-            ...(selectedPeriod === 'custom' && { startDate, endDate })
-        });
-
-        try {
-            const response = await fetch(`/admin/sales-report?${queryParams.toString()}`);
-            const { reportData } = await response.json();
-
-            if (!reportData || reportData.length === 0) {
-                alert('No data to export.');
-                return;
-            }
-
-            const worksheetData = reportData.map(item => ({
-                'Order ID': item.orderId,
-                'Date': item.date,
-                'Customer': item.customer,
-                'Products': item.products,
-                'Amount': item.amount,
-                'Discount': item.discount>=1?item.discount:0,
-                'Coupon': item.coupon || '-',
-                'Net Amount': item.netAmount,
-                'Offer Amount': item.offerAmount,
-                'Payment Method': item.paymentMethod
-            }));
-
-            const worksheet = XLSX.utils.json_to_sheet(worksheetData);
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, 'Sales Report');
-
-            const fileName = `Sales_Report_${selectedPeriod}_${new Date().toISOString().split('T')[0]}.xlsx`;
-            XLSX.writeFile(workbook, fileName);
-
-        } catch (error) {
-            console.error('Excel export error:', error);
-            alert('Failed to export Excel.');
-        }
-    }
-</script> 
- -->
 
 
 
@@ -1235,10 +754,18 @@
             const response = await fetch(`/admin/sales-summary?${queryParams.toString()}`);
             const { reportData } = await response.json();
 
-            if (!reportData || reportData.length === 0) {
-                alert('No data to export.');
-                return;
-            }
+if (!reportData || reportData.length === 0) {
+    Swal.fire({
+        toast: true,
+        icon: 'warning',
+        title: 'Pleae select a valid date',
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 1000,
+        timerProgressBar: true,
+    });
+    return;
+}
 
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
@@ -1266,9 +793,17 @@
             const fileName = `Sales_Report_${selectedPeriod}_${new Date().toISOString().split('T')[0]}.pdf`;
             doc.save(fileName);
         } catch (error) {
-            console.error('PDF export error:', error);
-            alert('Failed to export PDF.');
-        }
+    console.error('PDF export error:', error);
+    Swal.fire({
+        toast: true,
+        icon: 'error',
+        title: 'Failed to export PDF',
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+    });
+}
     }
 
     //=================download excel=========================
@@ -1286,10 +821,18 @@
             const response = await fetch(`/admin/sales-summary?${queryParams.toString()}`);
             const { reportData } = await response.json();
 
-            if (!reportData || reportData.length === 0) {
-                alert('No data to export.');
-                return;
-            }
+           if (!reportData || reportData.length === 0) {
+    Swal.fire({
+        toast: true,
+        icon: 'warning',
+        title: 'Please select a valid date',
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 1000,
+        timerProgressBar: true,
+    });
+    return;
+}
 
             const worksheetData = reportData.map(item => ({
                 'Order ID': item.orderId,
@@ -1309,10 +852,18 @@
             const fileName = `Sales_Report_${selectedPeriod}_${new Date().toISOString().split('T')[0]}.xlsx`;
             XLSX.writeFile(workbook, fileName);
 
-        } catch (error) {
-            console.error('Excel export error:', error);
-            alert('Failed to export Excel.');
-        }
+        }catch (error) {
+    console.error('Excel export error:', error);
+    Swal.fire({
+        toast: true,
+        icon: 'error',
+        title: 'Failed to export Excel',
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+    });
+}
     }
 </script>
 

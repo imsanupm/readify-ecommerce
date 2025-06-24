@@ -514,62 +514,6 @@
       });
     }
     
-//     function removeFromWishlist(itemId) {
-//   Swal.fire({
-//     title: 'Remove from wishlist?',
-//     text: "This item will be removed from your wishlist",
-//     icon: 'warning',
-//     showCancelButton: true,
-//     confirmButtonColor: '#3b5d50',
-//     cancelButtonColor: '#d33',
-//     confirmButtonText: 'Yes, remove it!',
-//     cancelButtonText: 'Cancel'
-//   }).then((result) => {
-//     if (result.isConfirmed) {
-     
-//       fetch(`/wishlist/delete/${itemId}`, {
-//         method: 'DELETE',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         }
-//       })
-//       .then(response => {
-//         if (!response.ok) {
-//           throw new Error('Network response was not ok');
-//         }
-//         return response.json();
-//       })
-//       .then(data => {
-//         console.log('Success:', data);
-        
-        
-//         Swal.fire({
-//           title: 'Removed!',
-//           text: 'Item has been removed from your wishlist.',
-//           icon: 'success',
-//           confirmButtonColor: '#3b5d50',
-//           timer: 1500
-//         }).then(() => {
-          
-//           window.location.reload();
-//         });
-//       })
-//       .catch((error) => {
-//         console.error('Error:', error);
-        
-        
-//         Swal.fire({
-//           title: 'Error!',
-//           text: 'There was a problem removing this item.',
-//           icon: 'error',
-//           confirmButtonColor: '#3b5d50'
-//         });
-//       });
-//     }
-//   });
-// }
-
-
 
 function removeFromWishlist(itemId) {
   // Validate input
@@ -606,6 +550,7 @@ function removeFromWishlist(itemId) {
           'Content-Type': 'application/json',
         },
         credentials: 'same-origin' 
+      })
       .then(response => {
         if (!response.ok) {
           return response.json().then(err => Promise.reject(err));

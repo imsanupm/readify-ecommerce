@@ -784,6 +784,58 @@
             e.preventDefault();
             // Controller route: POST /admin/coupons
             
+             const startDateInput = document.getElementById('startDate').value;
+    const expiryDateInput = document.getElementById('expiryDate').value;
+
+    const startDate = new Date(startDateInput);
+    const expiryDate = new Date(expiryDateInput);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // normalize
+
+    // ❌ Start date in past
+    if (startDate < today) {
+        Swal.fire({
+            toast: true,
+            icon: 'warning',
+            title: 'Start date cannot be in the past',
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 1000,
+            timerProgressBar: true,
+        });
+        return;
+    }
+
+    // ❌ Expiry date in past
+    if (expiryDate < today) {
+        Swal.fire({
+            toast: true,
+            icon: 'warning',
+            title: 'Expiry date cannot be in the past',
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 1000,
+            timerProgressBar: true,
+        });
+        return;
+    }
+
+    // ❌ Start date after expiry
+    if (startDate > expiryDate) {
+        Swal.fire({
+            toast: true,
+            icon: 'warning',
+            title: 'Start date cannot be after expiry date',
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 1000,
+            timerProgressBar: true,
+        });
+        return;
+    }
+
+
+
             const formData = {
                 code: document.getElementById('couponCode').value,
                // discountType: document.getElementById('discountType').value,
@@ -841,6 +893,56 @@
 
         document.getElementById('editCouponForm').addEventListener('submit', async function(e) {
         e.preventDefault();
+                //const couponCode = document.getElementById('editCouponCode').value;
+    const startDateInput = document.getElementById('editStartDate').value;
+    const expiryDateInput = document.getElementById('editExpiryDate').value;
+
+    const startDate = new Date(startDateInput);
+    const expiryDate = new Date(expiryDateInput);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // normalize to midnight
+
+    // ❌ Start date in the past
+    if (startDate < today) {
+        Swal.fire({
+            toast: true,
+            icon: 'warning',
+            title: 'Start date cannot be in the past',
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 1000,
+            timerProgressBar: true,
+        });
+        return;
+    }
+
+    // ❌ Expiry date in the past
+    if (expiryDate < today) {
+        Swal.fire({
+            toast: true,
+            icon: 'warning',
+            title: 'Expiry date cannot be in the past',
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 1000,
+            timerProgressBar: true,
+        });
+        return;
+    }
+
+    // ❌ Start date after expiry date
+    if (startDate > expiryDate) {
+        Swal.fire({
+            toast: true,
+            icon: 'warning',
+            title: 'Start date cannot be after expiry date',
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 1000,
+            timerProgressBar: true,
+        });
+        return;
+    }
 
         const couponCode = document.getElementById('editCouponCode').value;
         const formData = {

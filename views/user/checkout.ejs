@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <title>Checkout - Readify</title>
     <style>
         * {
@@ -971,10 +974,32 @@
             const paymentMethod = selectedPayment ? selectedPayment.id : null;
 
             // Validate
-            if (!addressId || !paymentMethod) {
-                alert("Please select both address and payment method.");
-                return;
-            }
+            if (!addressId) {
+    Swal.fire({
+        toast: true,
+        icon: 'warning',
+        title: 'Please select an address',
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+    });
+    return;
+}
+
+if (!paymentMethod) {
+    Swal.fire({
+        toast: true,
+        icon: 'warning',
+        title: 'Please select a payment method',
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+    });
+    return;
+}
+
         
             
 

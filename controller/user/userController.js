@@ -142,8 +142,6 @@ const loadVerifyOtp = async (req, res) => {
 const signup = async (req, res) => {
     try {
         const { email, password, Phone, cPassword, name ,referralCode} = req.body;
-        console.log('referel code ===============',referralCode);
-        
         
         if (password !== cPassword) {
             return res.render('signin', { message: 'Passwords do not match' });
@@ -308,19 +306,3 @@ module.exports = {
 
 
 
-// const user = async (req,res) => {
-//     try {
-//         const {password, email, phone , name} = req.body
-
-
-// const user = new User {
-//     name : name,
-//     password
-// };
-
-//     await user.save()
-//      return res.json({message: "ahopfiaih9pah"})
-//     } catch (error) {
-        
-//     }
-// }
