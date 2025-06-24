@@ -5,6 +5,7 @@ const message = require('../../helpers/user/jsonRespose');
 const getUser = require('../../helpers/user/getUser');
 const Product = require('../../models/admin/productSchema');
 const Wishlist = require('../../models/admin/wishList')
+const findUser = require('../../helpers/user/getUser');
 
 
 
@@ -62,7 +63,7 @@ const getCart = async (req, res) => {
   try {
     const userId = req.session.user_id;
     const cartData = await Cart.findOne({ userId }).populate('items.productId');
-     const userData = await User.findById(userId)
+    const userData = await findUser.getUserById(req.session.user_id);
     const {
       subTotal,
       totalAmount,
@@ -77,7 +78,8 @@ const getCart = async (req, res) => {
       totalAmount,
       deliveryCharge,
       gstAmount,
-      offerTypes
+      offerTypes,
+      user_name:userData.name
     });
   } catch (error) {
     console.log('error during getting the cart page', error);
@@ -88,7 +90,8 @@ const getCart = async (req, res) => {
       deliveryCharge: 0,
       gstAmount: 0,
       offerTypes: [],
-      user:userData
+      user:userData,
+      user_name:userData.name
     });
   }
 };

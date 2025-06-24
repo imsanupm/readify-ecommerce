@@ -1,9 +1,16 @@
 const Product = require("../../models/admin/productSchema")
 const Category = require('../../models/admin/category')
 const product = require("../../models/admin/productSchema")
-
+const findUser = require('../../helpers/user/getUser')
 const getProductListPage = async (req,res) => {
     try {
+
+        console.log('the page is rendering ................');
+        
+        const userData = await findUser.getUserById(req.session.user_id);
+        console.log('userData fomr product list page=========',userData);
+        console.log('product list page ===============');
+        
         const product = await Product.find({isBlocked:false}).sort({createdAt:-1})
         const category = await Category.find({})
         res.render('productList',{

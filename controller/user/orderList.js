@@ -2,26 +2,13 @@ const code = require('../../helpers/user/statusCode')
 const Order  = require('../../models/user/order-schema');
 const mongoose = require('mongoose');
 const Cart = require('../../models/admin/cart')
+const findUser = require('../../helpers/user/getUser');
 
-
-// const getOrderListPage = async (req,res) => {
-//    try {
-//     const userId = req.session.user_id;
-//     const userOrder = await Order.find({userId}).sort({ createdOn: -1 });
-   
-//     return res.render('order-list',{
-//         orders : userOrder
-//     });
-//    } catch (error) {
-//     console.log('error during getOrlderListPage',error)
-//     return res.status(code.HttpStatus.INTERNAL_SERVER_ERROR);
-//    } 
-// }
 
 const getOrderListPage = async (req, res) => {
   try {
     const userId = req.session.user_id;
-
+     const userData = await findUser.getUserById(req.session.user_id);
     // Pagination parameters
     const page = parseInt(req.query.page) || 1;
     const limit = 5; // Number of orders per page
@@ -41,7 +28,8 @@ const getOrderListPage = async (req, res) => {
     return res.render('order-list', {
       orders: userOrder,
       currentPage: page,
-      totalPages
+      totalPages,
+      user_name:userData.name
     });
   } catch (error) {
     console.log('Error during getOrderListPage', error);
@@ -59,7 +47,7 @@ const getOrderDetailPage = async (req, res) => {
   try {
     const userId = req.session.user_id;
     const orderId = req.params.id;
-
+       const userData = await findUser.getUserById(req.session.user_id);
     let filter = { userId };
 
     if (mongoose.Types.ObjectId.isValid(orderId)) {
@@ -86,7 +74,7 @@ const getOrderDetailPage = async (req, res) => {
         subTotal += item.price * item.quantity;
       }
     });
-    console.log('subTotal========',subTotal);
+    
     
 
 
@@ -101,7 +89,8 @@ const getOrderDetailPage = async (req, res) => {
       gstAmount: order.totalPrice<0?0:gst.toFixed(2),
       deliveryCharge: order.totalPrice<0?0:deliveryCharge.toFixed(2),
       // totalPrice: totalPrice.toFixed(2)
-      totalPrice:order.finalAmount<0?0:order.finalAmount
+      totalPrice:order.finalAmount<0?0:order.finalAmount,
+      user_name:userData.name
     });
 
   } catch (error) {

@@ -1,21 +1,12 @@
 const User = require('../../models/user/userSchema');
 const Address = require('../../models/user/addressSchema');
+const findUser = require('../../helpers/user/getUser');
 
 
-// const getAdressPage = async (req,res) => {
-//     try {
-//         const userId = req.session.user_id;
-//         const user = await User.findById(userId).populate('addresses')
-       
-        
-//         res.render('showAddress',{addresses:user.addresses});
-//     } catch (error) {
-//         console.log('error during getAddress Fucntion',error)
-//     }
-// }
 const getAdressPage = async (req, res) => {
     try {
       const userId = req.session.user_id;
+       const userData = await findUser.getUserById(req.session.user_id);
       const page = parseInt(req.query.page) || 1;
       const limit = 6; // Show 6 addresses per page
   
@@ -34,6 +25,7 @@ const getAdressPage = async (req, res) => {
         addresses: result.docs,
         currentPage: result.page,
         totalPages: result.totalPages,
+        user_name:userData.name
       });
     } catch (error) {
       console.error('Error in getAdressPage:', error);

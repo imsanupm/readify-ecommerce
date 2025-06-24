@@ -2,7 +2,7 @@ const status = require('../../helpers/user/statusCode');
 const Cart = require('../../models/admin/cart');
 const Whishlist = require('../../models/admin/wishList');
 const User =require('../../models/admin/wishList')
-
+const findUser = require('../../helpers/user/getUser')
 
 
 
@@ -10,7 +10,7 @@ const User =require('../../models/admin/wishList')
 const getWishList = async (req, res) => {
     try {
       const userId = req.session.user_id;
-      
+      const userData = await findUser.getUserById(req.session.user_id);
      
       const page = parseInt(req.query.page) || 1;
       const limit = parseInt(req.query.limit) || 8; // Items per page
@@ -51,6 +51,7 @@ const getWishList = async (req, res) => {
       }
       
       res.render('wishList', { 
+        user_name:userData.name,
         wishlistItems: validItems,
         pagination: {
           totalItems,

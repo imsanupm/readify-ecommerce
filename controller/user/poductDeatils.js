@@ -2,7 +2,7 @@
 const Category = require('../../models/admin/category');
 const product = require('../../models/admin/productSchema');
 const Product = require('../../models/admin/productSchema')
-
+const findUser = require('../../helpers/user/getUser')
 
 
 const getProductDetailPage = async (req, res) => {
@@ -44,6 +44,10 @@ const getProductDetailPage = async (req, res) => {
 const getProductListPage = async (req, res) => {
     try {
 
+      
+      const userData = await findUser.getUserById(req.session.user_id);
+      
+      
       const { search, category, sort, page = 1, limit = 9 } = req.query;
   
       const query = {
@@ -115,6 +119,7 @@ const getProductListPage = async (req, res) => {
   
     
       res.render('productList', {
+        user_name:userData.name,
         books: products,
         categories,
         totalProducts,

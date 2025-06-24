@@ -18,11 +18,11 @@ const loadHomepage = async (req,res)=>{
 
         if(user)   req.session.user_id = user
 
-        console.log(user,'homepage')
+      //  console.log(user,'homepage')
         if(user){
             const userData = await User.findOne({_id:user})
-           
-            res.render('home',{products:product,user:userData});
+         //  console.log('home page rendering',userData)
+            res.render('home',{products:product,user:userData,user_name:userData.name});
         }else{
             return res.render('home',{products:product});
         }
