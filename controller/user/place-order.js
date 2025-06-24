@@ -805,12 +805,12 @@ const retryWithExistingRazorpayOrder = async (req, res) => {
   try {
     console.log('Retry request received');
     
-    const { orderId } = req.body; // should include "order_"
+    const { orderId } = req.body;
     const userId = req.session.user_id;
 
     const order = await Order.findOne({ "paymentDetails.orderId": orderId });
 
-   console.log('Found order for retry:', order);
+  
 
     if (!order) {
       return res.status(404).json({ success: false, message: "Order not found or not in failed state" });
