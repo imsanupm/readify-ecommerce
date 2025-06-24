@@ -20,6 +20,8 @@ const updateStatus = async (req,res) => {
           
           }else if (orderData.status=="Return Requested"){
             return res.status(code.HttpStatus.BAD_REQUEST).json({message:"Status cannnot be changed. User requested for return do approve or deny to change the status"})
+          }else if (orderData.status=="Payment Failed"){
+            return res.status(code.HttpStatus.BAD_REQUEST).json({message:"You cannot change Status Because It's payment is is not completed ",success:false})
           }
         
           orderData.status = status;

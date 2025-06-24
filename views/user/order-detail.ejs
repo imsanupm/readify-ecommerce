@@ -604,6 +604,10 @@ body {
   background-color: #6C757D;
 }
 
+.order-status.payment-failed {
+  background-color: #dc3545; /* Red for failed payments */
+}
+
 </style>
 
 
@@ -751,25 +755,29 @@ body {
 
     <!-- Action column on the right -->
     <div class="col action-col">
-  <% if (item.status === 'Processing') { %>
-    <button 
-      class="cancel-btn" 
-      data-product-id="<%= item.product %>" 
-      data-order-id="<%= orderData._id %>" 
-      style="background-color: #dc3545; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer;">
-      Cancel
-    </button>
-  <% } else if (item.status === 'Delivered') { %>
-    <button 
-      class="return-btn" 
-      data-product-id="<%= item.product %>" 
-      data-order-id="<%= orderData._id %>" 
-      style="background-color: #3b5d50; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer;">
-      Return
-    </button>
-  <% } else { %>
-    <%= item.status %>
-  <% } %>
+  <% if (orderData.status === "Payment Failed") { %>
+  <!-- Show nothing -->
+     <span style="color: red; font-weight: 500;">Payment Failed</span>
+<% } else if (orderData.status !== "Returned" && orderData.status !== "Cancelled" && orderData.status !== "Shipped" && orderData.status !== "Return Requested") { %>
+  <button 
+    class="cancel-btn" 
+    data-product-id="<%= item.product %>" 
+    data-order-id="<%= orderData._id %>" 
+    style="background-color: #dc3545; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer;">
+    Cancel
+  </button>
+<% } else if (item.status === 'Delivered') { %>
+  <button 
+    class="return-btn" 
+    data-product-id="<%= item.product %>" 
+    data-order-id="<%= orderData._id %>" 
+    style="background-color: #3b5d50; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer;">
+    Return
+  </button>
+<% } else { %>
+  <%= item.status %>
+<% } %>
+
 </div>
   </div>
 <% }); %>
@@ -807,11 +815,36 @@ body {
         </div>
       </div>
     </div>
-    
+    <%if(orderData.status!=="Payment Failed"){%>
     <div class="order-actions">
       <a href="/downloadInvoice/<%= orderData.orderId %>" class="btn btn-secondary">Download Invoice</a>
-      <button class="btn btn-primary">Track Order</button>
+   
     </div>
+  <%}%>
+    <% if (orderData.status === 'Payment Failed' && orderData.paymentMethod === 'razorpay') { %>
+  <div class="order-actions" style="text-align: center; margin-top: 20px;">
+    <button 
+      id="retry-payment"
+      data-order-id="<%= orderData.paymentDetails.orderId %>"
+      style="
+        background-color: #7fac20;
+        border: none;
+        color: #212529;
+        padding: 10px 20px;
+        font-size: 16px;
+        font-weight: 500;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      "
+      onmouseover="this.style.backgroundColor='#e0a800';"
+      onmouseout="this.style.backgroundColor='#ffc107';"
+    >
+      Retry Payment
+    </button>
+  </div>
+<% } %>
+
 
     <% if (orderData.status === "Delivered") { %>
       <div class="order-actions">
@@ -822,7 +855,7 @@ body {
           Return Order
         </button>
       </div>
-    <% } else if (orderData.status !== "Returned"&&orderData.status !=="Cancelled"&&orderData.status!=="Shipped"&&orderData.status!=="Return Requested") { %>
+    <% } else if (orderData.status !== "Returned"&&orderData.status !=="Cancelled"&&orderData.status!=="Shipped"&&orderData.status!=="Return Requested"&&orderData.status!=="Payment Failed") { %>
       <div class="order-actions">
         <button
           class="btn btn-danger"
@@ -1054,7 +1087,6 @@ body {
   </script>
 
 
-<!-- SweetAlert2 CDN (Include this in your HTML head or before the script) -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
@@ -1166,6 +1198,69 @@ body {
   });
 </script>
 
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const retryBtn = document.getElementById("retry-payment");
+    if (retryBtn) {
+      retryBtn.addEventListener("click", async () => {
+        const orderId = retryBtn.getAttribute("data-order-id");
+
+        const res = await fetch("/api/retryPaymentWithExistingOrder", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ orderId })
+        });
+
+        const data = await res.json();
+
+        if (!data.success) {
+          return Swal.fire("Error", data.message, "error");
+        }
+
+        const razorpay = new Razorpay({
+          key: data.key,
+          amount: data.amount,
+          currency: "INR",
+          name: "Readify",
+          description: "Retry Payment",
+          order_id: data.razorpayOrderId,
+          handler: async function (response) {
+            const verifyRes = await fetch("/verifyRazorpayPayment", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                originalOrderId: orderId
+              })
+            });
+
+            const result = await verifyRes.json();
+            if (result.success) {
+              window.location.href = "/orderConfirmation";
+            } else {
+              Swal.fire("Payment Failed", result.message, "error");
+            }
+          },
+          prefill: {
+            name: data.user.name,
+            email: data.user.email,
+            contact: data.user.phone
+          },
+          theme: {
+            color: "#3b5d50"
+          }
+        });
+
+        razorpay.open();
+      });
+    }
+  });
+</script>
 
 
 </body>

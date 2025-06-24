@@ -1,24 +1,6 @@
 const Order = require("../../models/user/order-schema");
 const User = require('../../models/user/userSchema')
 
-// const getOrderListPage = async (req,res) => {
-//     try {
-      
-//         const orderData = await Order.find({}).sort({createdOn:-1})
-//         if(!orderData){
-//             return res.json({message:"cannot find the orderData"});
-
-//         }
-       
-//          res.render('list-order',{
-//             orderData:orderData
-//          });
-//          return
-//     } catch (error) {
-//         console.log('error during getOrderListPage',error);
-//     }
-// }
-
 
 
 const getOrderListPage = async (req, res) => {
