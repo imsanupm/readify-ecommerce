@@ -35,7 +35,8 @@ const forgotPassword = async (req,res) => {
             
           const resetToken = crypto.randomBytes(32).toString('hex');
 
-          const resetLink = `http://localhost:3856/confirmPassword?token=${resetToken}`;
+         //const resetLink = `http://localhost:3856/confirmPassword?token=${resetToken}`;
+           const resetLink = `${process.env.BASE_URL}/confirmPassword?token=${resetToken}`;
 
              
         const emailSent = await sendUrlTomail.sendVarificationEmail(email,resetLink);

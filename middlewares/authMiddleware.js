@@ -11,7 +11,7 @@ const getUser = require('../helpers/user/getUser');
 
 const main = async (req, res, next) => {
     res.locals.user_name = req.session.user_name || null;
-  console.log('session',req.session)
+
     if (req.session.user_id) {
         try {
             const userData = await User.findById(req.session.user_id);

@@ -23,7 +23,7 @@ passport.use(
       try {
        
         let user = await User.findOne({ googleId: profile.id });
-        console.log('found user',user)
+      
        
         if (user) {
       
