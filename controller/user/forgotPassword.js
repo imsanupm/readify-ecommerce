@@ -37,9 +37,14 @@ const forgotPassword = async (req,res) => {
 
          //const resetLink = `http://localhost:3856/confirmPassword?token=${resetToken}`;
            const resetLink = `${process.env.BASE_URL}/confirmPassword?token=${resetToken}`;
-
+           const htmlContent = `
+    <p>Hello,</p>
+    <p>You requested to reset your password. Click the link below to proceed:</p>
+    <a href="${resetLink}" style="color: #3b5d50;">Reset Password</a>
+    <p>If you did not request this, please ignore this email.</p>
+`;
              
-        const emailSent = await sendUrlTomail.sendVarificationEmail(email,resetLink);
+        const emailSent = await sendUrlTomail.sendVarificationEmail(email,htmlContent);
         if(emailSent){
             req.session.resetToken = resetToken;
           req.session.resetEmail = email;
