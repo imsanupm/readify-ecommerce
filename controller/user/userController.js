@@ -95,12 +95,10 @@ const sendVarificationEmail = async (email, otp) => {
     try {
         const transporter = nodemailer.createTransport({
             service: 'gmail',
-            port: 587,
-            secure: false,
             requireTLS: true,
             auth: {
-                user: process.env.NODEMAILER_EMAIL,
-                pass: process.env.NODEMAILER_PASSWORD
+                user: 'sanukrishna23@gmail.com',
+                pass: 'gyhqvrfwnpqbcnuq'
             }
         });
         const info = await transporter.sendMail({
