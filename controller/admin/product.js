@@ -121,6 +121,8 @@ const listProduct = async (req, res) => {
             });
         }
 
+       
+           
         res.render('listProduct', {
             products: productData,
             currentPage: page,
