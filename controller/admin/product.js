@@ -42,16 +42,19 @@ const addProduct = async (req,res) => {
           
       } = req.body;
      console.log(req.body)
-
+     console.log(typeof availableQuantity,regularPrice);
+     let quantity = Number(availableQuantity)
       if(!name ||!writer ||!category_id ||!language ||!regularPrice  ||!availableQuantity ||!description ){
           
-          console.log('Problem with finding credentials in req.body in addProduct in productController')
+        
 
         return res.status(code.HttpStatus.BAD_REQUEST).json({messge:"All fields are required ",success:false})
       }
-    
-      if(regularPrice<100){
-        res.json({message:"price should Morethan 100 Rpees",success:false})
+         const quantityNum = Number(quantity);
+      if(regularPrice<199){
+       return res.status(code.HttpStatus.BAD_REQUEST).json({message:"price should greaterthan or equals to 199 Rpees",success:false})
+      }else if(quantityNum<0){
+        return res.status(code.HttpStatus.BAD_REQUEST).json({message:"quantity should not negative number",success:false})
       }
 
       

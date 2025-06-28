@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart is Empty</title>
+    <style>
+        /* Empty Cart Specific Styles */
+        .empty-cart-main {
+            min-height: calc(100vh - 120px); /* Adjust based on header/footer height */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        
+        .empty-checkout-container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            margin: 20px 0;
+        }
+        
+        .empty-icon {
+            font-size: 72px;
+            margin-bottom: 20px;
+            color: #3b5d50;
+        }
+        
+        .empty-checkout-container h1 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            color: #3b5d50;
+        }
+        
+        .empty-checkout-container p {
+            font-size: 16px;
+            margin-bottom: 30px;
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .btn-shop {
+            background-color: #3b5d50;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-shop:hover {
+            background-color: #2e4a3f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(59, 93, 80, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <%- include("../../views/partials/user/header") %>
+    
+    <main class="empty-cart-main">
+        <div class="empty-checkout-container">
+            <div class="empty-icon">🛒</div>
+            <h1>Your Checkout is Empty</h1>
+            <p>Looks like you haven't added any products to your cart yet. Browse our collection and find something special!</p>
+            <a href="/books" class="btn-shop">Shop Books</a>
+        </div>
+    </main>
+    
+    <%- include("../../views/partials/user/footer") %>
+</body>
+</html>

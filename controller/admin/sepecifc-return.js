@@ -143,11 +143,7 @@ const specificReturnHandler = async (req, res) => {
         const refundAmount = parseFloat(((discountAmount * productShare) / 100).toFixed(2));
         const totalReturnAmount = parseFloat((itemTotal - refundAmount).toFixed(2));
 
-        console.log('subTotal=======', subtotal);
-        console.log('final amount==', finalAmount);
-        console.log('coupon amount==', couponAmount);
-        console.log('adjusted final amount==', adjustedFinalAmount);
-        console.log('refund amount==', totalReturnAmount);
+        
 
         if (action === "approve") {
             await specifReturnExicution(totalReturnAmount, order, orderId, productId, cancelItem, itemTotal);

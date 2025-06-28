@@ -64,6 +64,7 @@ const getCart = async (req, res) => {
     const userId = req.session.user_id;
     const cartData = await Cart.findOne({ userId }).populate('items.productId');
     const userData = await findUser.getUserById(req.session.user_id);
+    
     const {
       subTotal,
       totalAmount,
@@ -155,6 +156,16 @@ const addToCart = async (req, res) => {
       const existingItem = user.cart.items.find(item =>
         item.productId.toString() === productId
       );
+
+     if (existingItem) {
+  if (existingItem.quantity + 1 > product.quantity) {
+    return res.status(code.HttpStatus.BAD_REQUEST).json({
+      message: `Only ${product.quantity} unit(s) available in stock. You cannot add more.`,
+      success: false
+    });
+  }
+}
+
   
       if (existingItem) {
         if (existingItem.quantity >= 5) {

@@ -15,7 +15,8 @@ const findUser = require('../../helpers/user/getUser');
 
 const getCheckout = async (req, res) => {
     try {
-  
+    
+       
        const userId = req.session.user_id;
        const userData = await findUser.getUserById(req.session.user_id);
        const addresss = await User.findById(userId).populate('addresses');
@@ -28,7 +29,9 @@ const getCheckout = async (req, res) => {
            path: 'items.productId',
            populate: { path: 'category', select: 'offer' } // Populate category to access offer
        });
-       
+       if(cartData.length<0){
+        res.redirct('/empty-checkout')
+       }
        let subTotal = 0;
        let totalAmount = 0; // Initialize to 0 to avoid null issues
        let gstAmount = null;
@@ -38,8 +41,8 @@ const getCheckout = async (req, res) => {
        const appliedOffers = []; // Array to store applied offer details
        
        if (!cartData || !cartData.items || cartData.items.length === 0) {
-           return res.status(404).json({message:"Something Went Wrong Datas Cant find Please try again",success:false})
-       }
+    return res.redirect('/empty-checkout');
+}
        let orgTotal = 0;
        cartData.items.forEach(item => {
         const quantity = item.quantity;
@@ -97,11 +100,20 @@ const getCheckout = async (req, res) => {
     }
   }
 
-
+const emptyCheckout = async (req,res) => {
+  try {
+    res.render('empty-checkout')
+  } catch (error) {
+    console.log('error duirng emtyckeckout=========',error);
+    
+  }
+  
+}
 
   module.exports = {
     getCheckout,
     getOrderConfirmation,
+    emptyCheckout
   };
 
   

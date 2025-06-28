@@ -104,6 +104,7 @@ router.get('/orderConfirmation',userAuth.isUserSignedIn,checkout.getOrderConfirm
 router.get('/paymentFailed',userAuth.isUserSignedIn,placeOrder.getPaymentFailedPage)
 router.post('/api/retryPaymentWithExistingOrder',placeOrder.retryWithExistingRazorpayOrder)
 router.post('/api/paymentFailed',placeOrder.saveFailedOrder)
+router.get('/empty-checkout',userAuth.isUserSignedIn,checkout.emptyCheckout)
 //order Details
 router.get('/orderListPage',userAuth.isUserSignedIn,orderDetails.getOrderListPage)
 router.get('/orderDetailPage/:id',userAuth.isUserSignedIn,orderDetails.getOrderDetailPage)

@@ -568,6 +568,7 @@
 </head>
 <%-include('partials/user/header')%>
 <body>
+    
     <div class="checkout-container">
         <!-- Main Content -->
         <div class="main-content">
@@ -1017,9 +1018,12 @@ if (!paymentMethod) {
                 couponCode: appliedCoupon
             })
         });
-
+            if (response.status === 404) {
+            window.location.href = '/empty-checkout';
+            return;
+        }
         const result = await response.json();
-
+           
         if (result.success) {
             Swal.fire({
                 title: 'Success!',
@@ -1066,6 +1070,10 @@ if (paymentMethod === "razorpay") {
                 couponCode: appliedCoupon
             })
         });
+             if (res.status === 404) {
+            window.location.href = '/empty-checkout';
+            return;
+        }
 
         const data = await res.json();
         if (!data.success) {
@@ -1168,7 +1176,10 @@ if (paymentMethod === "razorpay") {
                 couponCode: appliedCoupon
             })
         });
-
+             if (response.status === 404) {
+            window.location.href = '/empty-checkout';
+            return;
+        }
         const result = await response.json();
 
        if (result.success) {

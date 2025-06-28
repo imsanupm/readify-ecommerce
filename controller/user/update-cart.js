@@ -53,6 +53,15 @@ const updateQuantity = async (req,res) => {
         }else{
             return res.status(status.HttpStatus.BAD_REQUEST).json({ success: false, message: 'Invalid action' });
         }
+
+           if (cart.items[itemIndex].quantity + 1 > product.quantity) {
+  return res.status(code.HttpStatus.BAD_REQUEST).json({
+    message: `Only ${product.quantity} unit(s) available in stock. You cannot add more.`,
+    success: false
+  });
+}
+
+
         await cart.save()
         res.status(status.HttpStatus.OK).json({ 
             success: true, 
