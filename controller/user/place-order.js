@@ -23,7 +23,7 @@ const razorpay = new Razorpay({
 
 const placeNewOrder = async (req, res) => {
   try {
-    console.log("ree", req.body);
+  
     const userId = req.session.user_id;
     const { addressId, paymentMethod, couponCode } = req.body;
    
@@ -54,7 +54,13 @@ const placeNewOrder = async (req, res) => {
     for (const item of cartData.items) {
       const product = item.productId;
       const quantity = item.quantity;
-
+            if (product.quantity < quantity) {
+    return res.status(400).json({
+      success: false,
+      message: `We're sorry! Only ${product.quantity} unit(s) of "${product.productTitle}" are available in stock. Please update your cart before proceeding.`,
+      errorCode: "INSUFFICIENT_STOCK"
+    });
+  }
       orderedItems.push({
         product: product._id,
         productDetails: {

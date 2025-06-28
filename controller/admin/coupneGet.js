@@ -1,6 +1,6 @@
 const { save } = require('pdfkit');
 const code  = require('../../helpers/user/statusCode');
-const Coupen = require('../../models/admin/coupen');
+const Coupon = require('../../models/admin/coupen');
 
 
 
@@ -10,10 +10,10 @@ const getCoupenPage = async (req, res) => {
     const ITEMS_PER_PAGE = 3; 
     const page = parseInt(req.query.page) || 1;
 
-    const totalCoupons = await Coupen.countDocuments({});
+    const totalCoupons = await Coupon.countDocuments({});
     const totalPages = Math.ceil(totalCoupons / ITEMS_PER_PAGE);
 
-    const coupenDatas = await Coupen.find({})
+    const coupenDatas = await Coupon.find({})
       .sort({ createdAt: -1 })
       .skip((page - 1) * ITEMS_PER_PAGE)
       .limit(ITEMS_PER_PAGE);
@@ -50,12 +50,12 @@ const getCoupenPage = async (req, res) => {
     const addCoupen = async (req, res) => {
         try {
 
-        
-              
+          console.log("You are getting call ================");
+          
+    
           const {
             code,
             discount,
-            maxDiscount,
            minPurchase,
             startDate,
             expiryDate,
@@ -93,7 +93,20 @@ const getCoupenPage = async (req, res) => {
           if (minPurchase !== undefined && (isNaN(minPurchase) || parseFloat(minPurchase) < 0)) {
             return res.status(400).json({ success: false, message: 'Minimum purchase must be a non-negative number.' });
           }
-      
+           console.log('you are getting call from here ================');
+           
+              if (
+      minPurchase !== undefined &&
+      !isNaN(minPurchase) &&
+      parseFloat(minPurchase) > 0 &&
+      parseFloat(discount) >= 0.6 * parseFloat(minPurchase)
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: 'Discount must be less than 60% of the minimum purchase amount.',
+      });
+    }
+
          
           if (!startDate || isNaN(start)) {
             return res.status(400).json({ success: false, message: 'Start date is required and must be valid.' });
@@ -118,7 +131,7 @@ const getCoupenPage = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Max usage per user must be a positive integer.' });
           }
       
-          const savedData = new Coupen({
+          const savedData = new Coupon({
             code,
             discount,
             minPurchase,
@@ -136,6 +149,9 @@ const getCoupenPage = async (req, res) => {
           });
         } catch (error) {
           console.log("Error during addCoupen:", error);
+          if(error.code==11000){
+            return res.status(code.HttpStatus.BAD_REQUEST).json({message:"Coupon code Already exists.",success:false})
+          }
           return res.status(500).json({
             message: "Internal server error",
             success: false,
@@ -162,7 +178,7 @@ const getCoupenPage = async (req, res) => {
           
       
        
-          const coupenData = await Coupen.findOne({ code: coupenId });
+          const coupenData = await Coupon.findOne({ code: coupenId });
           if (!coupenData) {
             return res.status(code.HttpStatus.BAD_REQUEST).json({ success: false, message: 'Coupon not found' });
           }
@@ -201,7 +217,7 @@ const getCoupenPage = async (req, res) => {
           const couponCode = req.params.couponCode.toUpperCase();
           const { isActive } = req.body;
       
-          const coupon = await Coupen.findOne({ code: couponCode });
+          const coupon = await Coupon.findOne({ code: couponCode });
       
           if (!coupon) {
             return res.status(404).json({ success: false, message: "Coupon not found" });
