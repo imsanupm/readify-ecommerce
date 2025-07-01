@@ -727,6 +727,7 @@ body {
           <div class="col price-col">Price</div>
           <div class="col quantity-col">Quantity</div>
           <div class="col total-col">Total</div>
+         
         </div>
     
      <% orderData.orderedItems.forEach((item, index) => { %>
@@ -758,7 +759,7 @@ body {
   <% if (orderData.status === "Payment Failed") { %>
   <!-- Show nothing -->
      <span style="color: red; font-weight: 500;">Payment Failed</span>
-<% } else if (orderData.status !== "Returned" && orderData.status !== "Cancelled" && orderData.status !== "Shipped" && orderData.status !== "Return Requested") { %>
+<% } else if (item.status !== "Returned" && item.status !== "Cancelled" && item.status !== "Shipped" && item.status !== "Return Requested") { %>
   <button 
     class="cancel-btn" 
     data-product-id="<%= item.product %>" 
