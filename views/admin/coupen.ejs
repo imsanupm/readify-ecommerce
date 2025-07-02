@@ -1184,33 +1184,42 @@ document.getElementById('addCouponForm').addEventListener('submit', function(e) 
             });
 
             const result = await res.json();
-
-            if (res.ok && result.success) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Coupon Updated',
-                    text: result.message || 'The coupon was updated successfully!',
-                    timer: 2000,
-                    showConfirmButton: false
-                }).then(() => {
-                    closeModal('editCouponModal');
-                    location.reload();
-                });
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Update Failed',
-                    text: result.message || 'Something went wrong!',
-                });
-            }
-        } catch (error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'An error occurred while updating the coupon.',
-            });
-            console.error('Fetch error:', error);
-        }
+if (res.ok && result.success) {
+    Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: result.message || 'Coupon updated successfully!',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true
+    }).then(() => {
+        closeModal('editCouponModal');
+        location.reload();
+    });
+} else {
+    Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'error',
+        title: result.message || 'Update failed!',
+        showConfirmButton: false,
+        timer: 1000,
+        timerProgressBar: true
+    });
+}
+} catch (error) {
+    Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'error',
+        title: 'Error updating coupon',
+        showConfirmButton: false,
+        timer: 1000,
+        timerProgressBar: true
+    });
+    console.error('Fetch error:', error);
+}
     });
 
         // Search Functionality
