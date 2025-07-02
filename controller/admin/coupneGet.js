@@ -249,7 +249,7 @@ const getCoupenPage = async (req, res) => {
          
           
           const couponCode = req.params.couponCode.toUpperCase();
-          const deleted = await Coupen.findOneAndDelete({ code: couponCode });
+          const deleted = await Coupon.findOneAndDelete({ code: couponCode });
       
           if (!deleted) {
             return res.status(404).json({ success: false, message: 'Coupon not found' });

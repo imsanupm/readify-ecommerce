@@ -432,25 +432,6 @@
     <div class="container">
    
 
-        <!-- Statistics Cards -->
-        <!-- <div class="stats-container">
-            <div class="stat-card">
-                <h3>24</h3>
-                <p>Total Coupons</p>
-            </div>
-            <div class="stat-card">
-                <h3>18</h3>
-                <p>Active Coupons</p>
-            </div>
-            <div class="stat-card">
-                <h3>3</h3>
-                <p>Expired Coupons</p>
-            </div>
-            <div class="stat-card">
-                <h3>3</h3>
-                <p>Blocked Coupons</p>
-            </div>
-        </div> -->
 
         <!-- Action Bar -->
         <div class="action-bar">
@@ -780,19 +761,233 @@
 }
 
         // Form Submissions
-        document.getElementById('addCouponForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            // Controller route: POST /admin/coupons
+    //     document.getElementById('addCouponForm').addEventListener('submit', function(e) {
+    //         e.preventDefault();
+    //         // Controller route: POST /admin/coupons
             
-             const startDateInput = document.getElementById('startDate').value;
-    const expiryDateInput = document.getElementById('expiryDate').value;
+    //          const startDateInput = document.getElementById('startDate').value;
+    // const expiryDateInput = document.getElementById('expiryDate').value;
 
+    // const startDate = new Date(startDateInput);
+    // const expiryDate = new Date(expiryDateInput);
+    // const today = new Date();
+    // today.setHours(0, 0, 0, 0); // normalize
+
+    // // ❌ Start date in past
+    // if (startDate < today) {
+    //     Swal.fire({
+    //         toast: true,
+    //         icon: 'warning',
+    //         title: 'Start date cannot be in the past',
+    //         position: 'top-end',
+    //         showConfirmButton: false,
+    //         timer: 1000,
+    //         timerProgressBar: true,
+    //     });
+    //     return;
+    // }
+
+    // // ❌ Expiry date in past
+    // if (expiryDate < today) {
+    //     Swal.fire({
+    //         toast: true,
+    //         icon: 'warning',
+    //         title: 'Expiry date cannot be in the past',
+    //         position: 'top-end',
+    //         showConfirmButton: false,
+    //         timer: 1000,
+    //         timerProgressBar: true,
+    //     });
+    //     return;
+    // }
+
+    // // ❌ Start date after expiry
+    // if (startDate > expiryDate) {
+    //     Swal.fire({
+    //         toast: true,
+    //         icon: 'warning',
+    //         title: 'Start date cannot be after expiry date',
+    //         position: 'top-end',
+    //         showConfirmButton: false,
+    //         timer: 1000,
+    //         timerProgressBar: true,
+    //     });
+    //     return;
+    // }
+
+
+
+    //         const formData = {
+    //             code: document.getElementById('couponCode').value,
+    //            // discountType: document.getElementById('discountType').value,
+    //             discount: document.getElementById('discountValue').value,
+    //             minPurchase: document.getElementById('minPurchase').value,
+    //            // maxDiscount: document.getElementById('maxDiscount').value,
+    //             startDate: document.getElementById('startDate').value,
+    //             expiryDate: document.getElementById('expiryDate').value,
+    //             maxUsagePerUser: document.getElementById('maxUsagePerUser').value,
+    //             isActive: document.getElementById('isActive').checked
+    //         };
+            
+    //         console.log('Creating coupon:', formData);
+    //         // Make a fetch here 
+    //         fetch('/admin/add-coupons', {
+    //     method: 'POST',
+    //     headers: {
+    //         'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify(formData)
+    // })
+    // .then(response => {
+    //     if (!response.ok) {
+    //         return response.json().then(err => { throw err; });
+    //     }
+    //     return response.json();
+    // })
+    // .then(data => {
+       
+    //     Swal.fire({
+    //         icon: 'success',
+    //         title: 'Coupon Created',
+    //         text: 'The coupon was added successfully!',
+    //         confirmButtonColor: '#3b5d50'
+    //     }).then(() =>  {
+    //         closeModal('addCouponModal');
+    //         location.reload();
+    //     });
+    // })
+    // .catch(error => {
+    //     Swal.fire({
+    //         icon: 'error',
+    //         title: 'Error',
+    //         text:  data.message||'Failed to create coupon.',
+    //         confirmButtonColor: '#d33'
+    //     }).then(()=>{
+    //         location.reload()
+    //     })
+    // });
+            
+    //     });
+
+    
+document.getElementById('addCouponForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    // Get form values
+    const couponCode = document.getElementById('couponCode').value.trim();
+    const discount = parseFloat(document.getElementById('discountValue').value);
+    const minPurchase = parseFloat(document.getElementById('minPurchase').value) || 0;
+    const startDateInput = document.getElementById('startDate').value;
+    const expiryDateInput = document.getElementById('expiryDate').value;
+    const maxUsagePerUser = parseInt(document.getElementById('maxUsagePerUser').value);
+    const isActive = document.getElementById('isActive').checked;
+   
+    // Date objects for validation
     const startDate = new Date(startDateInput);
     const expiryDate = new Date(expiryDateInput);
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // normalize
+    today.setHours(0, 0, 0, 0); // Normalize to midnight
 
-    // ❌ Start date in past
+    // Validation checks
+
+    if (startDateInput && expiryDateInput && !isNaN(startDate) && !isNaN(expiryDate)) {
+        if (expiryDate < startDate) {
+            Swal.fire({
+                toast: true,
+                icon: 'warning',
+                title: 'Expiry date must be on or after start date',
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 1500,
+                timerProgressBar: true,
+            });
+            return;
+        }
+    }
+
+    // 1. Coupon Code: Required, must contain letters and at least 2 numbers
+    if (!couponCode || typeof couponCode !== 'string') {
+        Swal.fire({
+            toast: true,
+            icon: 'warning',
+            title: 'Coupon code is required',
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 1500,
+            timerProgressBar: true,
+        });
+        return;
+    }
+    const hasLetters = /[a-zA-Z]/.test(couponCode);
+    const numbers = (couponCode.match(/\d/g) || []).length;
+    if (!hasLetters || numbers < 2) {
+        Swal.fire({
+            toast: true,
+            icon: 'warning',
+            title: 'Coupon code must contain letters and at least 2 numbers',
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 1500,
+            timerProgressBar: true,
+        });
+        return;
+    }
+
+    // 2. Discount: Required, positive number
+    if (isNaN(discount) || discount <= 0) {
+        Swal.fire({
+            toast: true,
+            icon: 'warning',
+            title: 'Discount must be a positive number',
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 1500,
+            timerProgressBar: true,
+        });
+        return;
+    }
+
+    // 3. Discount vs Minimum Purchase: Discount < 60% of minPurchase (if minPurchase > 0)
+    if (minPurchase > 0 && discount >= 0.6 * minPurchase) {
+        Swal.fire({
+            toast: true,
+            icon: 'warning',
+            title: 'Discount must be less than 60% of the minimum purchase amount',
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 1500,
+            timerProgressBar: true,
+        });
+        return;
+    }
+
+    // 4. Minimum Purchase: Non-negative number
+    if (minPurchase < 0) {
+        Swal.fire({
+            toast: true,
+            icon: 'warning',
+            title: 'Minimum purchase must be a non-negative number',
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 1500,
+            timerProgressBar: true,
+        });
+        return;
+    }
+
+    // 5. Start Date: Required, not in the past
+    if (!startDateInput || isNaN(startDate)) {
+        Swal.fire({
+            toast: true,
+            icon: 'warning',
+            title: 'Start date is required and must be valid',
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 1500,
+            timerProgressBar: true,
+        });
+        return;
+    }
     if (startDate < today) {
         Swal.fire({
             toast: true,
@@ -800,13 +995,25 @@
             title: 'Start date cannot be in the past',
             position: 'top-end',
             showConfirmButton: false,
-            timer: 1000,
+            timer: 1500,
             timerProgressBar: true,
         });
         return;
     }
 
-    // ❌ Expiry date in past
+    // 6. Expiry Date: Required, not in the past, after start date
+    if (!expiryDateInput || isNaN(expiryDate)) {
+        Swal.fire({
+            toast: true,
+            icon: 'warning',
+            title: 'Expiry date is required and must be valid',
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 1500,
+            timerProgressBar: true,
+        });
+        return;
+    }
     if (expiryDate < today) {
         Swal.fire({
             toast: true,
@@ -814,43 +1021,51 @@
             title: 'Expiry date cannot be in the past',
             position: 'top-end',
             showConfirmButton: false,
-            timer: 1000,
+            timer: 1500,
             timerProgressBar: true,
         });
         return;
     }
-
-    // ❌ Start date after expiry
-    if (startDate > expiryDate) {
+    if (expiryDate < startDate) {
         Swal.fire({
             toast: true,
             icon: 'warning',
-            title: 'Start date cannot be after expiry date',
+            title: 'Expiry date must be after start date',
             position: 'top-end',
             showConfirmButton: false,
-            timer: 1000,
+            timer: 1500,
             timerProgressBar: true,
         });
         return;
     }
 
+    // 7. Max Usage Per User: Positive integer
+    if (isNaN(maxUsagePerUser) || !Number.isInteger(maxUsagePerUser) || maxUsagePerUser <= 0) {
+        Swal.fire({
+            toast: true,
+            icon: 'warning',
+            title: 'Max usage per user must be a positive integer',
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 1500,
+            timerProgressBar: true,
+        });
+        return;
+    }
 
+    // Prepare form data
+    const formData = {
+        code: couponCode,
+        discount: discount,
+        minPurchase: minPurchase,
+        startDate: startDateInput,
+        expiryDate: expiryDateInput,
+        maxUsagePerUser: maxUsagePerUser,
+        isActive: isActive
+    };
 
-            const formData = {
-                code: document.getElementById('couponCode').value,
-               // discountType: document.getElementById('discountType').value,
-                discount: document.getElementById('discountValue').value,
-                minPurchase: document.getElementById('minPurchase').value,
-               // maxDiscount: document.getElementById('maxDiscount').value,
-                startDate: document.getElementById('startDate').value,
-                expiryDate: document.getElementById('expiryDate').value,
-                maxUsagePerUser: document.getElementById('maxUsagePerUser').value,
-                isActive: document.getElementById('isActive').checked
-            };
-            
-            console.log('Creating coupon:', formData);
-            // Make a fetch here 
-            fetch('/admin/addCoupens', {
+    // Send request to server
+    fetch('/admin/add-coupons', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -864,32 +1079,35 @@
         return response.json();
     })
     .then(data => {
-       
         Swal.fire({
             icon: 'success',
             title: 'Coupon Created',
-            text: 'The coupon was added successfully!',
+            text: data.message || 'The coupon was added successfully!',
             confirmButtonColor: '#3b5d50'
-        }).then(() =>  {
+        }).then(() => {
             closeModal('addCouponModal');
             location.reload();
         });
     })
     .catch(error => {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text:  data.message||'Failed to create coupon.',
-            confirmButtonColor: '#d33'
-        }).then(()=>{
-            location.reload()
-        })
+        const errorMessage = error.message || 'Failed to create coupon.';
+        if (errorMessage.includes('Coupon code Already exists')) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Coupon code already exists.',
+                confirmButtonColor: '#d33'
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: errorMessage,
+                confirmButtonColor: '#d33'
+            });
+        }
     });
-            
-        });
-
-    
-
+}); 
 
         document.getElementById('editCouponForm').addEventListener('submit', async function(e) {
         e.preventDefault();

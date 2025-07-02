@@ -58,7 +58,7 @@ adminRouter.patch('/deny-return', orderReturn.denyReturn);
 
 //coupen management
 adminRouter.get('/admin/coupenManagement',authMiddleware.adminAuth,coupen.getCoupenPage)
-adminRouter.post('/addCoupens',coupen.addCoupen);
+adminRouter.post('/add-coupons',coupen.addCoupen);
 adminRouter.put('/updateCoupen/:coupenId',updateCoupenValidate.validateCouponUpdate,coupen.updateCoupen)
 adminRouter.put('/coupons/:couponCode/toggle',coupen.coupenStatus);
 adminRouter.delete('/coupons/:couponCode', coupen.deleteCoupon);
