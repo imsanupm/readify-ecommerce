@@ -2,7 +2,7 @@
 
 **A full-featured e-commerce platform for buying and selling books — built to industry standards.**
 
-> Developed and code-reviewed by industry experts.
+> Independently developed with guidance and code reviews from industry professionals.
 
 ---
 
